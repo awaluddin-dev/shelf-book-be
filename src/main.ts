@@ -26,6 +26,8 @@ async function bootstrap() {
     credentials: true,
   });
 
+  app.setGlobalPrefix('api');
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -37,8 +39,8 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter());
 
   const config = new DocumentBuilder()
-    .setTitle('LedgerFlow API')
-    .setDescription('Dokumentasi Core Banking & P2P Wallet System')
+    .setTitle('ShelfBook API')
+    .setDescription('Dokumentasi Shelf Book System')
     .setVersion('1.0')
     .addBearerAuth() // KUNCI: Memberitahu Swagger bahwa kita pakai JWT
     .build();

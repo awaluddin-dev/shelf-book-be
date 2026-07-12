@@ -12,31 +12,20 @@ export class RegisterService {
     const hash = await argon2.hash(dto.password);
 
     try {
-      const result = await this.prisma.$transaction(async (tx) => {
-        const user = await tx.user.create({
-          data: {
-            email: dto.email,
-            name: dto.name,
-            password: hash,
-          },
-        });
-
-        await tx.wallet.create({
-          data: {
-            userId: user.id,
-            balance: 0,
-          },
-        });
-
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          createdAt: user.createdAt,
-        };
+      const user = await this.prisma.user.create({
+        data: {
+          email: dto.email,
+          name: dto.name,
+          password: hash,
+        },
       });
 
-      return result;
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt,
+      };
     } catch (error) {
       console.error('ERROR REGISTER:', error);
       if (error instanceof Prisma.PrismaClientKnownRequestError) {

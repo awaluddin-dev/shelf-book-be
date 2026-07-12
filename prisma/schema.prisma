@@ -1,18 +1,11 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
-  // output   = "../generated/prisma"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider = "postgresql"
-  schemas  = ["learning"]
-  
+  schemas  = ["public", "user"]
 }
 
 model User {
@@ -20,42 +13,149 @@ model User {
   email     String   @unique
   name      String
   password  String
-  wallet    Wallet?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("users")
-  @@schema("learning")
+  @@schema("user")
 }
 
-model Wallet {
-  id        String   @id @default(uuid())
-  balance   Decimal  @default(0) @db.Decimal(15, 2)
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
-  transactions Transaction[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  version   Int      @default(0)
+// ------------------------------------
+// PORTFOLIO MODELS
+// ------------------------------------
 
-  @@map("wallets")
-  @@schema("learning")
+model PortfolioStatus {
+  id     String @id @default("status_1") // Single row enforced
+  status String @default("busy")
+
+  @@map("portfolio_status")
+  @@schema("public")
 }
 
-model Transaction {
-  id              String            @id @default(uuid())
-  amount          Decimal           @db.Decimal(15, 2)
-  type            TransactionType 
-  walletId        String
-  wallet          Wallet            @relation(fields: [walletId], references: [id])
-  createdAt       DateTime          @default(now())
-  @@index([walletId])
-  @@map("transactions")
-  @@schema("learning")
+model HeroConfig {
+  id           String @id @default("hero_1")
+  name         String?
+  role         String?
+  availability String?
+  openForWork  Boolean? @default(true)
+  config       Json?    // For any flexible structure
+
+  @@map("hero_config")
+  @@schema("public")
 }
 
-enum TransactionType {
-  DEBIT
-  CREDIT
-  @@schema("learning")
+model Metric {
+  id    String @id @default(uuid())
+  value String
+  label String
+
+  @@map("metrics")
+  @@schema("public")
+}
+
+model Testimonial {
+  id          String  @id @default(uuid())
+  name        String
+  position    String
+  avatar      String?
+  text        String
+  highlighted Boolean @default(false)
+  project     String?
+
+  @@map("testimonials")
+  @@schema("public")
+}
+
+model WorkExperience {
+  id          String   @id @default(uuid())
+  role        String
+  company     String
+  type        String
+  startDate   String
+  endDate     String?
+  current     Boolean  @default(false)
+  description String
+  stack       String[]
+  logo        String?
+
+  @@map("work_experiences")
+  @@schema("public")
+}
+
+model CurrentFocus {
+  id          String  @id @default(uuid())
+  title       String
+  icon        String
+  description String
+  link        String?
+  linkText    String?
+
+  @@map("current_focus")
+  @@schema("public")
+}
+
+model Proficiency {
+  id     String             @id @default(uuid())
+  title  String
+  skills ProficiencySkill[]
+
+  @@map("proficiencies")
+  @@schema("public")
+}
+
+model ProficiencySkill {
+  id            String      @id @default(uuid())
+  name          String
+  subtext       String
+  status        String
+  proficiencyId String
+  proficiency   Proficiency @relation(fields: [proficiencyId], references: [id], onDelete: Cascade)
+
+  @@map("proficiency_skills")
+  @@schema("public")
+}
+
+model Skill {
+  id       String  @id @default(uuid())
+  title    String
+  category String
+  level    String
+  x        Int     @default(0)
+  y        Int     @default(0)
+  icon     String?
+
+  @@map("skills")
+  @@schema("public")
+}
+
+model Roadmap {
+  id          String   @id @default(uuid())
+  tech        String
+  quarter     String
+  status      String
+  icon        String?
+  description String
+  depth       String?
+  topics      String[]
+  projects    String[]
+
+  @@map("roadmaps")
+  @@schema("public")
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  image       String?
+  tags        String[]
+  repo        String?
+  demo        String?
+  highlights  String[]
+  role        String?
+  duration    String?
+  slug        String?  @unique
+
+  @@map("projects")
+  @@schema("public")
 }
