@@ -6,11 +6,9 @@ import { TokenService } from './shared/token.service';
 import { RegisterController } from './register/register.controller';
 import { LoginController } from './login/login.controller';
 import { RefreshTokenController } from './refresh-token/refresh-token.controller';
-import { GetProfileController } from './get-profile/get-profile.controller';
 import { RegisterService } from './register/register.service';
 import { LoginService } from './login/login.service';
 import { RefreshTokenService } from './refresh-token/refresh-token.service';
-import { GetProfileService } from './get-profile/get-profile.service';
 
 @Module({
   imports: [
@@ -27,7 +25,6 @@ import { GetProfileService } from './get-profile/get-profile.service';
     RegisterController,
     LoginController,
     RefreshTokenController,
-    GetProfileController,
   ],
   providers: [
     TokenService, 
@@ -35,7 +32,6 @@ import { GetProfileService } from './get-profile/get-profile.service';
     RegisterService,
     LoginService,
     RefreshTokenService,
-    GetProfileService,
   ],
 })
 export class AuthFeatureModule {}

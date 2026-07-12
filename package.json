@@ -1,7 +1,7 @@
 {
-  "name": "ledger-flow",
+  "name": "shelf-book-be",
   "version": "0.0.1",
-  "description": "Ledger Flow",
+  "description": "Shelf Book",
   "author": "Awaluddin",
   "private": true,
   "license": "MIT",

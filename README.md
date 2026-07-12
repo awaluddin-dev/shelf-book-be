@@ -1,85 +1,73 @@
-# LedgerFlow - Core Banking & E-Wallet API
+# Portfolio Backend API
 
-LedgerFlow is a high-performance, enterprise-grade digital wallet RESTful API built with NestJS and Fastify. It is designed to handle secure financial transactions with strict data integrity, effectively preventing race conditions and double-spending.
+Backend RESTful API untuk aplikasi portfolio interaktif, dibangun menggunakan **NestJS**, **Fastify**, dan **PostgreSQL** (Prisma ORM). Backend ini sebelumnya merupakan sistem e-wallet (LedgerFlow) yang telah direfactor menjadi CMS headless untuk *personal portfolio*.
 
 ## Architecture & Tech Stack
 
-- Framework: NestJS (Fastify Adapter)
-- Language: TypeScript
-- Database: PostgreSQL
-- ORM: Prisma v7
-- Caching & Session Management: Redis
-- Security: Argon2 (Password Hashing), JWT (Access & Refresh Tokens)
-- Testing: Jest (Unit Testing with Mocking)
-- Containerization: Docker & Docker Compose
-- API Documentation: Swagger UI
+- **Framework**: NestJS (Fastify Adapter)
+- **Language**: TypeScript
+- **Database**: PostgreSQL (via Aiven for Production / Docker for Local)
+- **ORM**: Prisma v7
+- **Caching & Auth Storage**: Redis
+- **Security**: Argon2 (Password Hashing), JWT (Access Tokens)
+- **API Documentation**: Swagger UI
 
 ## Key Features
 
-1. Optimistic Concurrency Control (OCC)
-   Implemented version-based locking on the wallet table to prevent race conditions. High-volume concurrent requests to modify the same wallet balance are safely queued or rejected to prevent phantom money creation.
+1. **Portfolio Content Management**
+   Menyediakan endpoint CRUD yang tersentralisasi untuk mengelola konfigurasi halaman depan (Hero), Work Experience, Projects, Skills, Roadmap, dan Testimonials. Seluruh data disimpan rapi dalam skema relasional PostgreSQL.
 
-2. Atomic Transactions
-   Peer-to-Peer (P2P) transfers are wrapped in database transactions. Deducting the sender, crediting the receiver, and recording both ledger entries execute as a single atomic unit (All-or-Nothing execution).
+2. **Secure Admin Authentication**
+   Seluruh rute mutasi data (POST, PUT, DELETE, PATCH) dilindungi dengan **JWT Guard**. Hanya sesi admin terautentikasi yang dapat mengubah konten website.
 
-3. Two-Tier Authentication System
-   Utilizes short-lived, stateless Access Tokens (JWT) for performance, paired with long-lived Refresh Tokens stored securely in Redis. This allows for immediate session revocation (Kill-Switch) in case of compromised accounts.
-
-4. Containerized Infrastructure
-   Fully isolated and reproducible development and production environments using multi-stage Docker builds.
+3. **Fastify Engine**
+   Berjalan di atas Fastify (bukan Express) untuk menjamin latensi yang sangat rendah saat *frontend* melakukan `fetch()` data secara paralel.
 
 ## Prerequisites
 
-Before running this project, ensure you have the following installed on your system:
-
-- Docker and Docker Compose
-- Git
+Sebelum menjalankan project ini di komputer Anda, pastikan Anda telah menginstal:
+- Node.js (v18 atau lebih baru)
+- pnpm (rekomendasi *package manager*)
+- Docker & Docker Compose (untuk database lokal)
 
 ## Getting Started
 
-1. Clone the repository
-
+1. **Jalankan Database Lokal (PostgreSQL & Redis)**
+   Gunakan docker-compose yang tersedia untuk menyalakan database lokal di *background*:
    ```bash
-   git clone <https://github.com/awaluddin-dev/ledger-flow>
-   cd ledger-flow
+   docker-compose up -d
    ```
 
-2. Configure Environment Variables
-   Create a .env file in the root directory and configure the following variables:
-
-   ```bash
-   DATABASE_URL="postgresql://postgres:1234passwordkuat@postgres:5432/ledger_flow?schema=learning"
-   REDIS_URL="redis://redis:6379"
-   JWT_SECRET="your_secure_jwt_secret"
-   JWT_REFRESH_SECRET="your_secure_refresh_secret"
+2. **Konfigurasi Environment Variables**
+   Salin `.env.example` ke `.env` (atau pastikan file `.env` sudah ada). 
+   ```env
+   DATABASE_URL="postgresql://admin:admin123@localhost:5432/portfolio-prod?sslmode=disable"
+   REDIS_URL="redis://localhost:6379"
+   JWT_SECRET="rahasia_admin"
    ```
 
-3. Build and Run via Docker
-   The application, along with PostgreSQL and Redis, can be started with a single command:
-
+3. **Install Dependencies & Sinkronisasi Database**
    ```bash
-     docker-compose up -d --build
+   # Install paket node_modules
+   pnpm install
+
+   # Generate Prisma Client (sangat penting setelah update skema)
+   npx prisma generate
+
+   # Sinkronisasi tabel ke database PostgreSQL lokal
+   npx prisma db push
    ```
 
-This command will automatically provision the database, run Prisma migrations, and start the Fastify server.
+4. **Jalankan Aplikasi**
+   ```bash
+   pnpm run start:dev
+   ```
+   Backend Anda akan berjalan pada port `3000`.
 
-API Documentation
-Once the container is running, the interactive API documentation is available at:
+## API Documentation
 
-<http://localhost:3000/api/docs>
+Setelah server berjalan, Anda dapat melihat seluruh daftar rute API (Auth & Portfolio) dan mengujinya melalui antarmuka Swagger UI di:
+👉 **[http://localhost:3000/api/docs](http://localhost:3000/api/docs)**
 
-You can use the Swagger UI to test the endpoints (Registration, Login, TopUp, Transfer, and History).
-
-Running Tests
-To run the automated unit tests locally (Node.js and pnpm required on the host machine):
-
-```bash
-# Install dependencies
-pnpm install
-
-# Run tests
-pnpm test
-```
-
-License
-This project is licensed under the MIT License.
+## License
+MIT License
