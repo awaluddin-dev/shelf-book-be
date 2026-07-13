@@ -12,7 +12,10 @@ export class RegisterDto {
   @IsNotEmpty({ message: 'Nama tidak boleh kosong' })
   name: string;
 
-  @ApiProperty({ example: 'password123', description: 'Password minimal 8 karakter' })
+  @ApiProperty({
+    example: 'password123',
+    description: 'Password minimal 8 karakter',
+  })
   @IsString()
   @MinLength(8, { message: 'Password minimal 8 karakter' })
   password: string;

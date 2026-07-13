@@ -11,4 +11,9 @@ export class LoginDto {
   @IsString()
   @IsNotEmpty({ message: 'Password tidak boleh kosong' })
   password: string;
+
+  @ApiProperty({ example: '0.xyz...' })
+  @IsString()
+  @IsNotEmpty({ message: 'Turnstile token tidak boleh kosong' })
+  turnstileToken: string;
 }

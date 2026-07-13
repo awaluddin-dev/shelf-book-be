@@ -21,13 +21,9 @@ import { RefreshTokenService } from './refresh-token/refresh-token.service';
       }),
     }),
   ],
-  controllers: [
-    RegisterController,
-    LoginController,
-    RefreshTokenController,
-  ],
+  controllers: [RegisterController, LoginController, RefreshTokenController],
   providers: [
-    TokenService, 
+    TokenService,
     JwtStrategy,
     RegisterService,
     LoginService,

@@ -66,8 +66,8 @@ export class TokenService {
       }
       return payload;
     } catch (error) {
-       if (error instanceof UnauthorizedException) throw error;
-       throw new UnauthorizedException(
+      if (error instanceof UnauthorizedException) throw error;
+      throw new UnauthorizedException(
         'Refresh token kadaluarsa atau tidak valid',
       );
     }

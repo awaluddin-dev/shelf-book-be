@@ -7,7 +7,9 @@ export class RefreshTokenService {
   constructor(private tokenService: TokenService) {}
 
   async execute(dto: RefreshDto) {
-    const payload = await this.tokenService.verifyRefreshToken(dto.refreshToken);
+    const payload = await this.tokenService.verifyRefreshToken(
+      dto.refreshToken,
+    );
     return this.tokenService.generateAndSaveTokens(payload.sub, payload.email);
   }
 }
