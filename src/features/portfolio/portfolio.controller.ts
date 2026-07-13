@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Patch, UseGuards } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
 import { PortfolioService } from './portfolio.service';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { ApiTags } from '@nestjs/swagger';
@@ -9,7 +21,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class PortfolioController {
   constructor(
     private readonly portfolioService: PortfolioService,
-    private readonly prisma: PrismaService
+    private readonly prisma: PrismaService,
   ) {}
 
   // STATUS
@@ -33,7 +45,10 @@ export class PortfolioController {
   @UseGuards(JwtGuard)
   @Patch('hero')
   async updateHero(@Body() body: any) {
-    return await this.portfolioService.updateHero(body.heroConfig, body.metrics);
+    return await this.portfolioService.updateHero(
+      body.heroConfig,
+      body.metrics,
+    );
   }
 
   // TESTIMONIALS
@@ -42,22 +57,31 @@ export class PortfolioController {
     return await this.portfolioService.getArrayData(this.prisma.testimonial);
   }
 
-  @UseGuards(JwtGuard)
   @Post('testimonials')
   async createTestimonial(@Body() body: any) {
-    return await this.portfolioService.createArrayItem(this.prisma.testimonial, body);
+    return await this.portfolioService.createArrayItem(
+      this.prisma.testimonial,
+      body,
+    );
   }
 
   @UseGuards(JwtGuard)
   @Put('testimonials/:id')
   async updateTestimonial(@Param('id') id: string, @Body() body: any) {
-    return await this.portfolioService.updateArrayItem(this.prisma.testimonial, id, body);
+    return await this.portfolioService.updateArrayItem(
+      this.prisma.testimonial,
+      id,
+      body,
+    );
   }
 
   @UseGuards(JwtGuard)
   @Delete('testimonials/:id')
   async deleteTestimonial(@Param('id') id: string) {
-    return await this.portfolioService.deleteArrayItem(this.prisma.testimonial, id);
+    return await this.portfolioService.deleteArrayItem(
+      this.prisma.testimonial,
+      id,
+    );
   }
 
   // WORK (workExperience)
@@ -69,19 +93,29 @@ export class PortfolioController {
   @UseGuards(JwtGuard)
   @Post('work')
   async createWork(@Body() body: any) {
-    return await this.portfolioService.createArrayItem(this.prisma.workExperience, body);
+    return await this.portfolioService.createArrayItem(
+      this.prisma.workExperience,
+      body,
+    );
   }
 
   @UseGuards(JwtGuard)
   @Put('work/:id')
   async updateWork(@Param('id') id: string, @Body() body: any) {
-    return await this.portfolioService.updateArrayItem(this.prisma.workExperience, id, body);
+    return await this.portfolioService.updateArrayItem(
+      this.prisma.workExperience,
+      id,
+      body,
+    );
   }
 
   @UseGuards(JwtGuard)
   @Delete('work/:id')
   async deleteWork(@Param('id') id: string) {
-    return await this.portfolioService.deleteArrayItem(this.prisma.workExperience, id);
+    return await this.portfolioService.deleteArrayItem(
+      this.prisma.workExperience,
+      id,
+    );
   }
 
   // CURRENT (currentFocus)
@@ -93,19 +127,29 @@ export class PortfolioController {
   @UseGuards(JwtGuard)
   @Post('current')
   async createCurrent(@Body() body: any) {
-    return await this.portfolioService.createArrayItem(this.prisma.currentFocus, body);
+    return await this.portfolioService.createArrayItem(
+      this.prisma.currentFocus,
+      body,
+    );
   }
 
   @UseGuards(JwtGuard)
   @Put('current/:id')
   async updateCurrent(@Param('id') id: string, @Body() body: any) {
-    return await this.portfolioService.updateArrayItem(this.prisma.currentFocus, id, body);
+    return await this.portfolioService.updateArrayItem(
+      this.prisma.currentFocus,
+      id,
+      body,
+    );
   }
 
   @UseGuards(JwtGuard)
   @Delete('current/:id')
   async deleteCurrent(@Param('id') id: string) {
-    return await this.portfolioService.deleteArrayItem(this.prisma.currentFocus, id);
+    return await this.portfolioService.deleteArrayItem(
+      this.prisma.currentFocus,
+      id,
+    );
   }
 
   // PROFICIENCY
@@ -147,7 +191,11 @@ export class PortfolioController {
   @UseGuards(JwtGuard)
   @Put('skills/:id')
   async updateSkill(@Param('id') id: string, @Body() body: any) {
-    return await this.portfolioService.updateArrayItem(this.prisma.skill, id, body);
+    return await this.portfolioService.updateArrayItem(
+      this.prisma.skill,
+      id,
+      body,
+    );
   }
 
   @UseGuards(JwtGuard)
@@ -159,20 +207,29 @@ export class PortfolioController {
   // LEARNING (roadmap)
   @Get('learning')
   async getLearning() {
-    const roadmap = await this.portfolioService.getArrayData(this.prisma.roadmap);
+    const roadmap = await this.portfolioService.getArrayData(
+      this.prisma.roadmap,
+    );
     return { roadmap };
   }
 
   @UseGuards(JwtGuard)
   @Post('learning')
   async createLearning(@Body() body: any) {
-    return await this.portfolioService.createArrayItem(this.prisma.roadmap, body);
+    return await this.portfolioService.createArrayItem(
+      this.prisma.roadmap,
+      body,
+    );
   }
 
   @UseGuards(JwtGuard)
   @Put('learning/:id')
   async updateLearning(@Param('id') id: string, @Body() body: any) {
-    return await this.portfolioService.updateArrayItem(this.prisma.roadmap, id, body);
+    return await this.portfolioService.updateArrayItem(
+      this.prisma.roadmap,
+      id,
+      body,
+    );
   }
 
   @UseGuards(JwtGuard)
@@ -190,13 +247,20 @@ export class PortfolioController {
   @UseGuards(JwtGuard)
   @Post('projects')
   async createProject(@Body() body: any) {
-    return await this.portfolioService.createArrayItem(this.prisma.project, body);
+    return await this.portfolioService.createArrayItem(
+      this.prisma.project,
+      body,
+    );
   }
 
   @UseGuards(JwtGuard)
   @Put('projects/:id')
   async updateProject(@Param('id') id: string, @Body() body: any) {
-    return await this.portfolioService.updateArrayItem(this.prisma.project, id, body);
+    return await this.portfolioService.updateArrayItem(
+      this.prisma.project,
+      id,
+      body,
+    );
   }
 
   @UseGuards(JwtGuard)

@@ -38,7 +38,13 @@ model HeroConfig {
   role         String?
   availability String?
   openForWork  Boolean? @default(true)
-  config       Json?    // For any flexible structure
+  
+  // New explicitly typed fields
+  expertise    String?
+  grit         String?
+  service      String?
+  
+  config       Json?    // Kept for any future untyped fields
 
   @@map("hero_config")
   @@schema("public")
@@ -54,29 +60,25 @@ model Metric {
 }
 
 model Testimonial {
-  id          String  @id @default(uuid())
-  name        String
-  position    String
-  avatar      String?
-  text        String
-  highlighted Boolean @default(false)
-  project     String?
+  id           String  @id @default(uuid())
+  name         String
+  role         String
+  company      String
+  relationship String
+  testimonial  String
 
   @@map("testimonials")
   @@schema("public")
 }
 
 model WorkExperience {
-  id          String   @id @default(uuid())
-  role        String
+  id          String @id @default(uuid())
+  title       String
   company     String
-  type        String
-  startDate   String
-  endDate     String?
-  current     Boolean  @default(false)
+  period      String
   description String
-  stack       String[]
-  logo        String?
+  type        String
+  level       String
 
   @@map("work_experiences")
   @@schema("public")
@@ -116,28 +118,29 @@ model ProficiencySkill {
 }
 
 model Skill {
-  id       String  @id @default(uuid())
-  title    String
-  category String
-  level    String
-  x        Int     @default(0)
-  y        Int     @default(0)
-  icon     String?
+  id          String  @id @default(uuid())
+  title       String
+  category    String
+  level       String
+  details     String
+  x           Int     @default(0)
+  y           Int     @default(0)
+  connections String?
 
   @@map("skills")
   @@schema("public")
 }
 
 model Roadmap {
-  id          String   @id @default(uuid())
+  id          String  @id @default(uuid())
   tech        String
   quarter     String
   status      String
   icon        String?
   description String
   depth       String?
-  topics      String[]
-  projects    String[]
+  topics      String
+  projects    String
 
   @@map("roadmaps")
   @@schema("public")
@@ -146,15 +149,18 @@ model Roadmap {
 model Project {
   id          String   @id @default(uuid())
   title       String
-  description String
-  image       String?
+  subtitle    String
+  category    String
+  date        String
   tags        String[]
-  repo        String?
-  demo        String?
-  highlights  String[]
-  role        String?
-  duration    String?
-  slug        String?  @unique
+  spineColor  String
+  coverColor  String
+  spineText   String
+  github      String?
+  demoUrl     String?
+  stats       Json?
+  phases      Json?
+  markdown    String
 
   @@map("projects")
   @@schema("public")
