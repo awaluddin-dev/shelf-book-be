@@ -10,6 +10,8 @@ import {
   Body,
   Patch,
   UseGuards,
+  Headers,
+  Res,
 } from '@nestjs/common';
 import { PortfolioService } from './portfolio.service';
 import { JwtGuard } from 'src/auth/jwt.guard';
@@ -38,8 +40,42 @@ export class PortfolioController {
 
   // HERO
   @Get('hero')
-  async getHero() {
-    return await this.portfolioService.getHero();
+  async getHero(
+    @Headers('if-none-match') ifNoneMatch: string,
+    @Res({ passthrough: true }) res: any,
+  ) {
+    const data = await this.portfolioService.getHero();
+    
+    let latestUpdate = 0;
+    const heroConfig = data.heroConfig as any;
+    if (heroConfig?.updatedAt) {
+      latestUpdate = new Date(heroConfig.updatedAt).getTime();
+    }
+    if (data.metrics && data.metrics.length > 0) {
+      const metricsDates = data.metrics.map((m: any) => new Date(m.updatedAt).getTime());
+      const maxMetricDate = Math.max(...metricsDates.filter((d: number) => !isNaN(d)));
+      if (maxMetricDate > latestUpdate) latestUpdate = maxMetricDate;
+    }
+    if (latestUpdate === 0) latestUpdate = Date.now();
+    
+    const etag = `W/"${latestUpdate}"`;
+    
+    res.header('ETag', etag);
+    res.header('Cache-Control', 'public, max-age=0, must-revalidate');
+    
+    if (ifNoneMatch === etag) {
+      res.status(304);
+      return;
+    }
+
+    return {
+      heroConfig: data.heroConfig,
+      metrics: data.metrics,
+      meta: {
+        etag,
+        lastUpdated: new Date(latestUpdate).toISOString(),
+      }
+    };
   }
 
   @UseGuards(JwtGuard)
