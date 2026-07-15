@@ -12,6 +12,7 @@ import { TransformInterceptor } from './common/transform.interceptor';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
+  process.env.TZ = 'Asia/Makassar';
   const logger = new Logger('Bootstrap');
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,

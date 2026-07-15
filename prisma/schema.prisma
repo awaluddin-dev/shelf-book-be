@@ -28,6 +28,9 @@ model PortfolioStatus {
   id     String @id @default("status_1") // Single row enforced
   status String @default("busy")
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+
   @@map("portfolio_status")
   @@schema("public")
 }
@@ -46,14 +49,22 @@ model HeroConfig {
   
   config       Json?    // Kept for any future untyped fields
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+
   @@map("hero_config")
   @@schema("public")
 }
 
 model Metric {
-  id    String @id @default(uuid())
-  value String
-  label String
+  id        String   @id @default(uuid())
+  value     String
+  label     String
+  icon      String?
+  isSavings Boolean? @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
 
   @@map("metrics")
   @@schema("public")
@@ -67,18 +78,26 @@ model Testimonial {
   relationship String
   testimonial  String
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+
   @@map("testimonials")
   @@schema("public")
 }
 
 model WorkExperience {
   id          String @id @default(uuid())
-  title       String
+  years       String
+  duration    String
   company     String
-  period      String
-  description String
-  type        String
-  level       String
+  role        String
+  stack       String
+  teaser      String
+  fullImpact  String
+  bullets     Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
 
   @@map("work_experiences")
   @@schema("public")
@@ -92,6 +111,9 @@ model CurrentFocus {
   link        String?
   linkText    String?
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+
   @@map("current_focus")
   @@schema("public")
 }
@@ -100,6 +122,9 @@ model Proficiency {
   id     String             @id @default(uuid())
   title  String
   skills ProficiencySkill[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
 
   @@map("proficiencies")
   @@schema("public")
@@ -113,6 +138,9 @@ model ProficiencySkill {
   proficiencyId String
   proficiency   Proficiency @relation(fields: [proficiencyId], references: [id], onDelete: Cascade)
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+
   @@map("proficiency_skills")
   @@schema("public")
 }
@@ -125,7 +153,10 @@ model Skill {
   details     String
   x           Int     @default(0)
   y           Int     @default(0)
-  connections String?
+  connections String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
 
   @@map("skills")
   @@schema("public")
@@ -141,6 +172,9 @@ model Roadmap {
   depth       String?
   topics      String
   projects    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("roadmaps")
   @@schema("public")
@@ -161,6 +195,9 @@ model Project {
   stats       Json?
   phases      Json?
   markdown    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("projects")
   @@schema("public")
