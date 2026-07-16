@@ -75,8 +75,9 @@ model Testimonial {
   name         String
   role         String
   company      String
-  relationship String
+  url          String?
   testimonial  String
+  status       String  @default("pending")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())

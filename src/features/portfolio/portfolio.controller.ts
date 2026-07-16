@@ -11,8 +11,10 @@ import {
   Patch,
   UseGuards,
   Headers,
+  Req,
   Res,
 } from '@nestjs/common';
+import { RateLimitService } from 'src/common/services/rate-limit.service';
 import { PortfolioService } from './portfolio.service';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { ApiTags } from '@nestjs/swagger';
@@ -24,6 +26,7 @@ export class PortfolioController {
   constructor(
     private readonly portfolioService: PortfolioService,
     private readonly prisma: PrismaService,
+    private readonly rateLimitService: RateLimitService,
   ) {}
 
   // STATUS
@@ -94,15 +97,22 @@ export class PortfolioController {
   }
 
   @Post('testimonials')
-  async createTestimonial(@Body() body: any) {
-    return await this.portfolioService.createArrayItem(
+  async createTestimonial(
+    @Req() req: any,
+    @Res({ passthrough: true }) res: any,
+    @Body() body: any,
+  ) {
+    await this.rateLimitService.checkLimit(req);
+    const result = await this.portfolioService.createArrayItem(
       this.prisma.testimonial,
       body,
     );
+    await this.rateLimitService.setLimit(req, res);
+    return result;
   }
 
   @UseGuards(JwtGuard)
-  @Put('testimonials/:id')
+  @Patch('testimonials/:id')
   async updateTestimonial(@Param('id') id: string, @Body() body: any) {
     return await this.portfolioService.updateArrayItem(
       this.prisma.testimonial,
