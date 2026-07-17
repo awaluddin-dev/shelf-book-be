@@ -1,4 +1,5 @@
 import { Controller, Post, Body, Req, Res } from '@nestjs/common';
+import type { FastifyRequest, FastifyReply } from 'fastify';
 import { ContactService } from './contact.service';
 import { CreateInquiryDto } from './contact.dto';
 import { RateLimitService } from 'src/common/services/rate-limit.service';
@@ -7,14 +8,14 @@ import { RateLimitService } from 'src/common/services/rate-limit.service';
 export class ContactController {
   constructor(
     private readonly contactService: ContactService,
-    private readonly rateLimitService: RateLimitService
+    private readonly rateLimitService: RateLimitService,
   ) {}
 
   @Post('inquiry')
   async sendInquiry(
-    @Req() req: any,
-    @Res({ passthrough: true }) res: any,
-    @Body() dto: CreateInquiryDto
+    @Req() req: FastifyRequest,
+    @Res({ passthrough: true }) res: FastifyReply,
+    @Body() dto: CreateInquiryDto,
   ) {
     await this.rateLimitService.checkLimit(req);
     const result = await this.contactService.sendInquiry(dto);

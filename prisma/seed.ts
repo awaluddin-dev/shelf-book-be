@@ -690,6 +690,77 @@ const defaultSkillNodes = [
   },
 ];
 
+const currentFocusData = [
+  {
+    title: "Writing",
+    icon: "PenTool",
+    description: '"I Rewrote a Fintech Platform Alone — No Handover, No Team, No Docs"',
+    link: "https://dev.to/awaluddin",
+    linkText: "Read on dev.to",
+  },
+  {
+    title: "Current Work",
+    icon: "Code2",
+    description: "Building AuraFlow AI, an intelligent project management and estimation agent.",
+    link: "https://github.com/awaluddin-dev",
+    linkText: "View Repository",
+  },
+  {
+    title: "Upcoming Tech",
+    icon: "Rocket",
+    description: "Deep diving into local LLM orchestration and vector database optimization.",
+    link: "#experience",
+    linkText: "See Roadmap",
+  },
+];
+
+const roadmapItemsData = [
+  {
+    quarter: 'Q3 2026',
+    title: 'Systems & High-Performance Services',
+    tech: 'Rust & WebAssembly',
+    icon: 'Code2',
+    description: 'Transitioning performance-critical modules to memory-safe systems programming to design ultra-low latency WebAssembly edge services.',
+    status: 'Plan Formulated',
+    depth: 'Intermediate Focus',
+    topics: ['Ownership & Borrow Checker', 'Tokio Async Runtime', 'WASM Edge Handlers', 'Zero-cost Abstractions'],
+    projects: ['WASM-based HTTP Request Filter', 'High-performance API Proxy in Rust']
+  },
+  {
+    quarter: 'Q4 2026',
+    title: 'Advanced Streaming & Event Architecture',
+    tech: 'Apache Kafka & Event Sourcing',
+    icon: 'Database',
+    description: 'Building robust, multi-region distributed streaming architectures with strict event ordering, transaction support, and message guarantees.',
+    status: 'Scheduled',
+    depth: 'Advanced Practice',
+    topics: ['Partitioning & Consumer Groups', 'Kafka Streams API', 'Schema Registry & Avro', 'Idempotent Producers'],
+    projects: ['Real-time Event Logging Pipeline', 'Transactional Event-Sourced Ledger']
+  },
+  {
+    quarter: 'Q1 2027',
+    title: 'Agentic Workflows & Cognitive Systems',
+    tech: 'LangGraph & Stateful Agents',
+    icon: 'BrainCircuit',
+    description: 'Evolving LLM integrations from standard RAG pipelines into autonomous stateful multi-agent systems that learn and adapt with memory.',
+    status: 'Research Phase',
+    depth: 'Architect Level',
+    topics: ['Stateful Multi-Agent Graphs', 'Human-in-the-loop Workflows', 'Semantic Caching & Memory', 'Self-Correcting RAG'],
+    projects: ['Autonomous PR Reviewer Agent', 'Self-Improving Code Interpreter Engine']
+  },
+  {
+    quarter: 'Q2 2027',
+    title: 'Edge-Native WebAssembly Serverless',
+    tech: 'Wasmtime & Spin Runtime',
+    icon: 'Globe',
+    description: 'Leveraging WebAssembly System Interface (WASI) and modular compilation to deploy sandboxed, lightning-fast edge-native serverless functions.',
+    status: 'Exploration Phase',
+    depth: 'Intermediate Focus',
+    topics: ['WASI Preview 2', 'Component Model Architecture', 'Spin Serverless Framework', 'Secure Sandbox Environments'],
+    projects: ['Edge-Deployed GeoIP Middleware', 'Instant-boot Sandbox Function Orchestrator']
+  }
+];
+
 async function main() {
   console.log('Seeding database...');
 
@@ -801,6 +872,116 @@ async function main() {
   }
   console.log('Projects seeded.');
 
+  // 6. Seed Current Focus
+  await prisma.currentFocus.deleteMany({});
+  for (const focus of currentFocusData) {
+    await prisma.currentFocus.create({
+      data: {
+        title: focus.title,
+        icon: focus.icon,
+        description: focus.description,
+        link: focus.link,
+        linkText: focus.linkText
+      }
+    });
+  }
+  console.log('CurrentFocus seeded.');
+
+  // 7. Seed Roadmap
+  await prisma.roadmap.deleteMany({});
+  for (const item of roadmapItemsData) {
+    await prisma.roadmap.create({
+      data: {
+        tech: item.tech,
+        quarter: item.quarter,
+        status: item.status,
+        icon: item.icon,
+        description: item.description,
+        depth: item.depth,
+        topics: item.topics,
+        projects: item.projects
+      }
+    });
+  }
+  console.log('Roadmap seeded.');
+
+  // 8. Seed Visual Showcase
+  await prisma.visualShowcase.deleteMany({});
+  await prisma.visualShowcase.create({
+    data: {
+      projectId: 'auraflow-ai',
+      imageUrl: '/assets/images/projects/auraflow/overview.jpg',
+      caption: 'AuraFlow Main Dashboard and Real-time Telemetry',
+      tag: 'OVERVIEW'
+    }
+  });
+  console.log('Visual Showcase seeded.');
+
+  // 9. Seed System Architecture
+  await prisma.systemArchitecture.deleteMany({});
+  await prisma.systemArchitecture.createMany({
+    data: [
+      {
+        projectId: 'auraflow-ai',
+        name: 'gateway',
+        title: 'NestJS / Express API Gateway',
+        description: 'Ingests unstructured records, sanitizes payloads, and runs schema-level validation before dispatching to the queue.',
+        metrics: 'Response: <12ms',
+        order: 0
+      },
+      {
+        projectId: 'auraflow-ai',
+        name: 'queue',
+        title: 'Redis & BullMQ In-Memory Queue',
+        description: 'Provides fault tolerance and backpressure control. Buffers peak traffic to prevent downstream microservice exhaustion.',
+        metrics: 'Capacity: 10K+ jobs/sec',
+        order: 1
+      },
+      {
+        projectId: 'auraflow-ai',
+        name: 'agents',
+        title: 'LangGraph Multi-Agent Worker',
+        description: 'A cyclic stateful Python graph where Parser and Validator agents collaborate to parse, clean, and self-heal data anomalies.',
+        metrics: 'Self-Heal Rate: 94.2%',
+        order: 2
+      },
+      {
+        projectId: 'auraflow-ai',
+        name: 'db',
+        title: 'PostgreSQL Clean Storage',
+        description: 'Stores fully resolved, compliant, and structured documents with indexes optimized for semantic searches.',
+        metrics: 'Uptime: 99.99%',
+        order: 3
+      }
+    ]
+  });
+  console.log('System Architecture seeded.');
+
+  // 10. Seed Project Lifecycle
+  await prisma.projectLifecycle.deleteMany({});
+  for (const proj of projects) {
+    if (proj.phases && proj.phases.length > 0) {
+      for (let i = 0; i < proj.phases.length; i++) {
+        const p = proj.phases[i];
+        let stageName = "Planning & Spec";
+        if (i === 1) stageName = "Architecture & Design";
+        if (i === 2) stageName = "Execution & Code";
+        if (i >= 3) stageName = "Testing & Launch";
+
+        await prisma.projectLifecycle.create({
+          data: {
+            projectId: proj.id,
+            stage: stageName,
+            date: p.date,
+            title: p.title,
+            description: p.description,
+            order: i
+          }
+        });
+      }
+    }
+  }
+  console.log('Project Lifecycle seeded.');
 
   console.log('Seeding completed successfully!');
 }

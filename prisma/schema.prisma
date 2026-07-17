@@ -1,6 +1,5 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
@@ -171,8 +170,8 @@ model Roadmap {
   icon        String?
   description String
   depth       String?
-  topics      String
-  projects    String
+  topics      String[]
+  projects    String[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -197,9 +196,59 @@ model Project {
   phases      Json?
   markdown    String
 
+  visualShowcases     VisualShowcase[]
+  systemArchitectures SystemArchitecture[]
+  projectLifecycles   ProjectLifecycle[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("projects")
+  @@schema("public")
+}
+model VisualShowcase {
+  id        String   @id @default(uuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  imageUrl  String
+  caption   String
+  tag       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("visual_showcases")
+  @@schema("public")
+}
+
+model SystemArchitecture {
+  id          String   @id @default(uuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name        String
+  title       String
+  description String
+  metrics     String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("system_architectures")
+  @@schema("public")
+}
+
+model ProjectLifecycle {
+  id          String   @id @default(uuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  stage       String
+  date        String
+  title       String
+  description String
+  evidentUrl  String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("project_lifecycles")
   @@schema("public")
 }
