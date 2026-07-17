@@ -1,14 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
+import { Prisma } from '@prisma/client';
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { HeroConfigDto, MetricDto, ProficiencyDto } from './portfolio.dto';
 
 export interface GenericModelDelegate {
   findMany(args?: unknown): Promise<unknown[]>;
-  findUnique(args: { where: { id: string } }): Promise<any>;
-  create(args: { data: any }): Promise<any>;
-  update(args: { where: { id: string }; data: any }): Promise<any>;
-  delete(args: { where: { id: string } }): Promise<any>;
+  findUnique(args: { where: { id: string } }): Promise<unknown>;
+  create(args: { data: unknown }): Promise<unknown>;
+  update(args: { where: { id: string }; data: unknown }): Promise<unknown>;
+  delete(args: { where: { id: string } }): Promise<unknown>;
 }
 
 @Injectable()
@@ -29,14 +30,21 @@ export class PortfolioService {
     return item;
   }
 
-  async createArrayItem(model: GenericModelDelegate, payload: any) {
+  async createArrayItem<T>(
+    model: GenericModelDelegate,
+    payload: T,
+  ): Promise<unknown> {
     // If frontend sends an id, we can try to use it, else let Prisma handle it
-    return await model.create({ data: payload });
+    return await model.create({ data: payload as unknown });
   }
 
-  async updateArrayItem(model: GenericModelDelegate, id: string, payload: any) {
+  async updateArrayItem<T>(
+    model: GenericModelDelegate,
+    id: string,
+    payload: T,
+  ): Promise<unknown> {
     try {
-      return await model.update({ where: { id }, data: payload });
+      return await model.update({ where: { id }, data: payload as unknown });
     } catch {
       throw new NotFoundException(`Item with id ${id} not found`);
     }
@@ -62,18 +70,23 @@ export class PortfolioService {
     });
   }
 
-  async createProficiency(payload: any) {
+  async createProficiency(payload: ProficiencyDto) {
     const { skills, ...rest } = payload;
     return await this.prisma.proficiency.create({
       data: {
         ...rest,
-        skills: skills ? { create: skills as object[] } : undefined,
+        skills: skills
+          ? {
+              create:
+                skills as unknown as Prisma.ProficiencySkillCreateWithoutProficiencyInput[],
+            }
+          : undefined,
       },
       include: { skills: true },
     });
   }
 
-  async updateProficiency(id: string, payload: any) {
+  async updateProficiency(id: string, payload: Partial<ProficiencyDto>) {
     const { skills, ...rest } = payload;
     // To update correctly with relations, we update the parent, and if skills are provided,
     // we would typically delete old and recreate, or update by ID.
@@ -88,7 +101,12 @@ export class PortfolioService {
       where: { id },
       data: {
         ...rest,
-        skills: skills ? { create: skills as object[] } : undefined,
+        skills: skills
+          ? {
+              create:
+                skills as unknown as Prisma.ProficiencySkillCreateWithoutProficiencyInput[],
+            }
+          : undefined,
       },
       include: { skills: true },
     });
@@ -132,12 +150,15 @@ export class PortfolioService {
     return { heroConfig, metrics };
   }
 
-  async updateHero(heroConfigPayload?: any, metricsPayload?: any[]) {
+  async updateHero(
+    heroConfigPayload?: Partial<HeroConfigDto>,
+    metricsPayload?: MetricDto[],
+  ) {
     if (heroConfigPayload) {
       await this.prisma.heroConfig.upsert({
         where: { id: 'hero_1' },
         update: heroConfigPayload,
-        create: { id: 'hero_1', ...(heroConfigPayload as any) },
+        create: { id: 'hero_1', ...heroConfigPayload },
       });
     }
 
@@ -146,7 +167,9 @@ export class PortfolioService {
       // since there are usually only 3 or 4 metrics
       await this.prisma.metric.deleteMany();
       if (metricsPayload.length > 0) {
-        await this.prisma.metric.createMany({ data: metricsPayload as any });
+        await this.prisma.metric.createMany({
+          data: metricsPayload as unknown as Prisma.MetricCreateManyInput[],
+        });
       }
     }
 
