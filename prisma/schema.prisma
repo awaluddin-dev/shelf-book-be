@@ -41,11 +41,6 @@ model HeroConfig {
   availability String?
   openForWork  Boolean? @default(true)
   
-  // New explicitly typed fields
-  expertise    String?
-  grit         String?
-  service      String?
-  
   config       Json?    // Kept for any future untyped fields
 
   createdAt DateTime @default(now())

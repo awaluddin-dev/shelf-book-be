@@ -31,17 +31,6 @@ export class HeroConfigDto {
   @IsOptional()
   openForWork?: boolean;
 
-  @IsString()
-  @IsOptional()
-  expertise?: string;
-
-  @IsString()
-  @IsOptional()
-  grit?: string;
-
-  @IsString()
-  @IsOptional()
-  service?: string;
 
   @IsOptional()
   config?: Prisma.InputJsonValue;
