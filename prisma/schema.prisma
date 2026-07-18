@@ -40,6 +40,9 @@ model HeroConfig {
   role         String?
   availability String?
   openForWork  Boolean? @default(true)
+  expertise    String?
+  grit         String?
+  service      String?
   
   config       Json?    // Kept for any future untyped fields
 
