@@ -17,20 +17,26 @@ export class PrismaService
     let sslConfig: boolean | ConnectionOptions = false;
 
     if (process.env.DB_REQUIRE_SSL === 'true') {
-      const caPath = process.env.CA_CERT_PATH || './certs/ca.pem';
-      const fullPath = path.resolve(process.cwd(), caPath);
-
-      // Pastikan file CA benar-benar ada agar aplikasi tidak crash
-      if (!fs.existsSync(fullPath)) {
-        throw new Error(
-          `File Sertifikat CA tidak ditemukan di path: ${fullPath}`,
-        );
+      if (process.env.DATABASE_CA) {
+        // Baca dari env var (base64 encoded)
+        sslConfig = {
+          rejectUnauthorized: true,
+          ca: Buffer.from(process.env.DATABASE_CA, 'base64').toString('utf-8'),
+        };
+      } else if (process.env.CA_CERT_PATH) {
+        // Fallback ke file kalau ada
+        const fullPath = path.resolve(process.cwd(), process.env.CA_CERT_PATH);
+        if (!fs.existsSync(fullPath)) {
+          throw new Error(`File CA tidak ditemukan: ${fullPath}`);
+        }
+        sslConfig = {
+          rejectUnauthorized: true,
+          ca: fs.readFileSync(fullPath).toString(),
+        };
+      } else {
+        // Fallback: SSL tanpa verify CA
+        sslConfig = { rejectUnauthorized: false };
       }
-
-      sslConfig = {
-        rejectUnauthorized: true, // Wajibkan sertifikat yang valid
-        ca: fs.readFileSync(fullPath).toString(), // Muat CA dari Aiven
-      };
     }
     const connectionString = `${process.env.DATABASE_URL}`;
     const pool = new Pool({
