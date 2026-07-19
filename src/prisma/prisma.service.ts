@@ -38,7 +38,7 @@ export class PrismaService
         sslConfig = { rejectUnauthorized: false };
       }
     }
-    const connectionString = `${process.env.DATABASE_URL}`;
+    const connectionString = `${process.env.AIVEN_DATABASE_URL}`;
     const pool = new Pool({
       connectionString,
       ssl: sslConfig,
