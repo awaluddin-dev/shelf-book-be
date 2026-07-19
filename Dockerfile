@@ -8,7 +8,7 @@ WORKDIR /app
 RUN npm install -g pnpm
 
 # 4. Salin file konfigurasi dependencies
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml .npmrc ./
 COPY prisma ./prisma/
 
 # 5. Install semua dependencies (termasuk devDependencies untuk build)
@@ -27,7 +27,7 @@ FROM node:22-alpine AS production
 WORKDIR /app
 RUN npm install -g pnpm
 
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml .npmrc ./
 
 RUN pnpm install --prod
 
