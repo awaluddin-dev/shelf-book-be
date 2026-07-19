@@ -18,6 +18,7 @@ RUN npm install -g pnpm
 
 COPY package.json pnpm-lock.yaml .npmrc ./
 COPY prisma ./prisma/
+COPY prisma.config.ts ./
 
 RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 RUN npx prisma generate
