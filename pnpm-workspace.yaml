@@ -6,3 +6,15 @@ allowBuilds:
   esbuild: true
   prisma: true
   unrs-resolver: true
+
+packages:
+  - '.'
+
+onlyBuiltDependencies:
+  - '@nestjs/core'
+  - '@prisma/engines'
+  - '@scarf/scarf'
+  - 'argon2'
+  - 'esbuild'
+  - 'prisma'
+  - 'unrs-resolver'
