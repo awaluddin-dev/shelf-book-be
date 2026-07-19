@@ -12,7 +12,7 @@ COPY package.json pnpm-lock.yaml .npmrc ./
 COPY prisma ./prisma/
 
 # 5. Install semua dependencies (termasuk devDependencies untuk build)
-RUN pnpm install
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # 6. Salin seluruh kode aplikasi Anda
 COPY . .
@@ -29,7 +29,7 @@ RUN npm install -g pnpm
 
 COPY package.json pnpm-lock.yaml .npmrc ./
 
-RUN pnpm install --prod
+RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 
 RUN pnpm add dotenv prisma
 
