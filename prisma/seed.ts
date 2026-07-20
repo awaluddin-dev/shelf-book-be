@@ -339,14 +339,35 @@ import { PrismaClient } from '@prisma/client';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 
-console.log('DATABASE_URL is:', process.env.DATABASE_URL);
-const connectionString = `${process.env.DATABASE_URL || process.env.AIVEN_DATABASE_URL}`;
+console.log('DATABASE_URL is:', process.env.AIVEN_DATABASE_URL);
+const connectionString = `${process.env.AIVEN_DATABASE_URL || process.env.DATABASE_URL}`;
 const pgConnectionString = connectionString.replace('?sslmode=require', '');
+
+let sslConfig: boolean | any = false;
+if (process.env.DB_REQUIRE_SSL === 'true') {
+  if (process.env.DATABASE_CA) {
+    sslConfig = {
+      rejectUnauthorized: true,
+      ca: Buffer.from(process.env.DATABASE_CA, 'base64').toString('utf-8'),
+    };
+  } else if (process.env.CA_CERT_PATH) {
+    const fs = require('fs');
+    const path = require('path');
+    const fullPath = path.resolve(process.cwd(), process.env.CA_CERT_PATH);
+    if (fs.existsSync(fullPath)) {
+      sslConfig = {
+        rejectUnauthorized: true,
+        ca: fs.readFileSync(fullPath).toString(),
+      };
+    }
+  } else {
+    sslConfig = { rejectUnauthorized: false };
+  }
+}
+
 const pool = new Pool({
   connectionString: pgConnectionString,
-  ssl: connectionString.includes('localhost')
-    ? false
-    : { rejectUnauthorized: false },
+  ssl: sslConfig,
 });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
