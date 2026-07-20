@@ -5,20 +5,22 @@ echo "Starting dummy healthcheck server on port 8080..."
 node -e "const http = require('http'); http.createServer((req, res) => { res.writeHead(200, {'Content-Type': 'application/json'}); res.end('{\"status\":\"ok\"}'); }).listen(8080);" &
 DUMMY_PID=$!
 
-# Force override DATABASE_URL to ensure Prisma CLI targets the same DB as the app
+# Step 1: Fix missing columns FIRST using Node.js pg driver (same SSL config as the app)
+# This runs BEFORE we modify DATABASE_URL, using AIVEN_DATABASE_URL directly
+echo "Applying missing columns patch..."
+node fix-schema.js
+
+# Step 2: Override DATABASE_URL for Prisma CLI commands (migrate, seed)
 if [ -n "$AIVEN_DATABASE_URL" ]; then
   export DATABASE_URL="$AIVEN_DATABASE_URL"
 fi
 
-# Append sslaccept=accept_invalid_certs to bypass Prisma CLI strict TLS check
+# Append sslaccept=accept_invalid_certs for Prisma CLI (Rust engine) TLS
 if echo "$DATABASE_URL" | grep -q "?"; then
   export DATABASE_URL="${DATABASE_URL}&sslaccept=accept_invalid_certs"
 else
   export DATABASE_URL="${DATABASE_URL}?sslaccept=accept_invalid_certs"
 fi
-
-echo "Applying missing columns patch..."
-node fix-schema.js
 
 echo "Applying latest schema via migrations..."
 if ! npx prisma migrate deploy; then
