@@ -33,18 +33,18 @@ const experiencesList = [
     ],
   },
   {
-    years: '2023 - 2024',
+    years: 'Apr 2023 - Mar 2024',
     duration: '1 year',
-    company: 'PT Hensel Davest Indonesia',
+    company: 'Regulated Fintech Company (OJK & BI Regulated)',
     role: 'Full Stack Developer',
-    stack: 'Laravel & NestJS',
+    stack: 'Laravel & NestJS & React Native',
     teaser: 'OJK & BI Regulatory Compliance',
     fullImpact:
-      'Successfully achieved strict banking and lending regulatory approvals single-handedly under extreme deadlines.',
+      'Spearheaded a complete overhaul of a legacy fintech system and led regulatory compliance efforts for OJK and Bank Indonesia approvals.',
     bullets: [
-      'Led solo compliance engineering to meet OJK & BI regulatory standards, securing active fintech licenses.',
-      'Rewrote the core P2P lending Laravel monolith into modular NestJS microservices, achieving a 4x increase in API throughput.',
-      'Designed secure database architectures safeguarding sensitive transaction records and personal financial data.',
+      'Compliance Platform Modernization: Transitioned from Laravel monolith to NestJS + Next.js microservices — achieved 10% throughput improvement and 75% reduction in security incidents. Owned full lifecycle: UI/UX (Figma), BRD, QA (Jest, Cypress), deployment.',
+      'Digital Wallet Stability & Compliance: Overhauled React Native mobile app, resolving critical bugs. Led technical preparation for Bank Indonesia audit, contributing to successful operational approval.',
+      'Regulatory Integration: Wrote core data reporting modules ensuring 100% success rate on daily FDC synchronization with OJK and AFPI regulators.',
     ],
   },
   {
@@ -60,6 +60,20 @@ const experiencesList = [
       'Reconstructed external vendor systems from scratch, saving substantial annual licensing and maintenance fees.',
       'Developed end-to-end database schemas and business logic for factory inventory, sales pipeline, and delivery tracking.',
       'Designed dynamic Vue.js frontends paired with PostgreSQL for real-time warehouse data visualization.',
+    ],
+  },
+  {
+    years: 'Jul 2019 - Feb 2022',
+    duration: '2 yrs 8 mos',
+    company: 'PT Daikin Industries Indonesia',
+    role: 'Technical Project Engineer',
+    stack: 'HVAC & Project Management',
+    teaser: '152+ Industrial HVAC Systems',
+    fullImpact:
+      'Spearheaded technical design and implementation for 152+ industrial HVAC systems, building deep expertise in system optimization and cross-functional project leadership.',
+    bullets: [
+      'Spearheaded technical design and implementation for 152+ industrial HVAC systems, developing strong analytical skills in system optimization and failure root-cause analysis.',
+      'Managed 3 concurrent installation projects with teams of 5+ technicians, honing skills in resource allocation and deadline-driven execution.',
     ],
   },
 ];
