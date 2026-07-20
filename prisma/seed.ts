@@ -777,6 +777,9 @@ async function main() {
   }
   console.log('Skills seeded.');
   // --- EXPERIENCES ---
+  await prisma.workExperience.deleteMany({
+    where: { NOT: { id: { startsWith: 'exp-' } } },
+  });
   for (const exp of experiencesList) {
     const id = 'exp-' + exp.company.toLowerCase().replace(/\W+/g, '-');
     await prisma.workExperience.upsert({
@@ -788,6 +791,10 @@ async function main() {
   console.log('Work Experiences seeded.');
 
   // --- PROFICIENCIES ---
+  await prisma.proficiency.deleteMany({
+    where: { NOT: { id: { startsWith: 'prof-' } } },
+  });
+  
   // Clear child skills only for seeded proficiencies
   const seededProfIds = skillCategoriesList.map(
     (c) => 'prof-' + c.title.toLowerCase().replace(/\W+/g, '-'),
@@ -847,6 +854,9 @@ async function main() {
   console.log('Projects seeded.');
 
   // 6. Seed Current Focus
+  await prisma.currentFocus.deleteMany({
+    where: { NOT: { id: { startsWith: 'focus-' } } },
+  });
   for (const focus of currentFocusData) {
     const id = 'focus-' + focus.title.toLowerCase().replace(/\W+/g, '-');
     await prisma.currentFocus.upsert({
@@ -858,6 +868,9 @@ async function main() {
   console.log('CurrentFocus seeded.');
 
   // 7. Seed Roadmap
+  await prisma.roadmap.deleteMany({
+    where: { NOT: { id: { startsWith: 'rm-' } } },
+  });
   for (const item of roadmapItemsData) {
     const id = 'rm-' + item.tech.toLowerCase().replace(/\W+/g, '-');
     const { title, ...data } = item;
