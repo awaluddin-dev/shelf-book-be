@@ -5,10 +5,7 @@ echo "Starting dummy healthcheck server on port 8080..."
 node -e "const http = require('http'); http.createServer((req, res) => { res.writeHead(200, {'Content-Type': 'application/json'}); res.end('{\"status\":\"ok\"}'); }).listen(8080);" &
 DUMMY_PID=$!
 
-# Force override DATABASE_URL to ensure Prisma CLI targets the same DB as the app
-if [ -n "$AIVEN_DATABASE_URL" ]; then
-  export DATABASE_URL="$AIVEN_DATABASE_URL"
-fi
+# (Removed Aiven override to use OpsCtrl DB natively)
 
 echo "Applying latest schema..."
 if ! npx prisma db push --skip-generate --accept-data-loss; then
