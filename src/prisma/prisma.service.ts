@@ -44,7 +44,7 @@ export class PrismaService
     );
     console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'SET' : 'NOT SET');
 
-    const connectionString = process.env.DATABASE_URL || process.env.AIVEN_DATABASE_URL;
+    const connectionString = process.env.AIVEN_DATABASE_URL || process.env.DATABASE_URL;
     console.log(
       'Using connection to:',
       connectionString?.split('@')[1]?.split('/')[0] ?? 'unknown',
