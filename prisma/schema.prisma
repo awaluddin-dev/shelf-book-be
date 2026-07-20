@@ -193,6 +193,8 @@ model Project {
   stats       Json?
   phases      Json?
   markdown    String
+  reasonToBuild String?
+  problemSolved String?
 
   visualShowcases     VisualShowcase[]
   systemArchitectures SystemArchitecture[]

@@ -238,6 +238,14 @@ export class ProjectDto {
 
   @IsString()
   markdown!: string;
+
+  @IsString()
+  @IsOptional()
+  reasonToBuild?: string;
+
+  @IsString()
+  @IsOptional()
+  problemSolved?: string;
 }
 
 export class VisualShowcaseDto {
