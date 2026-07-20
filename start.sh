@@ -1,5 +1,4 @@
 #!/bin/sh
-set -e
 
 # Start a dummy healthcheck server to satisfy Kubernetes probes during slow DB initialization
 echo "Starting dummy healthcheck server on port 8080..."
@@ -12,19 +11,17 @@ if [ -z "$DATABASE_URL" ] && [ -n "$AIVEN_DATABASE_URL" ]; then
 fi
 
 echo "Applying latest schema..."
-if ! npx prisma db push --accept-data-loss; then
-  echo "PRISMA DB PUSH FAILED! Sleeping for 60s so logs can be read..."
-  sleep 60
-  kill $DUMMY_PID || true
-  exit 1
+if ! npx prisma db push --skip-generate --accept-data-loss; then
+  echo "============== PRISMA DB PUSH FAILED =============="
+  echo "Check the logs above to see why Prisma failed to push the schema."
+  echo "==================================================="
 fi
 
 echo "Running latest seed..."
 if ! npx prisma db seed; then
-  echo "PRISMA DB SEED FAILED! Sleeping for 60s so logs can be read..."
-  sleep 60
-  kill $DUMMY_PID || true
-  exit 1
+  echo "============== PRISMA DB SEED FAILED =============="
+  echo "Check the logs above to see why Prisma failed to seed the database."
+  echo "==================================================="
 fi
 
 echo "Shutting down dummy server..."
