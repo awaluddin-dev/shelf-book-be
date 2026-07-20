@@ -17,6 +17,9 @@ else
   export DATABASE_URL="${DATABASE_URL}?sslaccept=accept_invalid_certs"
 fi
 
+echo "Applying missing columns patch..."
+node fix-schema.js
+
 echo "Applying latest schema via migrations..."
 if ! npx prisma migrate deploy; then
   echo "============== PRISMA MIGRATE FAILED =============="
