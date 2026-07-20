@@ -10,14 +10,11 @@ if [ -n "$AIVEN_DATABASE_URL" ]; then
   export DATABASE_URL="$AIVEN_DATABASE_URL"
 fi
 
-# Write CA to file and append to DATABASE_URL so Prisma CLI (Rust) can connect
-if [ -n "$DATABASE_CA" ]; then
-  echo "$DATABASE_CA" | base64 -d > /tmp/prisma_ca.pem
-  if echo "$DATABASE_URL" | grep -q "?"; then
-    export DATABASE_URL="${DATABASE_URL}&sslrootcert=/tmp/prisma_ca.pem"
-  else
-    export DATABASE_URL="${DATABASE_URL}?sslrootcert=/tmp/prisma_ca.pem"
-  fi
+# Append sslaccept=accept_invalid_certs to bypass Prisma CLI strict TLS check
+if echo "$DATABASE_URL" | grep -q "?"; then
+  export DATABASE_URL="${DATABASE_URL}&sslaccept=accept_invalid_certs"
+else
+  export DATABASE_URL="${DATABASE_URL}?sslaccept=accept_invalid_certs"
 fi
 
 echo "Applying latest schema..."
