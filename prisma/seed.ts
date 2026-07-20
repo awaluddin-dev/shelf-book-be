@@ -1,3 +1,6 @@
+import { config } from 'dotenv';
+config();
+console.log('DATABASE_URL is:', process.env.AIVEN_DATABASE_URL);
 const experiencesList = [
   {
     years: '2025 - Present',
@@ -158,7 +161,7 @@ const projects = [
     tags: ['Node.js', 'Python', 'LangGraph', 'Redis', 'BullMQ', 'PostgreSQL'],
     spineColor: 'bg-indigo-600',
     coverColor: 'bg-indigo-900',
-    spineText: 'AURAFLOW-AI // DISTRIBUTED AGENT ECOSYSTEM',
+    spineText: 'AURAFLOW-AI',
     date: '2026',
     demoUrl: 'https://example.com/demo',
     github: 'https://github.com/awaluddin-dev/auraflow-ai',
@@ -193,6 +196,10 @@ const projects = [
           'Implemented transaction-safe PostgreSQL persistence layer with optimistic locking, and validated system integrity under stress testing.',
       },
     ],
+    reasonToBuild:
+      'I wanted to explore how autonomous agents can work together in a distributed microservices environment using modern tools like LangGraph and BullMQ.',
+    problemSolved:
+      'Resolves the bottleneck of manual data processing by automating unstructured data parsing, validation, and self-healing across a robust asynchronous event loop.',
     markdown: `
 # AuraFlow AI
 **Distributed Asynchronous Enterprise Agent & Worker Ecosystem**
@@ -223,7 +230,7 @@ AuraFlow AI is an active portfolio project that mirrors real enterprise problems
     tags: ['Go', 'Node.js', 'Redis', 'Concurrency'],
     spineColor: 'bg-emerald-600',
     coverColor: 'bg-emerald-900',
-    spineText: 'LEDGERFLOW // WALLET API & OCC',
+    spineText: 'LEDGERFLOW',
     date: '2024',
     demoUrl: 'https://example.com/demo',
     github: 'https://github.com/awaluddin-dev/ledgerflow',
@@ -258,6 +265,10 @@ AuraFlow AI is an active portfolio project that mirrors real enterprise problems
           'Stress-tested core transaction pathways up to 5,000 requests per second, achieving sub-15ms endpoint latency while maintaining absolute race-condition safety.',
       },
     ],
+    reasonToBuild:
+      'I needed a solid demonstration of handling complex concurrent financial transactions efficiently without data races or locks holding up the system.',
+    problemSolved:
+      'Fixes common issues in digital wallet APIs, such as double-spending and slow throughput, by implementing Optimistic Concurrency Control (OCC) and atomic Redis mutations.',
     markdown: `
 # LedgerFlow
 **Digital Wallet API with Race Condition Prevention**
@@ -273,17 +284,68 @@ LedgerFlow is a high-performance digital wallet API built to handle concurrent f
 The primary technical achievement is the robust handling of race conditions—a critical requirement in fintech—demonstrating a deep understanding of transactional integrity across distributed systems.
 `,
   },
+  {
+    id: 'shelf-book-be',
+    title: 'Shelf Book',
+    subtitle: 'Dynamic Developer Portfolio Engine',
+    category: 'Fullstack / Tooling',
+    tags: ['NestJS', 'TypeScript', 'Prisma', 'PostgreSQL', 'Docker'],
+    spineColor: 'bg-zinc-600',
+    coverColor: 'bg-zinc-900',
+    spineText: 'SHELF-BOOK',
+    date: '2026',
+    demoUrl: null,
+    github: 'https://github.com/awaluddin-dev/shelf-book-be',
+    stats: [
+      { label: 'Data Tracking', value: '100%' },
+      { label: 'Validation', value: 'Public' },
+    ],
+    phases: [
+      {
+        date: 'Jul 2026',
+        title: 'Project Initiation & Schema Design',
+        description:
+          'Designed the core Prisma schema to act as the single source of truth for portfolio data, metrics, and progress tracking.',
+      },
+      {
+        date: 'Jul 2026',
+        title: 'API & Docker Setup',
+        description:
+          'Implemented the NestJS REST API and containerized the application with Docker for seamless production deployment.',
+      },
+    ],
+    reasonToBuild:
+      'I realized I was lacking in publishing my work and had no dedicated tools to monitor my own engineering progress.',
+    problemSolved:
+      'Provides a centralized platform to track activity, monitor what I have published, reflect on my progress, and serve as a public benchmark for recruiter validation and portfolio showcases.',
+    markdown: `
+# Shelf Book (Backend)
+**Dynamic Developer Portfolio Engine**
+
+Shelf Book is the backend engine powering my personal portfolio and developer metric tracking system.
+
+## Core Features
+- **Dynamic Seeding**: Uses Prisma to strictly sync database states with predefined configurations.
+- **Progress Tracking**: Tracks skills, roadmaps, and project lifecycles to act as a benchmark for self-reflection.
+- **Containerized**: Built with a multi-stage Dockerfile designed for robust production deployment.
+
+### Why This Matters
+This project serves as a public validation of my skills. Instead of just listing technologies on a static page, this backend actively tracks my activity and development roadmap, proving my commitment to continuous engineering growth.
+`,
+  },
 ];
 
 import { PrismaClient } from '@prisma/client';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 
-const connectionString = `${process.env.AIVEN_DATABASE_URL}`;
+const connectionString = `${process.env.AIVEN_DATABASE_URL || process.env.DATABASE_URL}`;
 const pgConnectionString = connectionString.replace('?sslmode=require', '');
 const pool = new Pool({
   connectionString: pgConnectionString,
-  ssl: { rejectUnauthorized: false },
+  ssl: connectionString.includes('localhost')
+    ? false
+    : { rejectUnauthorized: false },
 });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
@@ -715,101 +777,102 @@ async function main() {
   }
   console.log('Skills seeded.');
   // --- EXPERIENCES ---
-  await prisma.workExperience.deleteMany({});
   for (const exp of experiencesList) {
-    await prisma.workExperience.create({
-      data: {
-        years: exp.years,
-        duration: exp.duration,
-        company: exp.company,
-        role: exp.role,
-        stack: exp.stack,
-        teaser: exp.teaser,
-        fullImpact: exp.fullImpact,
-        bullets: exp.bullets,
-      },
+    const id = 'exp-' + exp.company.toLowerCase().replace(/\W+/g, '-');
+    await prisma.workExperience.upsert({
+      where: { id },
+      update: { ...exp },
+      create: { id, ...exp },
     });
   }
   console.log('Work Experiences seeded.');
 
   // --- PROFICIENCIES ---
-  await prisma.proficiencySkill.deleteMany({});
-  await prisma.proficiency.deleteMany({});
+  // Clear child skills only for seeded proficiencies
+  const seededProfIds = skillCategoriesList.map(
+    (c) => 'prof-' + c.title.toLowerCase().replace(/\W+/g, '-'),
+  );
+  await prisma.proficiencySkill.deleteMany({
+    where: { proficiencyId: { in: seededProfIds } },
+  });
+
   for (const cat of skillCategoriesList) {
-    await prisma.proficiency.create({
-      data: {
-        title: cat.title,
-        skills: {
-          create: cat.skills.map((s) => ({
-            name: s.name,
-            subtext: s.subtext,
-            status: s.status,
-          })),
-        },
-      },
+    const id = 'prof-' + cat.title.toLowerCase().replace(/\W+/g, '-');
+    const data = { title: cat.title };
+    await prisma.proficiency.upsert({
+      where: { id },
+      update: data,
+      create: { id, ...data },
     });
+
+    // Create skills for this proficiency
+    if (cat.skills) {
+      await prisma.proficiencySkill.createMany({
+        data: cat.skills.map((s) => ({
+          proficiencyId: id,
+          name: s.name,
+          subtext: s.subtext,
+          status: s.status,
+        })),
+      });
+    }
   }
   console.log('Proficiencies seeded.');
 
   // --- PROJECTS ---
-  await prisma.project.deleteMany({});
   for (const proj of projects) {
-    await prisma.project.create({
-      data: {
-        id: proj.id,
-        title: proj.title,
-        subtitle: proj.subtitle,
-        category: proj.category,
-        date: proj.date,
-        tags: proj.tags,
-        spineColor: proj.spineColor,
-        coverColor: proj.coverColor,
-        spineText: proj.spineText,
-        github: proj.github || null,
-        demoUrl: proj.demoUrl || null,
-        stats: proj.stats || null,
-        phases: proj.phases || null,
-        markdown: proj.markdown || '',
-      },
+    const data = {
+      title: proj.title,
+      subtitle: proj.subtitle,
+      category: proj.category,
+      date: proj.date,
+      tags: proj.tags,
+      spineColor: proj.spineColor,
+      coverColor: proj.coverColor,
+      spineText: proj.spineText,
+      github: proj.github || null,
+      demoUrl: proj.demoUrl || null,
+      stats: proj.stats || null,
+      phases: proj.phases || null,
+      markdown: proj.markdown || '',
+      reasonToBuild: proj.reasonToBuild || null,
+      problemSolved: proj.problemSolved || null,
+    };
+    await prisma.project.upsert({
+      where: { id: proj.id },
+      update: data,
+      create: { id: proj.id, ...data },
     });
   }
   console.log('Projects seeded.');
 
   // 6. Seed Current Focus
-  await prisma.currentFocus.deleteMany({});
   for (const focus of currentFocusData) {
-    await prisma.currentFocus.create({
-      data: {
-        title: focus.title,
-        icon: focus.icon,
-        description: focus.description,
-        link: focus.link,
-        linkText: focus.linkText,
-      },
+    const id = 'focus-' + focus.title.toLowerCase().replace(/\W+/g, '-');
+    await prisma.currentFocus.upsert({
+      where: { id },
+      update: { ...focus },
+      create: { id, ...focus },
     });
   }
   console.log('CurrentFocus seeded.');
 
   // 7. Seed Roadmap
-  await prisma.roadmap.deleteMany({});
   for (const item of roadmapItemsData) {
-    await prisma.roadmap.create({
-      data: {
-        tech: item.tech,
-        quarter: item.quarter,
-        status: item.status,
-        icon: item.icon,
-        description: item.description,
-        depth: item.depth,
-        topics: item.topics,
-        projects: item.projects,
-      },
+    const id = 'rm-' + item.tech.toLowerCase().replace(/\W+/g, '-');
+    const { title, ...data } = item;
+    await prisma.roadmap.upsert({
+      where: { id },
+      update: data,
+      create: { id, ...data },
     });
   }
   console.log('Roadmap seeded.');
 
   // 8. Seed Visual Showcase
-  await prisma.visualShowcase.deleteMany({});
+  await prisma.visualShowcase.deleteMany({
+    where: { projectId: { in: projects.map((p) => p.id) } },
+  });
   await prisma.visualShowcase.create({
     data: {
       projectId: 'auraflow-ai',
@@ -821,7 +884,9 @@ async function main() {
   console.log('Visual Showcase seeded.');
 
   // 9. Seed System Architecture
-  await prisma.systemArchitecture.deleteMany({});
+  await prisma.systemArchitecture.deleteMany({
+    where: { projectId: { in: projects.map((p) => p.id) } },
+  });
   await prisma.systemArchitecture.createMany({
     data: [
       {
@@ -865,7 +930,9 @@ async function main() {
   console.log('System Architecture seeded.');
 
   // 10. Seed Project Lifecycle
-  await prisma.projectLifecycle.deleteMany({});
+  await prisma.projectLifecycle.deleteMany({
+    where: { projectId: { in: projects.map((p) => p.id) } },
+  });
   for (const proj of projects) {
     if (proj.phases && proj.phases.length > 0) {
       for (let i = 0; i < proj.phases.length; i++) {
