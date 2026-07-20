@@ -17,10 +17,10 @@ else
   export DATABASE_URL="${DATABASE_URL}?sslaccept=accept_invalid_certs"
 fi
 
-echo "Applying latest schema..."
-if ! npx prisma db push --skip-generate --accept-data-loss; then
-  echo "============== PRISMA DB PUSH FAILED =============="
-  echo "Check the logs above to see why Prisma failed to push the schema."
+echo "Applying latest schema via migrations..."
+if ! npx prisma migrate deploy; then
+  echo "============== PRISMA MIGRATE FAILED =============="
+  echo "Check the logs above to see why Prisma failed to migrate the schema."
   echo "==================================================="
 fi
 
