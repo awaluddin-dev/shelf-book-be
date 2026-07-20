@@ -3,7 +3,7 @@ set -e
 
 # Start a dummy healthcheck server to satisfy Kubernetes probes during slow DB initialization
 echo "Starting dummy healthcheck server on port 8080..."
-node -e "const http = require('http'); http.createServer((req, res) => { res.writeHead(200); res.end('Initializing DB...'); }).listen(8080);" &
+node -e "const http = require('http'); http.createServer((req, res) => { res.writeHead(200, {'Content-Type': 'application/json'}); res.end('{\"status\":\"ok\"}'); }).listen(8080);" &
 DUMMY_PID=$!
 
 # Fallback for Aiven deployment
@@ -15,7 +15,7 @@ echo "Applying latest schema..."
 if ! npx prisma db push --accept-data-loss; then
   echo "PRISMA DB PUSH FAILED! Sleeping for 60s so logs can be read..."
   sleep 60
-  kill $DUMMY_PID
+  kill $DUMMY_PID || true
   exit 1
 fi
 
@@ -23,12 +23,12 @@ echo "Running latest seed..."
 if ! npx prisma db seed; then
   echo "PRISMA DB SEED FAILED! Sleeping for 60s so logs can be read..."
   sleep 60
-  kill $DUMMY_PID
+  kill $DUMMY_PID || true
   exit 1
 fi
 
 echo "Shutting down dummy server..."
-kill $DUMMY_PID
+kill $DUMMY_PID || true
 sleep 1
 
 echo "Starting application..."
