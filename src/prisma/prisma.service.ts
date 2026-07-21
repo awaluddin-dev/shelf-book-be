@@ -53,6 +53,7 @@ export class PrismaService
       connectionString,
       ssl: sslConfig,
     });
+    this.pool = pool;
     const adapter = new PrismaPg(pool);
     super({
       adapter,
