@@ -29,21 +29,37 @@ const pool = new Pool({
 
 async function run() {
   try {
-    const result = await pool.query(`
-      ALTER TABLE "projects" 
-      ADD COLUMN IF NOT EXISTS "reasonToBuild" TEXT,
-      ADD COLUMN IF NOT EXISTS "problemSolved" TEXT;
-      
-      ALTER TABLE "HeroConfig"
-      ADD COLUMN IF NOT EXISTS "availableFrom" TEXT;
-      
-      -- Also try to drop columns that were removed in the new migrations, ignoring errors if they don't exist
-      ALTER TABLE "HeroConfig" DROP COLUMN IF EXISTS "availability";
-      ALTER TABLE "projects" DROP COLUMN IF EXISTS "featuredImage";
-      ALTER TABLE "projects" DROP COLUMN IF EXISTS "blueprintImage";
-      ALTER TABLE "projects" DROP COLUMN IF EXISTS "metricsImage";
-    `);
-    console.log('[fix-schema] SUCCESS: Columns ensured on projects and HeroConfig tables.');
+    try {
+      await pool.query(`
+        ALTER TABLE "projects" 
+        ADD COLUMN IF NOT EXISTS "reasonToBuild" TEXT,
+        ADD COLUMN IF NOT EXISTS "problemSolved" TEXT;
+      `);
+      console.log('[fix-schema] SUCCESS: Columns ensured on projects table.');
+    } catch (e) {
+      console.error('[fix-schema] FAILED on projects add:', e.message);
+    }
+
+    try {
+      await pool.query(`
+        ALTER TABLE "hero_config"
+        ADD COLUMN IF NOT EXISTS "availableFrom" TEXT;
+      `);
+      console.log('[fix-schema] SUCCESS: Columns ensured on hero_config table.');
+    } catch (e) {
+      console.error('[fix-schema] FAILED on hero_config add:', e.message);
+    }
+
+    try {
+      // Also try to drop columns that were removed in the new migrations, ignoring errors if they don't exist
+      await pool.query(`ALTER TABLE "hero_config" DROP COLUMN IF EXISTS "availability";`);
+      await pool.query(`ALTER TABLE "projects" DROP COLUMN IF EXISTS "featuredImage";`);
+      await pool.query(`ALTER TABLE "projects" DROP COLUMN IF EXISTS "blueprintImage";`);
+      await pool.query(`ALTER TABLE "projects" DROP COLUMN IF EXISTS "metricsImage";`);
+      console.log('[fix-schema] SUCCESS: Dropped removed columns.');
+    } catch (e) {
+      console.error('[fix-schema] FAILED on dropping columns:', e.message);
+    }
     
     // Verify columns actually exist now
     const check = await pool.query(`
@@ -52,9 +68,6 @@ async function run() {
       AND column_name IN ('reasonToBuild', 'problemSolved');
     `);
     console.log('[fix-schema] Verified columns:', check.rows.map(r => r.column_name));
-  } catch (e) {
-    console.error('[fix-schema] FAILED:', e.message);
-    console.error('[fix-schema] Full error:', e);
   } finally {
     await pool.end();
   }
