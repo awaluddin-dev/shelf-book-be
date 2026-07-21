@@ -31,7 +31,6 @@ export class HeroConfigDto {
   @IsOptional()
   openForWork?: boolean;
 
-
   @IsOptional()
   config?: Prisma.InputJsonValue;
 }
@@ -246,6 +245,22 @@ export class ProjectDto {
   @IsString()
   @IsOptional()
   problemSolved?: string;
+
+  @IsString()
+  @IsOptional()
+  featuredImage?: string;
+
+  @IsString()
+  @IsOptional()
+  blueprintImage?: string;
+
+  @IsString()
+  @IsOptional()
+  metricsImage?: string;
+
+  @IsString()
+  @IsOptional()
+  architectureImage?: string;
 }
 
 export class VisualShowcaseDto {
