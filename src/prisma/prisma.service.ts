@@ -53,12 +53,12 @@ export class PrismaService
       connectionString,
       ssl: sslConfig,
     });
-    this.pool = pool;
     const adapter = new PrismaPg(pool);
     super({
       adapter,
       log: ['info', 'warn', 'error'], // Lihat query apa yang dijalankan (kecuali 'query' yang bikin spam)
     });
+    this.pool = pool;
   }
 
   async onModuleInit() {
