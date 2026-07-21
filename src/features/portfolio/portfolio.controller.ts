@@ -25,7 +25,6 @@ import {
   SkillDto,
   RoadmapDto,
   ProjectDto,
-  VisualShowcaseDto,
   SystemArchitectureDto,
   ProjectLifecycleDto,
 } from './portfolio.dto';
@@ -374,45 +373,6 @@ export class PortfolioController {
   async deleteProject(@Param('id') id: string) {
     return await this.portfolioService.deleteArrayItem(
       this.prisma.project as unknown as GenericModelDelegate,
-      id,
-    );
-  }
-
-  // VISUAL SHOWCASE
-  @Get('showcase')
-  async getShowcase() {
-    return await this.portfolioService.getArrayData(
-      this.prisma.visualShowcase as unknown as GenericModelDelegate,
-    );
-  }
-
-  @UseGuards(JwtGuard)
-  @Post('showcase')
-  async createShowcase(@Body() body: VisualShowcaseDto) {
-    return await this.portfolioService.createArrayItem(
-      this.prisma.visualShowcase as unknown as GenericModelDelegate,
-      body,
-    );
-  }
-
-  @UseGuards(JwtGuard)
-  @Patch('showcase/:id')
-  async updateShowcase(
-    @Param('id') id: string,
-    @Body() body: Partial<VisualShowcaseDto>,
-  ) {
-    return await this.portfolioService.updateArrayItem(
-      this.prisma.visualShowcase as unknown as GenericModelDelegate,
-      id,
-      body,
-    );
-  }
-
-  @UseGuards(JwtGuard)
-  @Delete('showcase/:id')
-  async deleteShowcase(@Param('id') id: string) {
-    return await this.portfolioService.deleteArrayItem(
-      this.prisma.visualShowcase as unknown as GenericModelDelegate,
       id,
     );
   }

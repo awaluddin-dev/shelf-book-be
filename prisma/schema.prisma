@@ -38,7 +38,6 @@ model HeroConfig {
   id           String @id @default("hero_1")
   name         String?
   role         String?
-  availability String?
   openForWork  Boolean? @default(true)
   expertise    String?
   grit         String?
@@ -195,12 +194,8 @@ model Project {
   markdown    String
   reasonToBuild    String?
   problemSolved    String?
-  featuredImage    String?
-  blueprintImage   String?
-  metricsImage     String?
   architectureImage String?
 
-  visualShowcases     VisualShowcase[]
   systemArchitectures SystemArchitecture[]
   projectLifecycles   ProjectLifecycle[]
 
@@ -208,19 +203,6 @@ model Project {
   updatedAt DateTime @updatedAt
 
   @@map("projects")
-  @@schema("public")
-}
-model VisualShowcase {
-  id        String   @id @default(uuid())
-  projectId String
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  imageUrl  String
-  caption   String
-  tag       String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  @@map("visual_showcases")
   @@schema("public")
 }
 

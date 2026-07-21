@@ -741,6 +741,8 @@ async function main() {
   await prisma.heroConfig.upsert({
     where: { id: 'hero_1' },
     update: {
+      name: 'Awaluddin',
+      role: 'Backend Engineer',
       expertise:
         'Async pipelines, event-driven architecture, and LLM integration for enterprise & fintech.',
       grit: 'Survived a solo OJK & BI regulatory audit as the only engineer. Moved from HVAC blueprints to production microservices in under 2 years.',
@@ -749,6 +751,8 @@ async function main() {
     },
     create: {
       id: 'hero_1',
+      name: 'Awaluddin',
+      role: 'Backend Engineer',
       expertise:
         'Async pipelines, event-driven architecture, and LLM integration for enterprise & fintech.',
       grit: 'Survived a solo OJK & BI regulatory audit as the only engineer. Moved from HVAC blueprints to production microservices in under 2 years.',
@@ -918,21 +922,7 @@ async function main() {
   }
   console.log('Roadmap seeded.');
 
-  // 8. Seed Visual Showcase
-  await prisma.visualShowcase.deleteMany({
-    where: { projectId: { in: projects.map((p) => p.id) } },
-  });
-  await prisma.visualShowcase.create({
-    data: {
-      projectId: 'auraflow-ai',
-      imageUrl: '/assets/images/projects/auraflow/overview.jpg',
-      caption: 'AuraFlow Main Dashboard and Real-time Telemetry',
-      tag: 'OVERVIEW',
-    },
-  });
-  console.log('Visual Showcase seeded.');
-
-  // 9. Seed System Architecture
+  // 8. Seed System Architecture
   await prisma.systemArchitecture.deleteMany({
     where: { projectId: { in: projects.map((p) => p.id) } },
   });

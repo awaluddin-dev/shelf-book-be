@@ -23,10 +23,6 @@ export class HeroConfigDto {
   @IsOptional()
   role?: string;
 
-  @IsString()
-  @IsOptional()
-  availability?: string;
-
   @IsBoolean()
   @IsOptional()
   openForWork?: boolean;
@@ -248,34 +244,9 @@ export class ProjectDto {
 
   @IsString()
   @IsOptional()
-  featuredImage?: string;
-
-  @IsString()
-  @IsOptional()
-  blueprintImage?: string;
-
-  @IsString()
-  @IsOptional()
-  metricsImage?: string;
-
-  @IsString()
-  @IsOptional()
   architectureImage?: string;
 }
 
-export class VisualShowcaseDto {
-  @IsString()
-  projectId!: string;
-
-  @IsString()
-  imageUrl!: string;
-
-  @IsString()
-  caption!: string;
-
-  @IsString()
-  tag!: string;
-}
 
 export class SystemArchitectureDto {
   @IsString()
