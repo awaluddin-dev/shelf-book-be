@@ -33,8 +33,17 @@ async function run() {
       ALTER TABLE "projects" 
       ADD COLUMN IF NOT EXISTS "reasonToBuild" TEXT,
       ADD COLUMN IF NOT EXISTS "problemSolved" TEXT;
+      
+      ALTER TABLE "HeroConfig"
+      ADD COLUMN IF NOT EXISTS "availableFrom" TEXT;
+      
+      -- Also try to drop columns that were removed in the new migrations, ignoring errors if they don't exist
+      ALTER TABLE "HeroConfig" DROP COLUMN IF EXISTS "availability";
+      ALTER TABLE "projects" DROP COLUMN IF EXISTS "featuredImage";
+      ALTER TABLE "projects" DROP COLUMN IF EXISTS "blueprintImage";
+      ALTER TABLE "projects" DROP COLUMN IF EXISTS "metricsImage";
     `);
-    console.log('[fix-schema] SUCCESS: Columns ensured on projects table. Result:', result.command);
+    console.log('[fix-schema] SUCCESS: Columns ensured on projects and HeroConfig tables.');
     
     // Verify columns actually exist now
     const check = await pool.query(`
