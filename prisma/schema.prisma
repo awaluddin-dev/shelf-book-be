@@ -39,6 +39,7 @@ model HeroConfig {
   name         String?
   role         String?
   openForWork  Boolean? @default(true)
+  availableFrom String?
   expertise    String?
   grit         String?
   service      String?
