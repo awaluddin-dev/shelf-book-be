@@ -21,7 +21,7 @@ COPY package.json pnpm-lock.yaml .npmrc ./
 COPY prisma ./prisma/
 COPY prisma.config.ts ./
 COPY run-seed.js ./
-COPY fix-schema.js ./
+
 COPY start.sh ./
 
 RUN pnpm install --frozen-lockfile --prod --ignore-scripts
