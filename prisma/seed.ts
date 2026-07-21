@@ -736,6 +736,16 @@ const roadmapItemsData = [
 
 async function main() {
   console.log('Seeding database...');
+  
+  // Safe Seeding: Check if database already has data
+  const projectCount = await prisma.project.count();
+  const heroCount = await prisma.heroConfig.count();
+  
+  if (projectCount > 0 || heroCount > 0) {
+    console.log('Data already exists in database (Projects or HeroConfig found).');
+    console.log('Skipping seed to prevent overwriting existing data.');
+    return;
+  }
 
   // 1. Seed Hero Config
   await prisma.heroConfig.upsert({
