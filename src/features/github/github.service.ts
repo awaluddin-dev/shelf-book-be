@@ -130,7 +130,7 @@ export class GithubService {
         return { calendar: [], timeline: [], repositories: [] };
       }
 
-      const levelMap = {
+      const levelMap: Record<string, number> = {
         NONE: 0,
         FIRST_QUARTILE: 1,
         SECOND_QUARTILE: 2,

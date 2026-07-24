@@ -2,6 +2,7 @@ import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
 import Redis from 'ioredis';
 import { REDIS_CLIENT } from 'src/redis/redis.module';
 import * as crypto from 'crypto';
+import { FastifyRequest, FastifyReply } from 'fastify';
 
 @Injectable()
 export class RateLimitService {
@@ -11,9 +12,12 @@ export class RateLimitService {
    * Checks if the IP or ETag has already submitted within the last 24 hours.
    * Throws a 429 HttpException if limit exceeded.
    */
-  async checkLimit(req: any) {
+  async checkLimit(req: FastifyRequest) {
     const ip =
-      (req.headers['x-forwarded-for'] as string) || req.ip || req.socket.remoteAddress || 'unknown';
+      (req.headers['x-forwarded-for'] as string) ||
+      req.ip ||
+      req.socket.remoteAddress ||
+      'unknown';
     const etag = req.headers['x-submit-etag'] as string;
 
     const ipKey = `rate_limit:ip:${ip}`;
@@ -38,13 +42,16 @@ export class RateLimitService {
   /**
    * Sets the rate limit for the given request for 24 hours and attaches the ETag to the response.
    */
-  async setLimit(req: any, res: any) {
+  async setLimit(req: FastifyRequest, res: FastifyReply) {
     const ip =
-      (req.headers['x-forwarded-for'] as string) || req.ip || req.socket.remoteAddress || 'unknown';
-    
+      (req.headers['x-forwarded-for'] as string) ||
+      req.ip ||
+      req.socket.remoteAddress ||
+      'unknown';
+
     // Generate new ETag
     const newEtag = crypto.randomUUID();
-    
+
     const ttlSeconds = 86400; // 24 hours
 
     const ipKey = `rate_limit:ip:${ip}`;
@@ -55,7 +62,7 @@ export class RateLimitService {
 
     // Send ETag to client
     res.header('X-Submit-ETag', newEtag);
-    
+
     // Also expose the header so CORS won't block the frontend from reading it
     res.header('Access-Control-Expose-Headers', 'X-Submit-ETag');
   }

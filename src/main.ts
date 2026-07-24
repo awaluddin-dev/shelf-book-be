@@ -9,6 +9,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import compression from 'compression';
 import { TransformInterceptor } from './common/transform.interceptor';
+import { TimeoutInterceptor } from './common/timeout.interceptor';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
@@ -36,7 +37,10 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  app.useGlobalInterceptors(new TransformInterceptor());
+  app.useGlobalInterceptors(
+    new TransformInterceptor(),
+    new TimeoutInterceptor(),
+  );
   app.useGlobalFilters(new AllExceptionsFilter());
 
   const config = new DocumentBuilder()
