@@ -18,11 +18,6 @@ import { ProjectsService } from './projects/projects.service';
     SkillsController,
     ProjectsController,
   ],
-  providers: [
-    HeroService,
-    ExperienceService,
-    SkillsService,
-    ProjectsService,
-  ],
+  providers: [HeroService, ExperienceService, SkillsService, ProjectsService],
 })
 export class PortfolioModule {}

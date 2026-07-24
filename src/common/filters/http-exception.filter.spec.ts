@@ -7,7 +7,9 @@ describe('AllExceptionsFilter', () => {
 
   beforeEach(() => {
     filter = new AllExceptionsFilter();
-    mockLoggerError = jest.spyOn(filter['logger'], 'error').mockImplementation();
+    mockLoggerError = jest
+      .spyOn(filter['logger'], 'error')
+      .mockImplementation();
   });
 
   afterEach(() => {
@@ -34,7 +36,9 @@ describe('AllExceptionsFilter', () => {
     const exception = new HttpException('Test Error', HttpStatus.BAD_REQUEST);
 
     // Mock Date for predictable timestamp
-    const dateSpy = jest.spyOn(Date.prototype, 'toISOString').mockReturnValue('2026-07-25T00:00:00.000Z');
+    const dateSpy = jest
+      .spyOn(Date.prototype, 'toISOString')
+      .mockReturnValue('2026-07-25T00:00:00.000Z');
 
     filter.catch(exception, mockHost);
 
@@ -46,11 +50,13 @@ describe('AllExceptionsFilter', () => {
       path: '/test-url',
       message: 'Test Error',
     });
-    expect(mockLoggerError).toHaveBeenCalledWith(`Http Status: ${HttpStatus.BAD_REQUEST} Error Message: "Test Error"`);
+    expect(mockLoggerError).toHaveBeenCalledWith(
+      `Http Status: ${HttpStatus.BAD_REQUEST} Error Message: "Test Error"`,
+    );
 
     dateSpy.mockRestore();
   });
-  
+
   it('should handle HttpException with object response', () => {
     const mockResponse = {
       status: jest.fn().mockReturnThis(),
@@ -64,10 +70,15 @@ describe('AllExceptionsFilter', () => {
       }),
     } as unknown as ArgumentsHost;
 
-    const exception = new HttpException({ message: 'Custom Object Error' }, HttpStatus.BAD_REQUEST);
+    const exception = new HttpException(
+      { message: 'Custom Object Error' },
+      HttpStatus.BAD_REQUEST,
+    );
 
     // Mock Date for predictable timestamp
-    const dateSpy = jest.spyOn(Date.prototype, 'toISOString').mockReturnValue('2026-07-25T00:00:00.000Z');
+    const dateSpy = jest
+      .spyOn(Date.prototype, 'toISOString')
+      .mockReturnValue('2026-07-25T00:00:00.000Z');
 
     filter.catch(exception, mockHost);
 
@@ -98,11 +109,15 @@ describe('AllExceptionsFilter', () => {
 
     const exception = new Error('Unexpected error');
 
-    const dateSpy = jest.spyOn(Date.prototype, 'toISOString').mockReturnValue('2026-07-25T00:00:00.000Z');
+    const dateSpy = jest
+      .spyOn(Date.prototype, 'toISOString')
+      .mockReturnValue('2026-07-25T00:00:00.000Z');
 
     filter.catch(exception, mockHost);
 
-    expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);
+    expect(mockResponse.status).toHaveBeenCalledWith(
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
     expect(mockResponse.send).toHaveBeenCalledWith({
       success: false,
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -110,7 +125,9 @@ describe('AllExceptionsFilter', () => {
       path: '/test-url',
       message: 'Internal server error',
     });
-    expect(mockLoggerError).toHaveBeenCalledWith(`Http Status: ${HttpStatus.INTERNAL_SERVER_ERROR} Error Message: "Internal server error"`);
+    expect(mockLoggerError).toHaveBeenCalledWith(
+      `Http Status: ${HttpStatus.INTERNAL_SERVER_ERROR} Error Message: "Internal server error"`,
+    );
 
     dateSpy.mockRestore();
   });

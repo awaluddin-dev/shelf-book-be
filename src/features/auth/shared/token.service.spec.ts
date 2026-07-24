@@ -62,17 +62,34 @@ describe('TokenService', () => {
     it('should generate and save tokens to redis', async () => {
       const userId = 'user1';
       const email = 'test@example.com';
-      
-      jest.spyOn(jwtService, 'signAsync')
+
+      jest
+        .spyOn(jwtService, 'signAsync')
         .mockResolvedValueOnce('access-token')
         .mockResolvedValueOnce('refresh-token');
 
       const result = await service.generateAndSaveTokens(userId, email);
 
-      expect(jwtService.signAsync).toHaveBeenNthCalledWith(1, { sub: userId, email }, { secret: 'secret', expiresIn: '15m' });
-      expect(jwtService.signAsync).toHaveBeenNthCalledWith(2, { sub: userId, email }, { secret: 'refresh_secret', expiresIn: '7d' });
-      expect(redisClient.set).toHaveBeenCalledWith(`user:${userId}:refresh_token`, 'refresh-token', 'EX', 7 * 24 * 60 * 60);
-      expect(result).toEqual({ access_token: 'access-token', refresh_token: 'refresh-token' });
+      expect(jwtService.signAsync).toHaveBeenNthCalledWith(
+        1,
+        { sub: userId, email },
+        { secret: 'secret', expiresIn: '15m' },
+      );
+      expect(jwtService.signAsync).toHaveBeenNthCalledWith(
+        2,
+        { sub: userId, email },
+        { secret: 'refresh_secret', expiresIn: '7d' },
+      );
+      expect(redisClient.set).toHaveBeenCalledWith(
+        `user:${userId}:refresh_token`,
+        'refresh-token',
+        'EX',
+        7 * 24 * 60 * 60,
+      );
+      expect(result).toEqual({
+        access_token: 'access-token',
+        refresh_token: 'refresh-token',
+      });
     });
   });
 
@@ -80,55 +97,79 @@ describe('TokenService', () => {
     it('should verify token and return payload', async () => {
       const refreshToken = 'valid-refresh-token';
       const payload = { sub: 'user1', email: 'test@example.com' };
-      
+
       jest.spyOn(jwtService, 'verifyAsync').mockResolvedValue(payload);
       redisClient.get.mockResolvedValue(refreshToken);
 
       const result = await service.verifyRefreshToken(refreshToken);
 
-      expect(jwtService.verifyAsync).toHaveBeenCalledWith(refreshToken, { secret: 'refresh_secret' });
-      expect(redisClient.get).toHaveBeenCalledWith(`user:${payload.sub}:refresh_token`);
+      expect(jwtService.verifyAsync).toHaveBeenCalledWith(refreshToken, {
+        secret: 'refresh_secret',
+      });
+      expect(redisClient.get).toHaveBeenCalledWith(
+        `user:${payload.sub}:refresh_token`,
+      );
       expect(result).toEqual(payload);
     });
 
     it('should throw UnauthorizedException if token not found in redis', async () => {
       const refreshToken = 'valid-refresh-token';
       const payload = { sub: 'user1', email: 'test@example.com' };
-      
+
       jest.spyOn(jwtService, 'verifyAsync').mockResolvedValue(payload);
       redisClient.get.mockResolvedValue(null);
 
-      await expect(service.verifyRefreshToken(refreshToken)).rejects.toThrow(UnauthorizedException);
-      await expect(service.verifyRefreshToken(refreshToken)).rejects.toThrow('Sesi tidak valid atau telah dicabut (Revoked)');
+      await expect(service.verifyRefreshToken(refreshToken)).rejects.toThrow(
+        UnauthorizedException,
+      );
+      await expect(service.verifyRefreshToken(refreshToken)).rejects.toThrow(
+        'Sesi tidak valid atau telah dicabut (Revoked)',
+      );
     });
 
     it('should throw UnauthorizedException if redis token does not match', async () => {
       const refreshToken = 'valid-refresh-token';
       const payload = { sub: 'user1', email: 'test@example.com' };
-      
+
       jest.spyOn(jwtService, 'verifyAsync').mockResolvedValue(payload);
       redisClient.get.mockResolvedValue('different-refresh-token');
 
-      await expect(service.verifyRefreshToken(refreshToken)).rejects.toThrow(UnauthorizedException);
-      await expect(service.verifyRefreshToken(refreshToken)).rejects.toThrow('Sesi tidak valid atau telah dicabut (Revoked)');
+      await expect(service.verifyRefreshToken(refreshToken)).rejects.toThrow(
+        UnauthorizedException,
+      );
+      await expect(service.verifyRefreshToken(refreshToken)).rejects.toThrow(
+        'Sesi tidak valid atau telah dicabut (Revoked)',
+      );
     });
 
     it('should throw UnauthorizedException if jwt verify fails', async () => {
       const refreshToken = 'invalid-refresh-token';
-      
-      jest.spyOn(jwtService, 'verifyAsync').mockRejectedValue(new Error('JWT Error'));
 
-      await expect(service.verifyRefreshToken(refreshToken)).rejects.toThrow(UnauthorizedException);
-      await expect(service.verifyRefreshToken(refreshToken)).rejects.toThrow('Refresh token kadaluarsa atau tidak valid');
+      jest
+        .spyOn(jwtService, 'verifyAsync')
+        .mockRejectedValue(new Error('JWT Error'));
+
+      await expect(service.verifyRefreshToken(refreshToken)).rejects.toThrow(
+        UnauthorizedException,
+      );
+      await expect(service.verifyRefreshToken(refreshToken)).rejects.toThrow(
+        'Refresh token kadaluarsa atau tidak valid',
+      );
     });
-    
+
     it('should bubble up UnauthorizedException if jwt verify fails with UnauthorizedException', async () => {
       const refreshToken = 'invalid-refresh-token';
-      
-      jest.spyOn(jwtService, 'verifyAsync').mockRejectedValue(new UnauthorizedException('Specific error'));
 
-      await expect(service.verifyRefreshToken(refreshToken)).rejects.toThrow(UnauthorizedException);
-      await expect(service.verifyRefreshToken(refreshToken)).rejects.toThrow('Specific error');
+      jest
+        .spyOn(jwtService, 'verifyAsync')
+        .mockRejectedValue(new UnauthorizedException('Specific error'));
+
+      await expect(service.verifyRefreshToken(refreshToken)).rejects.toThrow(
+        UnauthorizedException,
+      );
+      await expect(service.verifyRefreshToken(refreshToken)).rejects.toThrow(
+        'Specific error',
+      );
     });
   });
 });

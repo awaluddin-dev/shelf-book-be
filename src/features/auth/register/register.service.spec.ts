@@ -2,7 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RegisterService } from './register.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RegisterDto } from './register.dto';
-import { ConflictException, InternalServerErrorException } from '@nestjs/common';
+import {
+  ConflictException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import * as argon2 from 'argon2';
 import { Prisma } from '@prisma/client';
 
@@ -39,7 +42,11 @@ describe('RegisterService', () => {
 
   describe('execute', () => {
     it('should successfully register a user', async () => {
-      const dto: RegisterDto = { name: 'Test', email: 'test@example.com', password: 'password' };
+      const dto: RegisterDto = {
+        name: 'Test',
+        email: 'test@example.com',
+        password: 'password',
+      };
       const hashedPassword = 'hashedPassword';
       const createdUser = {
         id: '1',
@@ -51,7 +58,7 @@ describe('RegisterService', () => {
       };
 
       (argon2.hash as jest.Mock).mockResolvedValue(hashedPassword);
-      jest.spyOn(prismaService.user, 'create').mockResolvedValue(createdUser as any);
+      jest.spyOn(prismaService.user, 'create').mockResolvedValue(createdUser);
 
       const result = await service.execute(dto);
 
@@ -72,53 +79,79 @@ describe('RegisterService', () => {
     });
 
     it('should throw ConflictException if email is already registered', async () => {
-      const dto: RegisterDto = { name: 'Test', email: 'test@example.com', password: 'password' };
-      
+      const dto: RegisterDto = {
+        name: 'Test',
+        email: 'test@example.com',
+        password: 'password',
+      };
+
       (argon2.hash as jest.Mock).mockResolvedValue('hashedPassword');
-      
+
       const prismaError = new Prisma.PrismaClientKnownRequestError('Error', {
         code: 'P2002',
         clientVersion: 'x.x.x',
       });
       jest.spyOn(prismaService.user, 'create').mockRejectedValue(prismaError);
 
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
 
       await expect(service.execute(dto)).rejects.toThrow(ConflictException);
-      await expect(service.execute(dto)).rejects.toThrow('Email sudah terdaftar');
+      await expect(service.execute(dto)).rejects.toThrow(
+        'Email sudah terdaftar',
+      );
 
       consoleSpy.mockRestore();
     });
 
     it('should throw InternalServerErrorException for other prisma errors', async () => {
-      const dto: RegisterDto = { name: 'Test', email: 'test@example.com', password: 'password' };
-      
+      const dto: RegisterDto = {
+        name: 'Test',
+        email: 'test@example.com',
+        password: 'password',
+      };
+
       (argon2.hash as jest.Mock).mockResolvedValue('hashedPassword');
-      
+
       const prismaError = new Prisma.PrismaClientKnownRequestError('Error', {
         code: 'P2000',
         clientVersion: 'x.x.x',
       });
       jest.spyOn(prismaService.user, 'create').mockRejectedValue(prismaError);
 
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
 
-      await expect(service.execute(dto)).rejects.toThrow(InternalServerErrorException);
+      await expect(service.execute(dto)).rejects.toThrow(
+        InternalServerErrorException,
+      );
       await expect(service.execute(dto)).rejects.toThrow('Gagal Membuat User');
-      
+
       consoleSpy.mockRestore();
     });
 
     it('should throw InternalServerErrorException for generic errors', async () => {
-      const dto: RegisterDto = { name: 'Test', email: 'test@example.com', password: 'password' };
-      
+      const dto: RegisterDto = {
+        name: 'Test',
+        email: 'test@example.com',
+        password: 'password',
+      };
+
       (argon2.hash as jest.Mock).mockResolvedValue('hashedPassword');
-      
-      jest.spyOn(prismaService.user, 'create').mockRejectedValue(new Error('Some error'));
 
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      jest
+        .spyOn(prismaService.user, 'create')
+        .mockRejectedValue(new Error('Some error'));
 
-      await expect(service.execute(dto)).rejects.toThrow(InternalServerErrorException);
+      const consoleSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      await expect(service.execute(dto)).rejects.toThrow(
+        InternalServerErrorException,
+      );
       await expect(service.execute(dto)).rejects.toThrow('Gagal Membuat User');
 
       consoleSpy.mockRestore();

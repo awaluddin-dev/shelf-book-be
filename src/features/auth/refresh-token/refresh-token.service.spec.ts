@@ -35,15 +35,25 @@ describe('RefreshTokenService', () => {
     it('should verify token and generate new ones', async () => {
       const dto: RefreshDto = { refreshToken: 'old-refresh' };
       const payload = { sub: 'user1', email: 'test@example.com' };
-      const tokens = { access_token: 'new-access', refresh_token: 'new-refresh' };
+      const tokens = {
+        access_token: 'new-access',
+        refresh_token: 'new-refresh',
+      };
 
-      jest.spyOn(tokenService, 'verifyRefreshToken').mockResolvedValue(payload as any);
-      jest.spyOn(tokenService, 'generateAndSaveTokens').mockResolvedValue(tokens as any);
+      jest.spyOn(tokenService, 'verifyRefreshToken').mockResolvedValue(payload);
+      jest
+        .spyOn(tokenService, 'generateAndSaveTokens')
+        .mockResolvedValue(tokens);
 
       const result = await service.execute(dto);
 
-      expect(tokenService.verifyRefreshToken).toHaveBeenCalledWith(dto.refreshToken);
-      expect(tokenService.generateAndSaveTokens).toHaveBeenCalledWith(payload.sub, payload.email);
+      expect(tokenService.verifyRefreshToken).toHaveBeenCalledWith(
+        dto.refreshToken,
+      );
+      expect(tokenService.generateAndSaveTokens).toHaveBeenCalledWith(
+        payload.sub,
+        payload.email,
+      );
       expect(result).toEqual(tokens);
     });
   });

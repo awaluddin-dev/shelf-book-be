@@ -45,9 +45,11 @@ export class LoginService {
 
     const attemptsKey = `login_attempts:${dto.email}`;
     const attempts = await this.redis.get(attemptsKey);
-    
+
     if (attempts && parseInt(attempts) >= 3) {
-      throw new UnauthorizedException('Too many failed login attempts. Please try again in 15 minutes.');
+      throw new UnauthorizedException(
+        'Too many failed login attempts. Please try again in 15 minutes.',
+      );
     }
 
     const user = await this.prisma.user.findUnique({

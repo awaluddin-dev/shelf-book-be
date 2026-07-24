@@ -32,10 +32,16 @@ describe('LoginController', () => {
 
   describe('login', () => {
     it('should call loginService.execute with correct parameters', async () => {
-      const dto: LoginDto = { email: 'test@example.com', password: 'password123' };
-      const expectedResult = { access_token: 'access', refresh_token: 'refresh' };
-      
-      jest.spyOn(service, 'execute').mockResolvedValue(expectedResult as any);
+      const dto: LoginDto = {
+        email: 'test@example.com',
+        password: 'password123',
+      };
+      const expectedResult = {
+        access_token: 'access',
+        refresh_token: 'refresh',
+      };
+
+      jest.spyOn(service, 'execute').mockResolvedValue(expectedResult);
 
       const result = await controller.login(dto);
 

@@ -51,7 +51,9 @@ describe('ExperienceService', () => {
 
     it('should throw NotFoundException if testimonial not found', async () => {
       mockCtx.prisma.testimonial.findUnique.mockResolvedValue(null);
-      await expect(service.getTestimonial('999')).rejects.toThrow(NotFoundException);
+      await expect(service.getTestimonial('999')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should create testimonial', async () => {
@@ -59,7 +61,7 @@ describe('ExperienceService', () => {
       mockCtx.prisma.testimonial.create.mockResolvedValue({
         id: '2',
         ...payload,
-      } as any);
+      });
       const result = await service.createTestimonial(payload);
       expect(result).toEqual({ id: '2', name: 'New Testimonial' });
       expect(mockCtx.prisma.testimonial.create).toHaveBeenCalledWith({
@@ -72,14 +74,18 @@ describe('ExperienceService', () => {
       mockCtx.prisma.testimonial.update.mockResolvedValue({
         id: '1',
         ...payload,
-      } as any);
+      });
       const result = await service.updateTestimonial('1', payload);
       expect(result).toEqual({ id: '1', name: 'Updated' });
     });
 
     it('should handle update error by throwing NotFoundException', async () => {
-      mockCtx.prisma.testimonial.update.mockRejectedValue(new Error('Record not found'));
-      await expect(service.updateTestimonial('1', {})).rejects.toThrow(NotFoundException);
+      mockCtx.prisma.testimonial.update.mockRejectedValue(
+        new Error('Record not found'),
+      );
+      await expect(service.updateTestimonial('1', {})).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should delete testimonial', async () => {
@@ -89,8 +95,12 @@ describe('ExperienceService', () => {
     });
 
     it('should handle delete error by throwing NotFoundException', async () => {
-      mockCtx.prisma.testimonial.delete.mockRejectedValue(new Error('Record not found'));
-      await expect(service.deleteTestimonial('1')).rejects.toThrow(NotFoundException);
+      mockCtx.prisma.testimonial.delete.mockRejectedValue(
+        new Error('Record not found'),
+      );
+      await expect(service.deleteTestimonial('1')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -100,35 +110,48 @@ describe('ExperienceService', () => {
     for (const entity of entities) {
       describe(entity, () => {
         it(`should get all`, async () => {
-          mockCtx.prisma[entity].findMany = jest.fn().mockResolvedValue([{ id: '1' }]);
-          const method = entity === 'currentFocus' ? 'getCurrentFoci' : `get${entity.charAt(0).toUpperCase() + entity.slice(1)}s`;
+          mockCtx.prisma[entity].findMany = jest
+            .fn()
+            .mockResolvedValue([{ id: '1' }]);
+          const method =
+            entity === 'currentFocus'
+              ? 'getCurrentFoci'
+              : `get${entity.charAt(0).toUpperCase() + entity.slice(1)}s`;
           const res = await (service as any)[method]();
           expect(res).toEqual([{ id: '1' }]);
         });
 
         it(`should get one`, async () => {
-          mockCtx.prisma[entity].findUnique = jest.fn().mockResolvedValue({ id: '1' });
+          mockCtx.prisma[entity].findUnique = jest
+            .fn()
+            .mockResolvedValue({ id: '1' });
           const method = `get${entity.charAt(0).toUpperCase() + entity.slice(1)}`;
           const res = await (service as any)[method]('1');
           expect(res).toEqual({ id: '1' });
         });
 
         it(`should create`, async () => {
-          mockCtx.prisma[entity].create = jest.fn().mockResolvedValue({ id: '1' });
+          mockCtx.prisma[entity].create = jest
+            .fn()
+            .mockResolvedValue({ id: '1' });
           const method = `create${entity.charAt(0).toUpperCase() + entity.slice(1)}`;
           const res = await (service as any)[method]({} as any);
           expect(res).toEqual({ id: '1' });
         });
 
         it(`should update`, async () => {
-          mockCtx.prisma[entity].update = jest.fn().mockResolvedValue({ id: '1' });
+          mockCtx.prisma[entity].update = jest
+            .fn()
+            .mockResolvedValue({ id: '1' });
           const method = `update${entity.charAt(0).toUpperCase() + entity.slice(1)}`;
           const res = await (service as any)[method]('1', {} as any);
           expect(res).toEqual({ id: '1' });
         });
 
         it(`should delete`, async () => {
-          mockCtx.prisma[entity].delete = jest.fn().mockResolvedValue({ id: '1' });
+          mockCtx.prisma[entity].delete = jest
+            .fn()
+            .mockResolvedValue({ id: '1' });
           const method = `delete${entity.charAt(0).toUpperCase() + entity.slice(1)}`;
           const res = await (service as any)[method]('1');
           expect(res).toEqual({ success: true });

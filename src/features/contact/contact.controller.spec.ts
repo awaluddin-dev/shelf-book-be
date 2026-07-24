@@ -49,9 +49,13 @@ describe('ContactController', () => {
         projectType: 'Web',
         message: 'Hello',
       };
-      
-      const mockResult = { success: true, message: 'Inquiry sent successfully', id: '123' };
-      
+
+      const mockResult = {
+        success: true,
+        message: 'Inquiry sent successfully',
+        id: '123',
+      };
+
       jest.spyOn(rateLimitService, 'checkLimit').mockResolvedValue(undefined);
       jest.spyOn(contactService, 'sendInquiry').mockResolvedValue(mockResult);
       jest.spyOn(rateLimitService, 'setLimit').mockResolvedValue(undefined);

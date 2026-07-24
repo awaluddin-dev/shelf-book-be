@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Injectable,
   NestInterceptor,
@@ -15,7 +16,9 @@ export class TimeoutInterceptor implements NestInterceptor {
       timeout(10000), // 10 seconds timeout
       catchError((err) => {
         if (err instanceof TimeoutError) {
-          return throwError(() => new RequestTimeoutException('Request Timeout (Exceeded 10s)'));
+          return throwError(
+            () => new RequestTimeoutException('Request Timeout (Exceeded 10s)'),
+          );
         }
         return throwError(() => err);
       }),
