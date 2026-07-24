@@ -70,7 +70,11 @@ describe('LoginService', () => {
         password: 'password',
         turnstileToken: 'valid',
       }),
-    ).rejects.toThrow(new UnauthorizedException('Too many failed login attempts. Please try again in 15 minutes.'));
+    ).rejects.toThrow(
+      new UnauthorizedException(
+        'Too many failed login attempts. Please try again in 15 minutes.',
+      ),
+    );
   });
 
   it('should throw UnauthorizedException if captcha fails', async () => {

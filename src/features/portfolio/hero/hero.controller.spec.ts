@@ -8,7 +8,9 @@ describe('HeroController', () => {
 
   const mockHeroService = {
     getStatus: jest.fn().mockResolvedValue('available'),
-    updateStatus: jest.fn().mockResolvedValue({ success: true, status: 'busy' }),
+    updateStatus: jest
+      .fn()
+      .mockResolvedValue({ success: true, status: 'busy' }),
     getHero: jest.fn().mockResolvedValue({ heroConfig: {}, metrics: [] }),
     updateHero: jest.fn().mockResolvedValue({ success: true }),
   };
@@ -16,9 +18,7 @@ describe('HeroController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [HeroController],
-      providers: [
-        { provide: HeroService, useValue: mockHeroService },
-      ],
+      providers: [{ provide: HeroService, useValue: mockHeroService }],
     }).compile();
 
     controller = module.get<HeroController>(HeroController);

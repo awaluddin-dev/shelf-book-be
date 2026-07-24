@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ProficiencyDto } from './skills.dto';
@@ -74,8 +73,7 @@ export class SkillsService {
         ...rest,
         skills: skills
           ? {
-              create:
-                skills as Prisma.ProficiencySkillCreateWithoutProficiencyInput[],
+              create: skills,
             }
           : undefined,
       },
@@ -99,8 +97,7 @@ export class SkillsService {
           ...rest,
           skills: skills
             ? {
-                create:
-                  skills as Prisma.ProficiencySkillCreateWithoutProficiencyInput[],
+                create: skills,
               }
             : undefined,
         },

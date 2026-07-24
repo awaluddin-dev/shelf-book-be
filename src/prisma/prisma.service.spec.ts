@@ -21,7 +21,7 @@ jest.mock('@prisma/client', () => {
     PrismaClient: class {
       $connect = jest.fn();
       $disconnect = jest.fn();
-    }
+    },
   };
 });
 
@@ -51,7 +51,7 @@ describe('PrismaService', () => {
   it('should initialize with DATABASE_CA', async () => {
     process.env.DB_REQUIRE_SSL = 'true';
     process.env.DATABASE_CA = Buffer.from('test-ca').toString('base64');
-    
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [PrismaService],
     }).compile();
@@ -75,7 +75,7 @@ describe('PrismaService', () => {
     const service = module.get<PrismaService>(PrismaService);
     expect(service).toBeDefined();
   });
-  
+
   it('should throw error if CA_CERT_PATH file not found', async () => {
     process.env.DB_REQUIRE_SSL = 'true';
     delete process.env.DATABASE_CA;

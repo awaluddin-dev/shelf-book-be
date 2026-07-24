@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Test, TestingModule } from '@nestjs/testing';
 import { HeroService } from './hero.service';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -85,7 +83,7 @@ describe('HeroService', () => {
 
       const result = await service.updateHero({ name: 'New Name' }, [
         { label: 'Stars', value: '100' },
-      ] as any);
+      ]);
       expect(result).toEqual({ success: true });
       expect(mockCtx.prisma.heroConfig.upsert).toHaveBeenCalled();
       expect(mockCtx.prisma.metric.deleteMany).toHaveBeenCalled();

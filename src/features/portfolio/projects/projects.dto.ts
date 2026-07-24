@@ -1,10 +1,5 @@
 import { Prisma } from '@prisma/client';
-import {
-  IsString,
-  IsOptional,
-  IsArray,
-  IsNumber,
-} from 'class-validator';
+import { IsString, IsOptional, IsArray, IsNumber } from 'class-validator';
 
 export class ProjectDto {
   @IsString()

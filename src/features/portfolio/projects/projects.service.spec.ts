@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProjectsService } from './projects.service';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -30,18 +28,16 @@ describe('ProjectsService', () => {
   });
 
   describe('CRUD operations for entities', () => {
-    const entities = [
-      'project',
-      'systemArchitecture',
-      'projectLifecycle'
-    ];
+    const entities = ['project', 'systemArchitecture', 'projectLifecycle'];
 
     for (const entity of entities) {
       describe(entity, () => {
         it(`should get all`, async () => {
-          mockCtx.prisma[entity].findMany = jest.fn().mockResolvedValue([{ id: '1' }]);
+          mockCtx.prisma[entity].findMany = jest
+            .fn()
+            .mockResolvedValue([{ id: '1' }]);
           const method = `get${entity.charAt(0).toUpperCase() + entity.slice(1)}s`;
-          
+
           if (typeof (service as any)[method] === 'function') {
             const res = await (service as any)[method]();
             expect(res).toEqual([{ id: '1' }]);
@@ -49,7 +45,9 @@ describe('ProjectsService', () => {
         });
 
         it(`should get one`, async () => {
-          mockCtx.prisma[entity].findUnique = jest.fn().mockResolvedValue({ id: '1' });
+          mockCtx.prisma[entity].findUnique = jest
+            .fn()
+            .mockResolvedValue({ id: '1' });
           const method = `get${entity.charAt(0).toUpperCase() + entity.slice(1)}`;
           if (typeof (service as any)[method] === 'function') {
             const res = await (service as any)[method]('1');
@@ -68,7 +66,9 @@ describe('ProjectsService', () => {
         });
 
         it(`should create`, async () => {
-          mockCtx.prisma[entity].create = jest.fn().mockResolvedValue({ id: '1' });
+          mockCtx.prisma[entity].create = jest
+            .fn()
+            .mockResolvedValue({ id: '1' });
           const method = `create${entity.charAt(0).toUpperCase() + entity.slice(1)}`;
           if (typeof (service as any)[method] === 'function') {
             const res = await (service as any)[method]({} as any);
@@ -77,7 +77,9 @@ describe('ProjectsService', () => {
         });
 
         it(`should update`, async () => {
-          mockCtx.prisma[entity].update = jest.fn().mockResolvedValue({ id: '1' });
+          mockCtx.prisma[entity].update = jest
+            .fn()
+            .mockResolvedValue({ id: '1' });
           const method = `update${entity.charAt(0).toUpperCase() + entity.slice(1)}`;
           if (typeof (service as any)[method] === 'function') {
             const res = await (service as any)[method]('1', {} as any);
@@ -86,17 +88,21 @@ describe('ProjectsService', () => {
         });
 
         it(`should throw NotFoundException on update error`, async () => {
-          mockCtx.prisma[entity].update = jest.fn().mockRejectedValue(new Error('Record not found'));
+          mockCtx.prisma[entity].update = jest
+            .fn()
+            .mockRejectedValue(new Error('Record not found'));
           const method = `update${entity.charAt(0).toUpperCase() + entity.slice(1)}`;
           if (typeof (service as any)[method] === 'function') {
-            await expect((service as any)[method]('1', {} as any)).rejects.toThrow(
-              NotFoundException,
-            );
+            await expect(
+              (service as any)[method]('1', {} as any),
+            ).rejects.toThrow(NotFoundException);
           }
         });
 
         it(`should delete`, async () => {
-          mockCtx.prisma[entity].delete = jest.fn().mockResolvedValue({ id: '1' });
+          mockCtx.prisma[entity].delete = jest
+            .fn()
+            .mockResolvedValue({ id: '1' });
           const method = `delete${entity.charAt(0).toUpperCase() + entity.slice(1)}`;
           if (typeof (service as any)[method] === 'function') {
             const res = await (service as any)[method]('1');
@@ -105,7 +111,9 @@ describe('ProjectsService', () => {
         });
 
         it(`should throw NotFoundException on delete error`, async () => {
-          mockCtx.prisma[entity].delete = jest.fn().mockRejectedValue(new Error('Record not found'));
+          mockCtx.prisma[entity].delete = jest
+            .fn()
+            .mockRejectedValue(new Error('Record not found'));
           const method = `delete${entity.charAt(0).toUpperCase() + entity.slice(1)}`;
           if (typeof (service as any)[method] === 'function') {
             await expect((service as any)[method]('1')).rejects.toThrow(

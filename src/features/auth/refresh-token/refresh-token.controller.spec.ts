@@ -33,9 +33,12 @@ describe('RefreshTokenController', () => {
   describe('refreshToken', () => {
     it('should call refreshTokenService.execute with correct parameters', async () => {
       const dto: RefreshDto = { refreshToken: 'some-refresh-token' };
-      const expectedResult = { access_token: 'new-access', refresh_token: 'new-refresh' };
-      
-      jest.spyOn(service, 'execute').mockResolvedValue(expectedResult as any);
+      const expectedResult = {
+        access_token: 'new-access',
+        refresh_token: 'new-refresh',
+      };
+
+      jest.spyOn(service, 'execute').mockResolvedValue(expectedResult);
 
       const result = await controller.refreshToken(dto);
 

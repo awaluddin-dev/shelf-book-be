@@ -93,24 +93,51 @@ describe('GithubService', () => {
               weeks: [
                 {
                   contributionDays: [
-                    { contributionCount: 5, date: '2023-01-01T00:00:00Z', weekday: 0, contributionLevel: 'FOURTH_QUARTILE' },
-                    { contributionCount: 0, date: '2023-01-02T00:00:00Z', weekday: 1, contributionLevel: 'NONE' }
+                    {
+                      contributionCount: 5,
+                      date: '2023-01-01T00:00:00Z',
+                      weekday: 0,
+                      contributionLevel: 'FOURTH_QUARTILE',
+                    },
+                    {
+                      contributionCount: 0,
+                      date: '2023-01-02T00:00:00Z',
+                      weekday: 1,
+                      contributionLevel: 'NONE',
+                    },
                   ],
                 },
                 {
                   contributionDays: [
-                    { contributionCount: 2, date: '2023-01-08T00:00:00Z', weekday: 0, contributionLevel: 'SECOND_QUARTILE' }
-                  ]
-                }
+                    {
+                      contributionCount: 2,
+                      date: '2023-01-08T00:00:00Z',
+                      weekday: 0,
+                      contributionLevel: 'SECOND_QUARTILE',
+                    },
+                  ],
+                },
               ],
             },
             commitContributionsByRepository: [
-              { repository: { name: 'repo-A' }, contributions: { totalCount: 10 } },
-              { repository: { name: 'repo-B' }, contributions: { totalCount: 20 } },
+              {
+                repository: { name: 'repo-A' },
+                contributions: { totalCount: 10 },
+              },
+              {
+                repository: { name: 'repo-B' },
+                contributions: { totalCount: 20 },
+              },
             ],
             pullRequestContributionsByRepository: [
-              { repository: { name: 'repo-A' }, contributions: { totalCount: 5 } },
-              { repository: { name: 'repo-C' }, contributions: { totalCount: 15 } },
+              {
+                repository: { name: 'repo-A' },
+                contributions: { totalCount: 5 },
+              },
+              {
+                repository: { name: 'repo-C' },
+                contributions: { totalCount: 15 },
+              },
             ],
           },
           repositories: {
@@ -118,17 +145,23 @@ describe('GithubService', () => {
               {
                 languages: {
                   edges: [
-                    { size: 100, node: { name: 'TypeScript', color: '#2b7489' } },
-                    { size: 50, node: { name: 'JavaScript', color: '#f1e05a' } },
+                    {
+                      size: 100,
+                      node: { name: 'TypeScript', color: '#2b7489' },
+                    },
+                    {
+                      size: 50,
+                      node: { name: 'JavaScript', color: '#f1e05a' },
+                    },
                     { size: 10, node: { name: 'HTML', color: '#e34c26' } },
                     { size: 10, node: { name: 'CSS', color: '#563d7c' } },
                     { size: 10, node: { name: 'Python', color: '#3572A5' } },
                     { size: 10, node: { name: 'Go', color: '#00ADD8' } },
                     { size: 10, node: { name: 'Rust', color: '#dea584' } },
                     { size: 5, node: { name: 'C++', color: '#f34b7d' } },
-                  ]
-                }
-              }
+                  ],
+                },
+              },
             ],
           },
         },
@@ -144,7 +177,7 @@ describe('GithubService', () => {
     expect(result.calendar.length).toBe(2);
     // test others in languages (since we have 8, 6 top and 1 "Others")
     expect(result.languages.length).toBe(7);
-    const others = result.languages.find(l => l.name === 'Others');
+    const others = result.languages.find((l) => l.name === 'Others');
     expect(others).toBeDefined();
 
     // repos sorted by commits + pull requests
@@ -162,7 +195,7 @@ describe('GithubService', () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       json: jest.fn().mockResolvedValue(mockResponse),
     });
-    
+
     const result = await service.getContributions('testuser');
     expect(result).toEqual({ calendar: [], timeline: [], repositories: [] });
   });

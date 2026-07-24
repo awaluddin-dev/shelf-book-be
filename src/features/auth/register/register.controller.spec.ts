@@ -32,10 +32,19 @@ describe('RegisterController', () => {
 
   describe('register', () => {
     it('should call registerService.execute with correct parameters', async () => {
-      const dto: RegisterDto = { name: 'Test', email: 'test@example.com', password: 'password123' };
-      const expectedResult = { id: 'user1', name: 'Test', email: 'test@example.com', createdAt: new Date() };
-      
-      jest.spyOn(service, 'execute').mockResolvedValue(expectedResult as any);
+      const dto: RegisterDto = {
+        name: 'Test',
+        email: 'test@example.com',
+        password: 'password123',
+      };
+      const expectedResult = {
+        id: 'user1',
+        name: 'Test',
+        email: 'test@example.com',
+        createdAt: new Date(),
+      };
+
+      jest.spyOn(service, 'execute').mockResolvedValue(expectedResult);
 
       const result = await controller.register(dto);
 

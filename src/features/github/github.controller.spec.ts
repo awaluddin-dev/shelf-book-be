@@ -31,7 +31,7 @@ describe('GithubController', () => {
     const mockData = { calendar: [] };
     const githubService = controller['githubService'];
     (githubService.getContributions as jest.Mock).mockResolvedValue(mockData);
-    
+
     const result = await controller.getContributions('testuser');
     expect(result).toEqual(mockData);
     expect(githubService.getContributions).toHaveBeenCalledWith('testuser');

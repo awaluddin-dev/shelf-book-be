@@ -53,7 +53,7 @@ describe('RateLimitService', () => {
         new HttpException(
           'Anda telah mengirimkan data hari ini. Silakan coba lagi besok.',
           HttpStatus.TOO_MANY_REQUESTS,
-        )
+        ),
       );
     });
 
@@ -73,7 +73,7 @@ describe('RateLimitService', () => {
         new HttpException(
           'Anda telah mengirimkan data hari ini. Silakan coba lagi besok.',
           HttpStatus.TOO_MANY_REQUESTS,
-        )
+        ),
       );
     });
 
@@ -86,14 +86,14 @@ describe('RateLimitService', () => {
       } as unknown as Request;
 
       await expect(service.checkLimit(req)).resolves.toBeUndefined();
-      
+
       const req2 = {
         headers: {},
         socket: { remoteAddress: '127.0.0.1' },
       } as unknown as Request;
-      
+
       await expect(service.checkLimit(req2)).resolves.toBeUndefined();
-      
+
       const req3 = {
         headers: {},
         socket: {},
@@ -115,12 +115,25 @@ describe('RateLimitService', () => {
 
       await service.setLimit(req, res);
 
-      expect(redisMock.set).toHaveBeenCalledWith('rate_limit:ip:127.0.0.1', 'true', 'EX', 86400);
-      expect(redisMock.set).toHaveBeenCalledWith('rate_limit:etag:test-uuid', 'true', 'EX', 86400);
+      expect(redisMock.set).toHaveBeenCalledWith(
+        'rate_limit:ip:127.0.0.1',
+        'true',
+        'EX',
+        86400,
+      );
+      expect(redisMock.set).toHaveBeenCalledWith(
+        'rate_limit:etag:test-uuid',
+        'true',
+        'EX',
+        86400,
+      );
       expect(res.header).toHaveBeenCalledWith('X-Submit-ETag', 'test-uuid');
-      expect(res.header).toHaveBeenCalledWith('Access-Control-Expose-Headers', 'X-Submit-ETag');
+      expect(res.header).toHaveBeenCalledWith(
+        'Access-Control-Expose-Headers',
+        'X-Submit-ETag',
+      );
     });
-    
+
     it('should set limit and ETag headers using req.ip', async () => {
       const req = {
         headers: {},
@@ -134,9 +147,14 @@ describe('RateLimitService', () => {
 
       await service.setLimit(req, res);
 
-      expect(redisMock.set).toHaveBeenCalledWith('rate_limit:ip:127.0.0.1', 'true', 'EX', 86400);
+      expect(redisMock.set).toHaveBeenCalledWith(
+        'rate_limit:ip:127.0.0.1',
+        'true',
+        'EX',
+        86400,
+      );
     });
-    
+
     it('should set limit and ETag headers using req.socket.remoteAddress', async () => {
       const req = {
         headers: {},
@@ -149,9 +167,14 @@ describe('RateLimitService', () => {
 
       await service.setLimit(req, res);
 
-      expect(redisMock.set).toHaveBeenCalledWith('rate_limit:ip:127.0.0.1', 'true', 'EX', 86400);
+      expect(redisMock.set).toHaveBeenCalledWith(
+        'rate_limit:ip:127.0.0.1',
+        'true',
+        'EX',
+        86400,
+      );
     });
-    
+
     it('should set limit and ETag headers using unknown', async () => {
       const req = {
         headers: {},
@@ -164,7 +187,12 @@ describe('RateLimitService', () => {
 
       await service.setLimit(req, res);
 
-      expect(redisMock.set).toHaveBeenCalledWith('rate_limit:ip:unknown', 'true', 'EX', 86400);
+      expect(redisMock.set).toHaveBeenCalledWith(
+        'rate_limit:ip:unknown',
+        'true',
+        'EX',
+        86400,
+      );
     });
   });
 });

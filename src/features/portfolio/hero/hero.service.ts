@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { HeroConfigDto, MetricDto } from './hero.dto';
@@ -58,7 +57,7 @@ export class HeroService {
       await this.prisma.metric.deleteMany();
       if (metricsPayload.length > 0) {
         await this.prisma.metric.createMany({
-          data: metricsPayload as Prisma.MetricCreateManyInput[],
+          data: metricsPayload,
         });
       }
     }
