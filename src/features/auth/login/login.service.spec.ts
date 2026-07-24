@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { LoginService } from './login.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TokenService } from '../shared/token.service';
+import { REDIS_CLIENT } from 'src/redis/redis.module';
 import { Context, createMockContext } from 'src/prisma/prisma.mock';
 import { UnauthorizedException } from '@nestjs/common';
 import * as argon2 from 'argon2';
@@ -12,6 +13,7 @@ describe('LoginService', () => {
   let service: LoginService;
   let mockCtx: Context;
   let mockTokenService: Partial<TokenService>;
+  let mockRedis: any;
 
   beforeEach(async () => {
     mockCtx = createMockContext();
@@ -19,6 +21,13 @@ describe('LoginService', () => {
       generateAndSaveTokens: jest
         .fn()
         .mockResolvedValue({ accessToken: 'access', refreshToken: 'refresh' }),
+    };
+
+    mockRedis = {
+      get: jest.fn().mockResolvedValue(null),
+      incr: jest.fn().mockResolvedValue(1),
+      expire: jest.fn().mockResolvedValue(1),
+      del: jest.fn().mockResolvedValue(1),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -32,6 +41,10 @@ describe('LoginService', () => {
           provide: TokenService,
           useValue: mockTokenService,
         },
+        {
+          provide: REDIS_CLIENT,
+          useValue: mockRedis,
+        },
       ],
     }).compile();
 
@@ -43,6 +56,21 @@ describe('LoginService', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  it('should throw UnauthorizedException if user is locked out (>3 attempts)', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      json: jest.fn().mockResolvedValue({ success: true }),
+    });
+    mockRedis.get.mockResolvedValue('3');
+
+    await expect(
+      service.execute({
+        email: 'test@example.com',
+        password: 'password',
+        turnstileToken: 'valid',
+      }),
+    ).rejects.toThrow(new UnauthorizedException('Too many failed login attempts. Please try again in 15 minutes.'));
   });
 
   it('should throw UnauthorizedException if captcha fails', async () => {
