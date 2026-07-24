@@ -251,7 +251,6 @@ export class ProjectDto {
   architectureImage?: string;
 }
 
-
 export class SystemArchitectureDto {
   @IsString()
   projectId!: string;

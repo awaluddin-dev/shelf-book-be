@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/unbound-method */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Test, TestingModule } from '@nestjs/testing';
-import { PortfolioService, GenericModelDelegate } from './portfolio.service';
+import { PortfolioService } from './portfolio.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { prismaMockProvider, Context, createMockContext } from 'src/prisma/prisma.mock';
+import { Context, createMockContext } from 'src/prisma/prisma.mock';
 import { NotFoundException } from '@nestjs/common';
 
 describe('PortfolioService', () => {
@@ -16,7 +18,7 @@ describe('PortfolioService', () => {
         {
           provide: PrismaService,
           useValue: mockCtx.prisma,
-        }
+        },
       ],
     }).compile();
 
@@ -27,68 +29,91 @@ describe('PortfolioService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('Generic Array Methods', () => {
-    const mockModel: GenericModelDelegate = {
-      findMany: jest.fn().mockResolvedValue([{ id: '1', name: 'Item 1' }]),
-      findUnique: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
-    };
-
-    it('should return array data', async () => {
-      const result = await service.getArrayData(mockModel);
-      expect(result).toEqual([{ id: '1', name: 'Item 1' }]);
-      expect(mockModel.findMany).toHaveBeenCalled();
+  describe('CRUD via entity-specific methods', () => {
+    it('should get testimonials (findMany)', async () => {
+      mockCtx.prisma.testimonial.findMany.mockResolvedValue([
+        { id: '1', name: 'John' } as any,
+      ]);
+      const result = await service.getTestimonials();
+      expect(result).toEqual([{ id: '1', name: 'John' }]);
+      expect(mockCtx.prisma.testimonial.findMany).toHaveBeenCalled();
     });
 
-    it('should get array item by id', async () => {
-      (mockModel.findUnique as jest.Mock).mockResolvedValue({ id: '1', name: 'Item 1' });
-      const result = await service.getArrayItem(mockModel, '1');
-      expect(result).toEqual({ id: '1', name: 'Item 1' });
-      expect(mockModel.findUnique).toHaveBeenCalledWith({ where: { id: '1' } });
+    it('should get testimonial by id', async () => {
+      mockCtx.prisma.testimonial.findUnique.mockResolvedValue({
+        id: '1',
+        name: 'John',
+      } as any);
+      const result = await service.getTestimonial('1');
+      expect(result).toEqual({ id: '1', name: 'John' });
+      expect(mockCtx.prisma.testimonial.findUnique).toHaveBeenCalledWith({
+        where: { id: '1' },
+      });
     });
 
-    it('should throw NotFoundException if item not found', async () => {
-      (mockModel.findUnique as jest.Mock).mockResolvedValue(null);
-      await expect(service.getArrayItem(mockModel, '999')).rejects.toThrow(NotFoundException);
+    it('should throw NotFoundException if testimonial not found', async () => {
+      mockCtx.prisma.testimonial.findUnique.mockResolvedValue(null);
+      await expect(service.getTestimonial('999')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
-    it('should create array item', async () => {
-      const payload = { name: 'New Item' };
-      (mockModel.create as jest.Mock).mockResolvedValue({ id: '2', ...payload });
-      const result = await service.createArrayItem(mockModel, payload);
-      expect(result).toEqual({ id: '2', name: 'New Item' });
-      expect(mockModel.create).toHaveBeenCalledWith({ data: payload });
+    it('should create testimonial', async () => {
+      const payload = { name: 'New Testimonial' };
+      mockCtx.prisma.testimonial.create.mockResolvedValue({
+        id: '2',
+        ...payload,
+      } as any);
+      const result = await service.createTestimonial(payload);
+      expect(result).toEqual({ id: '2', name: 'New Testimonial' });
+      expect(mockCtx.prisma.testimonial.create).toHaveBeenCalledWith({
+        data: payload,
+      });
     });
 
-    it('should update array item', async () => {
-      const payload = { name: 'Updated Item' };
-      (mockModel.update as jest.Mock).mockResolvedValue({ id: '1', ...payload });
-      const result = await service.updateArrayItem(mockModel, '1', payload);
-      expect(result).toEqual({ id: '1', name: 'Updated Item' });
+    it('should update testimonial', async () => {
+      const payload = { name: 'Updated' };
+      mockCtx.prisma.testimonial.update.mockResolvedValue({
+        id: '1',
+        ...payload,
+      } as any);
+      const result = await service.updateTestimonial('1', payload);
+      expect(result).toEqual({ id: '1', name: 'Updated' });
     });
-    
+
     it('should handle update error by throwing NotFoundException', async () => {
-      (mockModel.update as jest.Mock).mockRejectedValue(new Error('Record not found'));
-      await expect(service.updateArrayItem(mockModel, '1', {})).rejects.toThrow(NotFoundException);
+      mockCtx.prisma.testimonial.update.mockRejectedValue(
+        new Error('Record not found'),
+      );
+      await expect(service.updateTestimonial('1', {})).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
-    it('should delete array item', async () => {
-      (mockModel.delete as jest.Mock).mockResolvedValue({ id: '1' });
-      const result = await service.deleteArrayItem(mockModel, '1');
+    it('should delete testimonial', async () => {
+      mockCtx.prisma.testimonial.delete.mockResolvedValue({ id: '1' } as any);
+      const result = await service.deleteTestimonial('1');
       expect(result).toEqual({ success: true });
     });
-    
+
     it('should handle delete error by throwing NotFoundException', async () => {
-      (mockModel.delete as jest.Mock).mockRejectedValue(new Error('Record not found'));
-      await expect(service.deleteArrayItem(mockModel, '1')).rejects.toThrow(NotFoundException);
+      mockCtx.prisma.testimonial.delete.mockRejectedValue(
+        new Error('Record not found'),
+      );
+      await expect(service.deleteTestimonial('1')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
   describe('Specific Methods', () => {
     it('should return status', async () => {
-      mockCtx.prisma.portfolioStatus.findUnique.mockResolvedValue({ id: 'status_1', status: 'available', updatedAt: new Date() });
+      mockCtx.prisma.portfolioStatus.findUnique.mockResolvedValue({
+        id: 'status_1',
+        status: 'available',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
       const result = await service.getStatus();
       expect(result).toBe('available');
     });
@@ -100,16 +125,32 @@ describe('PortfolioService', () => {
     });
 
     it('should update status', async () => {
-      mockCtx.prisma.portfolioStatus.upsert.mockResolvedValue({ id: 'status_1', status: 'away', updatedAt: new Date() });
+      mockCtx.prisma.portfolioStatus.upsert.mockResolvedValue({
+        id: 'status_1',
+        status: 'away',
+        updatedAt: new Date(),
+      } as any);
       const result = await service.updateStatus('away');
       expect(result).toEqual({ success: true, status: 'away' });
     });
 
     it('should get hero data', async () => {
-      const mockHero = { id: 'hero_1', title: 'Hello', description: 'Desc', name: 'Test', imageUrl: 'url', updatedAt: new Date(), githubUrl: null, linkedinUrl: null, resumeUrl: null };
+      const mockHero = {
+        id: 'hero_1',
+        name: 'Test',
+        role: 'Engineer',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        openForWork: true,
+        availableFrom: null,
+        expertise: null,
+        grit: null,
+        service: null,
+        config: {},
+      };
       mockCtx.prisma.heroConfig.findUnique.mockResolvedValue(mockHero);
       mockCtx.prisma.metric.findMany.mockResolvedValue([]);
-      
+
       const result = await service.getHero();
       expect(result.heroConfig).toEqual(mockHero);
       expect(result.metrics).toEqual([]);
@@ -120,7 +161,9 @@ describe('PortfolioService', () => {
       mockCtx.prisma.metric.deleteMany.mockResolvedValue({ count: 1 });
       mockCtx.prisma.metric.createMany.mockResolvedValue({ count: 1 });
 
-      const result = await service.updateHero({ title: 'New Title' }, [{ label: 'Stars', value: '100' }]);
+      const result = await service.updateHero({ name: 'New Name' }, [
+        { label: 'Stars', value: '100' },
+      ] as any);
       expect(result).toEqual({ success: true });
       expect(mockCtx.prisma.heroConfig.upsert).toHaveBeenCalled();
       expect(mockCtx.prisma.metric.deleteMany).toHaveBeenCalled();

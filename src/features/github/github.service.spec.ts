@@ -14,7 +14,7 @@ describe('GithubService', () => {
     }).compile();
 
     service = module.get<GithubService>(GithubService);
-    
+
     // Mock global fetch
     global.fetch = jest.fn();
   });
@@ -30,7 +30,9 @@ describe('GithubService', () => {
 
   it('should throw an error if GITHUB_TOKEN is missing', async () => {
     delete process.env.GITHUB_TOKEN;
-    await expect(service.getContributions('testuser')).rejects.toThrow(HttpException);
+    await expect(service.getContributions('testuser')).rejects.toThrow(
+      HttpException,
+    );
   });
 
   it('should return parsed github contributions successfully', async () => {
@@ -69,13 +71,13 @@ describe('GithubService', () => {
     });
 
     const result = await service.getContributions('testuser');
-    
+
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(result).toHaveProperty('calendar');
     expect(result).toHaveProperty('timeline');
     expect(result).toHaveProperty('repositories');
     expect(result).toHaveProperty('languages');
-    
+
     // Check if the single day is processed
     expect(result.calendar[0][2]).toHaveProperty('count', 5);
   });
@@ -83,13 +85,15 @@ describe('GithubService', () => {
   it('should handle API errors returned in json correctly', async () => {
     process.env.GITHUB_TOKEN = 'mock-token';
     const mockResponse = {
-      errors: [{ message: 'User not found' }]
+      errors: [{ message: 'User not found' }],
     };
 
     (global.fetch as jest.Mock).mockResolvedValue({
       json: jest.fn().mockResolvedValue(mockResponse),
     });
 
-    await expect(service.getContributions('unknown_user')).rejects.toThrow(HttpException);
+    await expect(service.getContributions('unknown_user')).rejects.toThrow(
+      HttpException,
+    );
   });
 });

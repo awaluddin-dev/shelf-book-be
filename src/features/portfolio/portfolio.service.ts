@@ -1,58 +1,60 @@
 import { Prisma } from '@prisma/client';
-
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { HeroConfigDto, MetricDto, ProficiencyDto } from './portfolio.dto';
-
-export interface GenericModelDelegate {
-  findMany(args?: unknown): Promise<unknown[]>;
-  findUnique(args: { where: { id: string } }): Promise<unknown>;
-  create(args: { data: unknown }): Promise<unknown>;
-  update(args: { where: { id: string }; data: unknown }): Promise<unknown>;
-  delete(args: { where: { id: string } }): Promise<unknown>;
-}
 
 @Injectable()
 export class PortfolioService {
   constructor(private prisma: PrismaService) {}
 
   // ----------------------------------------------------
-  // GENERIC METHODS FOR SIMPLE ARRAYS (Work, Testimonial, CurrentFocus, Skill, Roadmap, Project)
+  // INTERNAL HELPERS — type-safe wrappers over Prisma delegates
   // ----------------------------------------------------
 
-  async getArrayData(model: GenericModelDelegate) {
-    return await model.findMany();
+  private async getMany<T>(delegate: {
+    findMany: (args?: any) => Promise<T[]>;
+  }): Promise<T[]> {
+    return delegate.findMany();
   }
 
-  async getArrayItem(model: GenericModelDelegate, id: string) {
-    const item = await model.findUnique({ where: { id } });
+  private async getById<T extends { id: string }>(
+    delegate: {
+      findUnique: (args: { where: { id: string } }) => Promise<T | null>;
+    },
+    id: string,
+  ): Promise<T> {
+    const item = await delegate.findUnique({ where: { id } });
     if (!item) throw new NotFoundException(`Item with id ${id} not found`);
     return item;
   }
 
-  async createArrayItem<T>(
-    model: GenericModelDelegate,
-    payload: T,
-  ): Promise<unknown> {
-    // If frontend sends an id, we can try to use it, else let Prisma handle it
-    return await model.create({ data: payload as unknown });
+  private async createOne<T, D>(
+    delegate: { create: (args: { data: D }) => Promise<T> },
+    data: D,
+  ): Promise<T> {
+    return delegate.create({ data });
   }
 
-  async updateArrayItem<T>(
-    model: GenericModelDelegate,
+  private async updateOne<T, D>(
+    delegate: {
+      update: (args: { where: { id: string }; data: D }) => Promise<T>;
+    },
     id: string,
-    payload: T,
-  ): Promise<unknown> {
+    data: D,
+  ): Promise<T> {
     try {
-      return await model.update({ where: { id }, data: payload as unknown });
+      return await delegate.update({ where: { id }, data });
     } catch {
       throw new NotFoundException(`Item with id ${id} not found`);
     }
   }
 
-  async deleteArrayItem(model: GenericModelDelegate, id: string) {
+  private async deleteOne<T>(
+    delegate: { delete: (args: { where: { id: string } }) => Promise<T> },
+    id: string,
+  ): Promise<{ success: boolean }> {
     try {
-      await model.delete({ where: { id } });
+      await delegate.delete({ where: { id } });
       return { success: true };
     } catch {
       throw new NotFoundException(`Item with id ${id} not found`);
@@ -60,69 +62,10 @@ export class PortfolioService {
   }
 
   // ----------------------------------------------------
-  // SPECIFIC METHODS FOR NESTED/COMPLEX DATA
-  // ----------------------------------------------------
-
-  // PROFICIENCY (Includes relation to ProficiencySkill)
-  async getProficiency() {
-    return await this.prisma.proficiency.findMany({
-      include: { skills: true },
-    });
-  }
-
-  async createProficiency(payload: ProficiencyDto) {
-    const { skills, ...rest } = payload;
-    return await this.prisma.proficiency.create({
-      data: {
-        ...rest,
-        skills: skills
-          ? {
-              create:
-                skills as unknown as Prisma.ProficiencySkillCreateWithoutProficiencyInput[],
-            }
-          : undefined,
-      },
-      include: { skills: true },
-    });
-  }
-
-  async updateProficiency(id: string, payload: Partial<ProficiencyDto>) {
-    const { skills, ...rest } = payload;
-    // To update correctly with relations, we update the parent, and if skills are provided,
-    // we would typically delete old and recreate, or update by ID.
-    // For simplicity, we just delete all skills and recreate if skills array is present.
-    if (skills) {
-      await this.prisma.proficiencySkill.deleteMany({
-        where: { proficiencyId: id },
-      });
-    }
-
-    return await this.prisma.proficiency.update({
-      where: { id },
-      data: {
-        ...rest,
-        skills: skills
-          ? {
-              create:
-                skills as unknown as Prisma.ProficiencySkillCreateWithoutProficiencyInput[],
-            }
-          : undefined,
-      },
-      include: { skills: true },
-    });
-  }
-
-  async deleteProficiency(id: string) {
-    try {
-      await this.prisma.proficiency.delete({ where: { id } });
-      return { success: true };
-    } catch {
-      throw new NotFoundException(`Proficiency with id ${id} not found`);
-    }
-  }
-
   // STATUS
-  async getStatus() {
+  // ----------------------------------------------------
+
+  async getStatus(): Promise<string> {
     const statusObj = await this.prisma.portfolioStatus.findUnique({
       where: { id: 'status_1' },
     });
@@ -138,7 +81,10 @@ export class PortfolioService {
     return { success: true, status };
   }
 
-  // HERO (HeroConfig + Metrics)
+  // ----------------------------------------------------
+  // HERO — HeroConfig + Metrics
+  // ----------------------------------------------------
+
   async getHero() {
     const heroConfig =
       (await this.prisma.heroConfig.findUnique({
@@ -163,16 +109,267 @@ export class PortfolioService {
     }
 
     if (metricsPayload) {
-      // Simplest way is to wipe existing metrics and insert new ones
-      // since there are usually only 3 or 4 metrics
       await this.prisma.metric.deleteMany();
       if (metricsPayload.length > 0) {
         await this.prisma.metric.createMany({
-          data: metricsPayload as unknown as Prisma.MetricCreateManyInput[],
+          data: metricsPayload as Prisma.MetricCreateManyInput[],
         });
       }
     }
 
     return { success: true };
+  }
+
+  // ----------------------------------------------------
+  // TESTIMONIALS
+  // ----------------------------------------------------
+
+  async getTestimonials() {
+    return this.getMany(this.prisma.testimonial);
+  }
+
+  async getTestimonial(id: string) {
+    return this.getById(this.prisma.testimonial, id);
+  }
+
+  async createTestimonial(data: any) {
+    return this.createOne(this.prisma.testimonial, data);
+  }
+
+  async updateTestimonial(id: string, data: any) {
+    return this.updateOne(this.prisma.testimonial, id, data);
+  }
+
+  async deleteTestimonial(id: string) {
+    return this.deleteOne(this.prisma.testimonial, id);
+  }
+
+  // ----------------------------------------------------
+  // WORK EXPERIENCE
+  // ----------------------------------------------------
+
+  async getWorkExperiences() {
+    return this.getMany(this.prisma.workExperience);
+  }
+
+  async getWorkExperience(id: string) {
+    return this.getById(this.prisma.workExperience, id);
+  }
+
+  async createWorkExperience(data: any) {
+    return this.createOne(this.prisma.workExperience, data);
+  }
+
+  async updateWorkExperience(id: string, data: any) {
+    return this.updateOne(this.prisma.workExperience, id, data);
+  }
+
+  async deleteWorkExperience(id: string) {
+    return this.deleteOne(this.prisma.workExperience, id);
+  }
+
+  // ----------------------------------------------------
+  // CURRENT FOCUS
+  // ----------------------------------------------------
+
+  async getCurrentFoci() {
+    return this.getMany(this.prisma.currentFocus);
+  }
+
+  async getCurrentFocus(id: string) {
+    return this.getById(this.prisma.currentFocus, id);
+  }
+
+  async createCurrentFocus(data: any) {
+    return this.createOne(this.prisma.currentFocus, data);
+  }
+
+  async updateCurrentFocus(id: string, data: any) {
+    return this.updateOne(this.prisma.currentFocus, id, data);
+  }
+
+  async deleteCurrentFocus(id: string) {
+    return this.deleteOne(this.prisma.currentFocus, id);
+  }
+
+  // ----------------------------------------------------
+  // PROFICIENCY (with nested ProficiencySkill relations)
+  // ----------------------------------------------------
+
+  async getProficiencies() {
+    return this.prisma.proficiency.findMany({
+      include: { skills: true },
+    });
+  }
+
+  async createProficiency(payload: ProficiencyDto) {
+    const { skills, ...rest } = payload;
+    return this.prisma.proficiency.create({
+      data: {
+        ...rest,
+        skills: skills
+          ? {
+              create:
+                skills as Prisma.ProficiencySkillCreateWithoutProficiencyInput[],
+            }
+          : undefined,
+      },
+      include: { skills: true },
+    });
+  }
+
+  async updateProficiency(id: string, payload: Partial<ProficiencyDto>) {
+    const { skills, ...rest } = payload;
+
+    return this.prisma.$transaction(async (tx) => {
+      if (skills) {
+        await tx.proficiencySkill.deleteMany({
+          where: { proficiencyId: id },
+        });
+      }
+
+      return tx.proficiency.update({
+        where: { id },
+        data: {
+          ...rest,
+          skills: skills
+            ? {
+                create:
+                  skills as Prisma.ProficiencySkillCreateWithoutProficiencyInput[],
+              }
+            : undefined,
+        },
+        include: { skills: true },
+      });
+    });
+  }
+
+  async deleteProficiency(id: string) {
+    try {
+      await this.prisma.proficiency.delete({ where: { id } });
+      return { success: true };
+    } catch {
+      throw new NotFoundException(`Proficiency with id ${id} not found`);
+    }
+  }
+
+  // ----------------------------------------------------
+  // SKILLS
+  // ----------------------------------------------------
+
+  async getSkills() {
+    return this.getMany(this.prisma.skill);
+  }
+
+  async getSkill(id: string) {
+    return this.getById(this.prisma.skill, id);
+  }
+
+  async createSkill(data: any) {
+    return this.createOne(this.prisma.skill, data);
+  }
+
+  async updateSkill(id: string, data: any) {
+    return this.updateOne(this.prisma.skill, id, data);
+  }
+
+  async deleteSkill(id: string) {
+    return this.deleteOne(this.prisma.skill, id);
+  }
+
+  // ----------------------------------------------------
+  // ROADMAP
+  // ----------------------------------------------------
+
+  async getRoadmaps() {
+    return this.getMany(this.prisma.roadmap);
+  }
+
+  async getRoadmap(id: string) {
+    return this.getById(this.prisma.roadmap, id);
+  }
+
+  async createRoadmap(data: any) {
+    return this.createOne(this.prisma.roadmap, data);
+  }
+
+  async updateRoadmap(id: string, data: any) {
+    return this.updateOne(this.prisma.roadmap, id, data);
+  }
+
+  async deleteRoadmap(id: string) {
+    return this.deleteOne(this.prisma.roadmap, id);
+  }
+
+  // ----------------------------------------------------
+  // PROJECTS
+  // ----------------------------------------------------
+
+  async getProjects() {
+    return this.getMany(this.prisma.project);
+  }
+
+  async getProject(id: string) {
+    return this.getById(this.prisma.project, id);
+  }
+
+  async createProject(data: any) {
+    return this.createOne(this.prisma.project, data);
+  }
+
+  async updateProject(id: string, data: any) {
+    return this.updateOne(this.prisma.project, id, data);
+  }
+
+  async deleteProject(id: string) {
+    return this.deleteOne(this.prisma.project, id);
+  }
+
+  // ----------------------------------------------------
+  // SYSTEM ARCHITECTURE
+  // ----------------------------------------------------
+
+  async getSystemArchitectures() {
+    return this.getMany(this.prisma.systemArchitecture);
+  }
+
+  async getSystemArchitecture(id: string) {
+    return this.getById(this.prisma.systemArchitecture, id);
+  }
+
+  async createSystemArchitecture(data: any) {
+    return this.createOne(this.prisma.systemArchitecture, data);
+  }
+
+  async updateSystemArchitecture(id: string, data: any) {
+    return this.updateOne(this.prisma.systemArchitecture, id, data);
+  }
+
+  async deleteSystemArchitecture(id: string) {
+    return this.deleteOne(this.prisma.systemArchitecture, id);
+  }
+
+  // ----------------------------------------------------
+  // PROJECT LIFECYCLE
+  // ----------------------------------------------------
+
+  async getProjectLifecycles() {
+    return this.getMany(this.prisma.projectLifecycle);
+  }
+
+  async getProjectLifecycle(id: string) {
+    return this.getById(this.prisma.projectLifecycle, id);
+  }
+
+  async createProjectLifecycle(data: any) {
+    return this.createOne(this.prisma.projectLifecycle, data);
+  }
+
+  async updateProjectLifecycle(id: string, data: any) {
+    return this.updateOne(this.prisma.projectLifecycle, id, data);
+  }
+
+  async deleteProjectLifecycle(id: string) {
+    return this.deleteOne(this.prisma.projectLifecycle, id);
   }
 }
