@@ -24,12 +24,7 @@ if ! npx prisma db push --accept-data-loss; then
   echo "==================================================="
 fi
 
-echo "Running latest seed..."
-if ! npx prisma db seed; then
-  echo "============== PRISMA DB SEED FAILED =============="
-  echo "Check the logs above to see why Prisma failed to seed the database."
-  echo "==================================================="
-fi
+
 
 echo "Shutting down dummy server..."
 kill $DUMMY_PID || true

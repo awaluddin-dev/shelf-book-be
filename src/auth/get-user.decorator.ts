@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { Request } from 'express';
+import { FastifyRequest } from 'fastify';
 
 export interface JwtPayload {
   id: string;
@@ -11,7 +11,7 @@ export const GetUser = createParamDecorator(
   (data: keyof JwtPayload | undefined, ctx: ExecutionContext) => {
     const request = ctx
       .switchToHttp()
-      .getRequest<Request & { user: JwtPayload }>();
+      .getRequest<FastifyRequest & { user: JwtPayload }>();
 
     // Jika kita panggil @GetUser('id'), dia hanya mengembalikan id-nya saja
     if (data) {

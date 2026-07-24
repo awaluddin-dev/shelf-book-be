@@ -2,7 +2,7 @@ import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
 import Redis from 'ioredis';
 import { REDIS_CLIENT } from 'src/redis/redis.module';
 import * as crypto from 'crypto';
-import { Request, Response } from 'express';
+import { FastifyRequest, FastifyReply } from 'fastify';
 
 @Injectable()
 export class RateLimitService {
@@ -12,7 +12,7 @@ export class RateLimitService {
    * Checks if the IP or ETag has already submitted within the last 24 hours.
    * Throws a 429 HttpException if limit exceeded.
    */
-  async checkLimit(req: Request) {
+  async checkLimit(req: FastifyRequest) {
     const ip =
       (req.headers['x-forwarded-for'] as string) ||
       req.ip ||
@@ -42,7 +42,7 @@ export class RateLimitService {
   /**
    * Sets the rate limit for the given request for 24 hours and attaches the ETag to the response.
    */
-  async setLimit(req: Request, res: Response) {
+  async setLimit(req: FastifyRequest, res: FastifyReply) {
     const ip =
       (req.headers['x-forwarded-for'] as string) ||
       req.ip ||
