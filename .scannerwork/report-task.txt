@@ -1,0 +1,7 @@
+organization=awaluddin-dev
+projectKey=shelf-book-be
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.98802
+dashboardUrl=https://sonarcloud.io/dashboard?id=shelf-book-be
+ceTaskId=AZ-XG4U-ro-86RsXXFqT
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZ-XG4U-ro-86RsXXFqT
