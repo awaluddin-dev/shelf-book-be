@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { BaseCrudService } from 'src/common/services/base-crud.service';
 
@@ -13,11 +13,25 @@ export class ProjectsService extends BaseCrudService {
   // ----------------------------------------------------
 
   async getProjects() {
-    return this.getMany(this.prisma.project);
+    return this.prisma.project.findMany({
+      include: {
+        systemArchitectures: { orderBy: { order: 'asc' } },
+        projectLifecycles: { orderBy: { order: 'asc' } },
+      },
+      orderBy: { createdAt: 'desc' }
+    });
   }
 
   async getProject(id: string) {
-    return this.getById(this.prisma.project, id);
+    const item = await this.prisma.project.findUnique({
+      where: { id },
+      include: {
+        systemArchitectures: { orderBy: { order: 'asc' } },
+        projectLifecycles: { orderBy: { order: 'asc' } },
+      }
+    });
+    if (!item) throw new NotFoundException(`Item with id ${id} not found`);
+    return item;
   }
 
   async createProject(data: any) {
