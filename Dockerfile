@@ -20,12 +20,13 @@ COPY package.json pnpm-lock.yaml .npmrc ./
 COPY prisma ./prisma/
 COPY prisma.config.ts ./
 
+COPY start.sh ./
 
 RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 RUN npx prisma generate
 
 COPY --from=builder /app/dist ./dist
-COPY start.sh ./
+
 RUN chmod +x start.sh
 
 EXPOSE 8080
