@@ -51,10 +51,6 @@ export class ProjectDto {
   @IsString()
   @IsOptional()
   problemSolved?: string;
-
-  @IsString()
-  @IsOptional()
-  architectureImage?: string;
 }
 
 export class SystemArchitectureDto {
@@ -62,16 +58,7 @@ export class SystemArchitectureDto {
   projectId!: string;
 
   @IsString()
-  name!: string;
-
-  @IsString()
-  title!: string;
-
-  @IsString()
-  description!: string;
-
-  @IsString()
-  metrics!: string;
+  imageUrl!: string;
 
   @IsNumber()
   order!: number;
