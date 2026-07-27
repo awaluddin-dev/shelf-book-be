@@ -25,6 +25,8 @@ RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 RUN npx prisma generate
 
 COPY --from=builder /app/dist ./dist
+COPY start.sh ./
+RUN chmod +x start.sh
 
 EXPOSE 8080
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/src/main.js"]
+CMD ["./start.sh"]
