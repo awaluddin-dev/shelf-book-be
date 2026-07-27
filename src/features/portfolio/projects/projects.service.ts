@@ -4,7 +4,7 @@ import { BaseCrudService } from 'src/common/services/base-crud.service';
 
 @Injectable()
 export class ProjectsService extends BaseCrudService {
-  constructor(private prisma: PrismaService) {
+  constructor(private readonly prisma: PrismaService) {
     super();
   }
 
@@ -18,7 +18,7 @@ export class ProjectsService extends BaseCrudService {
         systemArchitectures: { orderBy: { order: 'asc' } },
         projectLifecycles: { orderBy: { order: 'asc' } },
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
   }
 
@@ -28,7 +28,7 @@ export class ProjectsService extends BaseCrudService {
       include: {
         systemArchitectures: { orderBy: { order: 'asc' } },
         projectLifecycles: { orderBy: { order: 'asc' } },
-      }
+      },
     });
     if (!item) throw new NotFoundException(`Item with id ${id} not found`);
     return item;
