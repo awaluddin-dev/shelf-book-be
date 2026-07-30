@@ -15,8 +15,17 @@ export class ProjectsService extends BaseCrudService {
   async getProjects() {
     return this.prisma.project.findMany({
       include: {
-        systemArchitectures: { orderBy: { order: 'asc' } },
-        projectLifecycles: { orderBy: { order: 'asc' } },
+        systemArchitectures: {
+          orderBy: {
+            order: 'asc'
+          }
+        },
+        projectLifecycles: {
+          orderBy: {
+            order: 'asc'
+          }
+        },
+        technicalImagery: true
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -28,6 +37,7 @@ export class ProjectsService extends BaseCrudService {
       include: {
         systemArchitectures: { orderBy: { order: 'asc' } },
         projectLifecycles: { orderBy: { order: 'asc' } },
+        technicalImagery: true,
       },
     });
     if (!item) throw new NotFoundException(`Item with id ${id} not found`);
@@ -93,4 +103,33 @@ export class ProjectsService extends BaseCrudService {
   async deleteProjectLifecycle(id: string) {
     return this.deleteOne(this.prisma.projectLifecycle, id);
   }
+
+  // ----------------------------------------------------
+  // TECHNICAL IMAGERY
+  // ----------------------------------------------------
+
+  async getTechnicalImageries() {
+    return this.getMany(this.prisma.technicalImagery);
+  }
+
+  async getTechnicalImagery(id: string) {
+    return this.getById(this.prisma.technicalImagery, id);
+  }
+
+  async upsertTechnicalImagery(projectId: string, data: any) {
+    return this.prisma.technicalImagery.upsert({
+      where: { projectId },
+      update: data,
+      create: { ...data, projectId },
+    });
+  }
+
+  async deleteTechnicalImagery(id: string) {
+    return this.deleteOne(this.prisma.technicalImagery, id);
+  }
+
+  async updateTechnicalImagery(id: string, data: any) {
+    return this.updateOne(this.prisma.technicalImagery, id, data);
+  }
 }
+

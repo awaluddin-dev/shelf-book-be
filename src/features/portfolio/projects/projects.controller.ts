@@ -13,6 +13,7 @@ import {
   ProjectDto,
   SystemArchitectureDto,
   ProjectLifecycleDto,
+  TechnicalImageryDto,
 } from './projects.dto';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { ApiTags } from '@nestjs/swagger';
@@ -102,4 +103,34 @@ export class ProjectsController {
   async deleteLifecycle(@Param('id') id: string) {
     return await this.projectsService.deleteProjectLifecycle(id);
   }
+
+  // TECHNICAL IMAGERY
+  @Get('technical-imagery')
+  async getTechnicalImageryList() {
+    return await this.projectsService.getTechnicalImageries();
+  }
+
+  @UseGuards(JwtGuard)
+  @Post('technical-imagery')
+  async upsertTechnicalImagery(@Body() body: TechnicalImageryDto) {
+    // Upsert expects projectId to match
+    const { projectId, ...data } = body;
+    return await this.projectsService.upsertTechnicalImagery(projectId, data);
+  }
+
+  @UseGuards(JwtGuard)
+  @Delete('technical-imagery/:id')
+  async deleteTechnicalImagery(@Param('id') id: string) {
+    return await this.projectsService.deleteTechnicalImagery(id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch('technical-imagery/:id')
+  async updateTechnicalImagery(
+    @Param('id') id: string,
+    @Body() body: Partial<TechnicalImageryDto>,
+  ) {
+    return await this.projectsService.updateTechnicalImagery(id, body);
+  }
 }
+
