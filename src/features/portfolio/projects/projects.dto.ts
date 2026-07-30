@@ -88,3 +88,26 @@ export class ProjectLifecycleDto {
   @IsNumber()
   order?: number;
 }
+
+export class TechnicalImageryDto {
+  @IsString()
+  projectId!: string;
+
+  @IsString()
+  featured!: string;
+
+  @IsString()
+  blueprint!: string;
+
+  @IsString()
+  metrics!: string;
+
+  @IsString()
+  featuredCaption!: string;
+
+  @IsString()
+  blueprintCaption!: string;
+
+  @IsString()
+  metricsCaption!: string;
+}

@@ -198,6 +198,7 @@ model Project {
 
   systemArchitectures SystemArchitecture[]
   projectLifecycles   ProjectLifecycle[]
+  technicalImagery    TechnicalImagery?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -233,5 +234,23 @@ model ProjectLifecycle {
   updatedAt   DateTime @updatedAt
 
   @@map("project_lifecycles")
+  @@schema("public")
+}
+
+model TechnicalImagery {
+  id               String   @id @default(uuid())
+  projectId        String   @unique
+  project          Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  featured         String   @default("")
+  blueprint        String   @default("")
+  metrics          String   @default("")
+  featuredCaption  String   @default("")
+  blueprintCaption String   @default("")
+  metricsCaption   String   @default("")
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("technical_imageries")
   @@schema("public")
 }
