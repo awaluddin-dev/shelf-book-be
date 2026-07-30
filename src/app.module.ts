@@ -7,6 +7,7 @@ import { PortfolioModule } from './features/portfolio/portfolio.module';
 import { GithubModule } from './features/github/github.module';
 import { ContactModule } from './features/contact/contact.module';
 import { HealthModule } from './health/health.module';
+import { AiModule } from './features/ai/ai.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { HealthModule } from './health/health.module';
     GithubModule,
     ContactModule,
     HealthModule,
+    AiModule,
   ],
   controllers: [],
   providers: [],
