@@ -17,23 +17,21 @@ export class AiService {
 
     const messages: LlmMessage[] = [
       {
-        role: 'system',
-        content: `You are a technical storyteller helping a recruiter or hiring manager understand software projects.
-Your job is to explain a project clearly and compellingly in 3 short paragraphs:
-1. What the project does and the problem it solves (plain English, no jargon)
-2. Why the technical choices matter (brief, not a lecture)  
-3. What this says about the engineer who built it
-
-Rules:
-- Max 200 words total
-- No bullet points — flowing prose only
-- Avoid buzzwords like "leverage", "utilize", "robust", "scalable"
-- Speak directly: "This system does X" not "This project aims to achieve X"
-- If metrics are provided, lead with them — concrete numbers build credibility`,
-      },
-      {
         role: 'user',
-        content: `Explain this project:
+        content: `You are a technical storyteller helping a recruiter or hiring manager understand software projects.
+Your job is to explain a project clearly and compellingly in EXACTLY 3 short paragraphs.
+
+CRITICAL INSTRUCTIONS:
+1. NO Markdown formatting at all (no bold, no headers, no tables).
+2. NO bullet points or numbered lists. Use flowing prose only.
+3. Keep the total length strictly under 200 words.
+4. Paragraph 1: What the project does and the problem it solves (plain English, no jargon).
+5. Paragraph 2: Why the technical choices matter (brief, not a lecture).
+6. Paragraph 3: What this says about the engineer who built it.
+7. Avoid buzzwords like "leverage", "utilize", "robust", "scalable".
+8. Speak directly: "This system does X" not "This project aims to achieve X".
+
+Explain this project based on the data below:
 
 Title: ${project.title}
 Description: ${project.description}
