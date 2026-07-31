@@ -54,7 +54,7 @@ export class LlmProviderService {
         name: 'gemini',
         baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
         apiKey: geminiKey,
-        model: 'gemini-1.5-flash',
+        model: 'gemini-3.6-flash',
       });
     }
 
@@ -87,7 +87,7 @@ export class LlmProviderService {
             messages,
             stream: true,
             temperature: 0.7,
-            max_tokens: 600,
+            max_tokens: 4096,
           }),
         });
 

@@ -1,7 +1,7 @@
 import { IsString, IsUUID, IsArray, IsOptional } from 'class-validator';
 
 export class ExplainProjectDto {
-  @IsUUID()
+  @IsString()
   id: string;
 
   @IsString()

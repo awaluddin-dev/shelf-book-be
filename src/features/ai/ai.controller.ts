@@ -12,6 +12,7 @@ import {
 import type { FastifyReply } from 'fastify';
 import { AiService } from './ai.service';
 import { ExplainProjectDto } from './dto/explain-project.dto';
+import { Readable } from 'stream';
 
 @Controller('ai')
 export class AiController {
@@ -35,14 +36,6 @@ export class AiController {
     @Body() dto: ExplainProjectDto,
     @Res() reply: FastifyReply,
   ): Promise<void> {
-    reply.raw.writeHead(200, {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      Connection: 'keep-alive',
-      'X-Accel-Buffering': 'no', // disable Nginx buffering if behind proxy
-      'Access-Control-Allow-Origin': process.env.FRONTEND_URL ?? '*',
-    });
-
     try {
       const llmResponse = await this.aiService.streamProjectExplanation(dto);
 
@@ -50,25 +43,19 @@ export class AiController {
         throw new Error('LLM response body is null');
       }
 
-      const reader = llmResponse.body.getReader();
-      const decoder = new TextDecoder();
+      reply.header('Content-Type', 'text/event-stream');
+      reply.header('Cache-Control', 'no-cache');
+      reply.header('Connection', 'keep-alive');
+      reply.header('X-Accel-Buffering', 'no');
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        // Forward the raw SSE chunks from the LLM provider directly to the client.
-        // OpenAI-compatible providers already emit proper "data: {...}\n\n" format.
-        const chunk = decoder.decode(value, { stream: true });
-        reply.raw.write(chunk);
-      }
-
-      reply.raw.write('data: [DONE]\n\n');
+      // Convert the Web ReadableStream to a Node.js Readable stream.
+      // By using reply.send(stream), Fastify will correctly trigger its onSend hooks,
+      // ensuring that CORS headers (from app.enableCors) are properly attached!
+      const stream = Readable.fromWeb(llmResponse.body as any);
+      reply.send(stream);
     } catch (error) {
       this.logger.error('LLM streaming error', (error as Error).stack);
-      reply.raw.write(`data: [ERROR] ${(error as Error).message}\n\n`);
-    } finally {
-      reply.raw.end();
+      reply.status(500).send({ error: (error as Error).message });
     }
   }
 }
