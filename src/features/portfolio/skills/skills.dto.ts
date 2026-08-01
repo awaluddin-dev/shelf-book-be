@@ -26,8 +26,13 @@ export class SkillDto {
   @IsString()
   title!: string;
 
+  @IsOptional()
   @IsString()
-  category!: string;
+  categoryId?: string;
+
+  @IsOptional()
+  @IsString()
+  proficiencySkillId?: string;
 
   @IsString()
   level!: string;

@@ -73,19 +73,44 @@ export class SkillsService extends BaseCrudService {
   // ----------------------------------------------------
 
   async getSkills() {
-    return this.getMany(this.prisma.skill);
+    const skills = await this.prisma.skill.findMany({
+      include: { category: true, proficiencySkill: true },
+    });
+    return skills.map((s) => ({
+      ...s,
+      category: s.category?.title || '',
+      categoryObj: s.category,
+    }));
   }
 
   async getSkill(id: string) {
-    return this.getById(this.prisma.skill, id);
+    const s = await this.prisma.skill.findUnique({
+      where: { id },
+      include: { category: true, proficiencySkill: true },
+    });
+    if (!s) throw new NotFoundException(`Skill with id ${id} not found`);
+    return {
+      ...s,
+      category: s.category?.title || '',
+      categoryObj: s.category,
+    };
   }
 
   async createSkill(data: any) {
-    return this.createOne(this.prisma.skill, data);
+    const { category, categoryObj, ...rest } = data;
+    return this.prisma.skill.create({
+      data: rest,
+      include: { category: true, proficiencySkill: true }
+    });
   }
 
   async updateSkill(id: string, data: any) {
-    return this.updateOne(this.prisma.skill, id, data);
+    const { category, categoryObj, ...rest } = data;
+    return this.prisma.skill.update({
+      where: { id },
+      data: rest,
+      include: { category: true, proficiencySkill: true }
+    });
   }
 
   async deleteSkill(id: string) {
@@ -97,7 +122,9 @@ export class SkillsService extends BaseCrudService {
   // ----------------------------------------------------
 
   async getRoadmaps() {
-    return this.getMany(this.prisma.roadmap);
+    return this.prisma.roadmap.findMany({
+      include: { currentFocuses: true },
+    });
   }
 
   async getRoadmap(id: string) {

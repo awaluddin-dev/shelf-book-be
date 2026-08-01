@@ -1,5 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -19,35 +19,28 @@ model User {
   @@schema("user")
 }
 
-// ------------------------------------
-// PORTFOLIO MODELS
-// ------------------------------------
-
 model PortfolioStatus {
-  id     String @id @default("status_1") // Single row enforced
-  status String @default("busy")
-
+  id        String   @id @default("status_1")
+  status    String   @default("busy")
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("portfolio_status")
   @@schema("public")
 }
 
 model HeroConfig {
-  id           String @id @default("hero_1")
-  name         String?
-  role         String?
-  openForWork  Boolean? @default(true)
+  id            String   @id @default("hero_1")
+  name          String?
+  role          String?
+  openForWork   Boolean? @default(true)
+  expertise     String?
+  grit          String?
+  service       String?
+  config        Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
   availableFrom String?
-  expertise    String?
-  grit         String?
-  service      String?
-  
-  config       Json?    // Kept for any future untyped fields
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
 
   @@map("hero_config")
   @@schema("public")
@@ -59,70 +52,68 @@ model Metric {
   label     String
   icon      String?
   isSavings Boolean? @default(false)
-
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("metrics")
   @@schema("public")
 }
 
 model Testimonial {
-  id           String  @id @default(uuid())
-  name         String
-  role         String
-  company      String
-  url          String?
-  testimonial  String
-  status       String  @default("pending")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  id          String   @id @default(uuid())
+  name        String
+  role        String
+  company     String
+  url         String?
+  testimonial String
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
 
   @@map("testimonials")
   @@schema("public")
 }
 
 model WorkExperience {
-  id          String @id @default(uuid())
-  years       String
-  duration    String
-  company     String
-  role        String
-  stack       String
-  teaser      String
-  fullImpact  String
-  bullets     Json
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  id         String   @id @default(uuid())
+  years      String
+  duration   String
+  company    String
+  role       String
+  stack      String
+  teaser     String
+  fullImpact String
+  bullets    Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
 
   @@map("work_experiences")
   @@schema("public")
 }
 
 model CurrentFocus {
-  id          String  @id @default(uuid())
+  id          String   @id @default(uuid())
   title       String
   icon        String
   description String
   link        String?
   linkText    String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  roadmapId   String?
+  roadmap     Roadmap? @relation(fields: [roadmapId], references: [id])
 
   @@map("current_focus")
   @@schema("public")
 }
 
 model Proficiency {
-  id     String             @id @default(uuid())
-  title  String
-  skills ProficiencySkill[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  id         String             @id @default(uuid())
+  title      String
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @default(now()) @updatedAt
+  skills     ProficiencySkill[]
+  treeSkills Skill[]
 
   @@map("proficiencies")
   @@schema("public")
@@ -134,87 +125,87 @@ model ProficiencySkill {
   subtext       String
   status        String
   proficiencyId String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @default(now()) @updatedAt
   proficiency   Proficiency @relation(fields: [proficiencyId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  treeSkills    Skill[]
 
   @@map("proficiency_skills")
   @@schema("public")
 }
 
 model Skill {
-  id          String  @id @default(uuid())
-  title       String
-  category    String
-  level       String
-  details     String
-  x           Int     @default(0)
-  y           Int     @default(0)
-  connections String[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  id                 String            @id @default(uuid())
+  title              String
+  level              String
+  details            String
+  x                  Int               @default(0)
+  y                  Int               @default(0)
+  connections        String[]
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @default(now()) @updatedAt
+  categoryId         String?
+  proficiencySkillId String?
+  category           Proficiency?      @relation(fields: [categoryId], references: [id])
+  proficiencySkill   ProficiencySkill? @relation(fields: [proficiencySkillId], references: [id])
 
   @@map("skills")
   @@schema("public")
 }
 
 model Roadmap {
-  id          String  @id @default(uuid())
-  tech        String
-  quarter     String
-  status      String
-  icon        String?
-  description String
-  depth       String?
-  topics      String[]
-  projects    String[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String         @id @default(uuid())
+  tech           String
+  quarter        String
+  status         String
+  icon           String?
+  description    String
+  depth          String?
+  topics         String[]
+  projects       String[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  currentFocuses CurrentFocus[]
 
   @@map("roadmaps")
   @@schema("public")
 }
 
 model Project {
-  id          String   @id @default(uuid())
-  title       String
-  subtitle    String
-  category    String
-  date        String
-  tags        String[]
-  spineColor  String
-  coverColor  String
-  spineText   String
-  github      String?
-  demoUrl     String?
-  stats       Json?
-  phases      Json?
-  markdown    String
-  reasonToBuild    String?
-  problemSolved    String?
-
-  systemArchitectures SystemArchitecture[]
+  id                  String               @id @default(uuid())
+  title               String
+  subtitle            String
+  category            String
+  date                String
+  tags                String[]
+  spineColor          String
+  coverColor          String
+  spineText           String
+  github              String?
+  demoUrl             String?
+  stats               Json?
+  phases              Json?
+  markdown            String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  problemSolved       String?
+  reasonToBuild       String?
   projectLifecycles   ProjectLifecycle[]
+  systemArchitectures SystemArchitecture[]
   technicalImagery    TechnicalImagery?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   @@map("projects")
   @@schema("public")
 }
 
 model SystemArchitecture {
-  id          String   @id @default(uuid())
-  projectId   String
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  imageUrl    String   @default("")
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(uuid())
+  projectId String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  imageUrl  String   @default("")
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@map("system_architectures")
   @@schema("public")
@@ -223,7 +214,6 @@ model SystemArchitecture {
 model ProjectLifecycle {
   id          String   @id @default(uuid())
   projectId   String
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   stage       String
   date        String
   title       String
@@ -232,6 +222,7 @@ model ProjectLifecycle {
   order       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@map("project_lifecycles")
   @@schema("public")
@@ -240,16 +231,15 @@ model ProjectLifecycle {
 model TechnicalImagery {
   id               String   @id @default(uuid())
   projectId        String   @unique
-  project          Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   featured         String   @default("")
   blueprint        String   @default("")
   metrics          String   @default("")
   featuredCaption  String   @default("")
   blueprintCaption String   @default("")
   metricsCaption   String   @default("")
-
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+  project          Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@map("technical_imageries")
   @@schema("public")
