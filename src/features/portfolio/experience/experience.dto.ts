@@ -66,4 +66,8 @@ export class CurrentFocusDto {
   @IsString()
   @IsOptional()
   linkText?: string;
+
+  @IsString()
+  @IsOptional()
+  roadmapId?: string;
 }
