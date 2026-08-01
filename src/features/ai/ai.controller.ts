@@ -12,7 +12,7 @@ import {
 import type { FastifyReply } from 'fastify';
 import { AiService } from './ai.service';
 import { ExplainProjectDto } from './dto/explain-project.dto';
-import { Readable } from 'stream';
+import { Readable } from 'node:stream';
 
 @Controller('ai')
 export class AiController {
