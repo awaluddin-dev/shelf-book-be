@@ -13,7 +13,10 @@ import { catchError, timeout } from 'rxjs/operators';
 export class TimeoutInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
-    if (request.url?.includes('/ai/explain-project')) {
+    if (
+      request.url?.includes('/ai/explain-project') ||
+      request.url?.includes('/ai/cover-letter')
+    ) {
       return next.handle();
     }
     
