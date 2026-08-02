@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
   email     String   @unique
   name      String
   password  String
@@ -47,7 +47,7 @@ model HeroConfig {
 }
 
 model Metric {
-  id        String   @id @default(uuid())
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
   value     String
   label     String
   icon      String?
@@ -60,7 +60,7 @@ model Metric {
 }
 
 model Testimonial {
-  id          String   @id @default(uuid())
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
   name        String
   role        String
   company     String
@@ -75,7 +75,7 @@ model Testimonial {
 }
 
 model WorkExperience {
-  id         String   @id @default(uuid())
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
   years      String
   duration   String
   company    String
@@ -92,7 +92,7 @@ model WorkExperience {
 }
 
 model CurrentFocus {
-  id          String   @id @default(uuid())
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
   title       String
   icon        String
   description String
@@ -108,7 +108,7 @@ model CurrentFocus {
 }
 
 model Proficiency {
-  id         String             @id @default(uuid())
+  id         String             @id @default(dbgenerated("gen_random_uuid()"))
   title      String
   createdAt  DateTime           @default(now())
   updatedAt  DateTime           @default(now()) @updatedAt
@@ -120,7 +120,7 @@ model Proficiency {
 }
 
 model ProficiencySkill {
-  id            String      @id @default(uuid())
+  id            String      @id @default(dbgenerated("gen_random_uuid()"))
   name          String
   subtext       String
   status        String
@@ -135,7 +135,7 @@ model ProficiencySkill {
 }
 
 model Skill {
-  id                 String            @id @default(uuid())
+  id                 String            @id @default(dbgenerated("gen_random_uuid()"))
   title              String
   level              String
   details            String
@@ -154,7 +154,7 @@ model Skill {
 }
 
 model Roadmap {
-  id             String         @id @default(uuid())
+  id             String         @id @default(dbgenerated("gen_random_uuid()"))
   tech           String
   quarter        String
   status         String
@@ -172,7 +172,7 @@ model Roadmap {
 }
 
 model Project {
-  id                  String               @id @default(uuid())
+  id                  String               @id @default(dbgenerated("gen_random_uuid()"))
   title               String
   subtitle            String
   category            String
@@ -199,7 +199,7 @@ model Project {
 }
 
 model SystemArchitecture {
-  id        String   @id @default(uuid())
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
   projectId String
   order     Int      @default(0)
   createdAt DateTime @default(now())
@@ -212,7 +212,7 @@ model SystemArchitecture {
 }
 
 model ProjectLifecycle {
-  id          String   @id @default(uuid())
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
   projectId   String
   stage       String
   date        String
@@ -229,7 +229,7 @@ model ProjectLifecycle {
 }
 
 model TechnicalImagery {
-  id               String   @id @default(uuid())
+  id               String   @id @default(dbgenerated("gen_random_uuid()"))
   projectId        String   @unique
   featured         String   @default("")
   blueprint        String   @default("")
