@@ -65,7 +65,10 @@ export class LlmProviderService {
    * Returns a native fetch Response with SSE stream from the first healthy provider.
    * Caller is responsible for piping this to the HTTP response.
    */
-  async streamCompletion(messages: LlmMessage[]): Promise<Response> {
+  async streamCompletion(
+    messages: LlmMessage[],
+    maxTokens: number = 800,
+  ): Promise<Response> {
     const providers = this.getProviders();
 
     if (providers.length === 0) {
@@ -87,7 +90,7 @@ export class LlmProviderService {
             messages,
             stream: true,
             temperature: 0.7,
-            max_tokens: 4096,
+            max_tokens: maxTokens,
           }),
         });
 
