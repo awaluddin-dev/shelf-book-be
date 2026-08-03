@@ -34,6 +34,25 @@ export class ChatController {
 
       if (!llmResponse.body) throw new Error('LLM response body is null');
 
+      const contentType = llmResponse.headers.get('content-type') || '';
+      
+      // If the provider ignored stream: true and returned JSON directly
+      if (contentType.includes('application/json')) {
+        this.logger.warn('LLM provider returned JSON instead of stream. Parsing and simulating stream...');
+        const json = await llmResponse.json();
+        const content = json?.choices?.[0]?.message?.content || json?.choices?.[0]?.delta?.content || '';
+        
+        reply.header('Content-Type', 'text/event-stream');
+        reply.header('Cache-Control', 'no-cache');
+        reply.header('Connection', 'keep-alive');
+        
+        // Send a simulated SSE stream
+        reply.raw.write(`data: ${JSON.stringify({ choices: [{ delta: { content } }] })}\n\n`);
+        reply.raw.write(`data: [DONE]\n\n`);
+        reply.raw.end();
+        return;
+      }
+
       reply.header('Content-Type', 'text/event-stream');
       reply.header('Cache-Control', 'no-cache');
       reply.header('Connection', 'keep-alive');

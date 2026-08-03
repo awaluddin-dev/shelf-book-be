@@ -22,7 +22,10 @@ export class HealthController {
   @HealthCheck()
   check() {
     return this.health.check([
-      () => this.prismaHealth.pingCheck('database', this.prismaService),
+      () =>
+        this.prismaHealth.pingCheck('database', this.prismaService, {
+          timeout: 5000,
+        }),
       () => this.memoryHealth.checkHeap('memory_heap', 150 * 1024 * 1024),
     ]);
   }
