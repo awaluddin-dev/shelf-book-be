@@ -14,6 +14,8 @@ import {
   SystemArchitectureDto,
   ProjectLifecycleDto,
   TechnicalImageryDto,
+  ProjectDatabaseSchemaDto,
+  ProjectErdDto,
 } from './projects.dto';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { ApiTags } from '@nestjs/swagger';
@@ -131,6 +133,60 @@ export class ProjectsController {
     @Body() body: Partial<TechnicalImageryDto>,
   ) {
     return await this.projectsService.updateTechnicalImagery(id, body);
+  }
+
+  // PROJECT DATABASE SCHEMA
+  @Get('database-schema')
+  async getDatabaseSchemaList() {
+    return await this.projectsService.getProjectDatabaseSchemas();
+  }
+
+  @UseGuards(JwtGuard)
+  @Post('database-schema')
+  async createDatabaseSchema(@Body() body: ProjectDatabaseSchemaDto) {
+    return await this.projectsService.createProjectDatabaseSchema(body);
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch('database-schema/:id')
+  async updateDatabaseSchema(
+    @Param('id') id: string,
+    @Body() body: Partial<ProjectDatabaseSchemaDto>,
+  ) {
+    return await this.projectsService.updateProjectDatabaseSchema(id, body);
+  }
+
+  @UseGuards(JwtGuard)
+  @Delete('database-schema/:id')
+  async deleteDatabaseSchema(@Param('id') id: string) {
+    return await this.projectsService.deleteProjectDatabaseSchema(id);
+  }
+
+  // PROJECT ERD
+  @Get('erd')
+  async getErdList() {
+    return await this.projectsService.getProjectErds();
+  }
+
+  @UseGuards(JwtGuard)
+  @Post('erd')
+  async createErd(@Body() body: ProjectErdDto) {
+    return await this.projectsService.createProjectErd(body);
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch('erd/:id')
+  async updateErd(
+    @Param('id') id: string,
+    @Body() body: Partial<ProjectErdDto>,
+  ) {
+    return await this.projectsService.updateProjectErd(id, body);
+  }
+
+  @UseGuards(JwtGuard)
+  @Delete('erd/:id')
+  async deleteErd(@Param('id') id: string) {
+    return await this.projectsService.deleteProjectErd(id);
   }
 }
 
