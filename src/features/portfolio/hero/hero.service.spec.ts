@@ -76,6 +76,14 @@ describe('HeroService', () => {
       expect(result.metrics).toEqual([]);
     });
 
+    it('should get hero data with default if not found', async () => {
+      mockCtx.prisma.heroConfig.findUnique.mockResolvedValue(null);
+      mockCtx.prisma.metric.findMany.mockResolvedValue([]);
+      const result = await service.getHero();
+      expect(result.heroConfig).toEqual({});
+      expect(result.metrics).toEqual([]);
+    });
+
     it('should update hero data successfully', async () => {
       mockCtx.prisma.heroConfig.upsert.mockResolvedValue({} as any);
       mockCtx.prisma.metric.deleteMany.mockResolvedValue({ count: 1 });
@@ -88,6 +96,23 @@ describe('HeroService', () => {
       expect(mockCtx.prisma.heroConfig.upsert).toHaveBeenCalled();
       expect(mockCtx.prisma.metric.deleteMany).toHaveBeenCalled();
       expect(mockCtx.prisma.metric.createMany).toHaveBeenCalled();
+    });
+
+    it('should update hero data with empty metrics and no hero config', async () => {
+      mockCtx.prisma.metric.deleteMany.mockResolvedValue({ count: 1 });
+      const result = await service.updateHero(undefined, []);
+      expect(result).toEqual({ success: true });
+      expect(mockCtx.prisma.metric.deleteMany).toHaveBeenCalled();
+      expect(mockCtx.prisma.metric.createMany).not.toHaveBeenCalled();
+      expect(mockCtx.prisma.heroConfig.upsert).not.toHaveBeenCalled();
+    });
+
+    it('should update hero config only', async () => {
+      mockCtx.prisma.heroConfig.upsert.mockResolvedValue({} as any);
+      const result = await service.updateHero({ name: 'Only Name' }, undefined);
+      expect(result).toEqual({ success: true });
+      expect(mockCtx.prisma.heroConfig.upsert).toHaveBeenCalled();
+      expect(mockCtx.prisma.metric.deleteMany).not.toHaveBeenCalled();
     });
   });
 });

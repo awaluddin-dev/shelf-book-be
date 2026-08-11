@@ -19,6 +19,18 @@ describe('ProjectsController', () => {
     createProjectLifecycle: jest.fn().mockResolvedValue({ id: '1' }),
     updateProjectLifecycle: jest.fn().mockResolvedValue({ id: '1' }),
     deleteProjectLifecycle: jest.fn().mockResolvedValue({ success: true }),
+    getTechnicalImageries: jest.fn().mockResolvedValue([]),
+    upsertTechnicalImagery: jest.fn().mockResolvedValue({ id: '1' }),
+    updateTechnicalImagery: jest.fn().mockResolvedValue({ id: '1' }),
+    deleteTechnicalImagery: jest.fn().mockResolvedValue({ success: true }),
+    getProjectDatabaseSchemas: jest.fn().mockResolvedValue([]),
+    createProjectDatabaseSchema: jest.fn().mockResolvedValue({ id: '1' }),
+    updateProjectDatabaseSchema: jest.fn().mockResolvedValue({ id: '1' }),
+    deleteProjectDatabaseSchema: jest.fn().mockResolvedValue({ success: true }),
+    getProjectErds: jest.fn().mockResolvedValue([]),
+    createProjectErd: jest.fn().mockResolvedValue({ id: '1' }),
+    updateProjectErd: jest.fn().mockResolvedValue({ id: '1' }),
+    deleteProjectErd: jest.fn().mockResolvedValue({ success: true }),
   };
 
   beforeEach(async () => {
@@ -81,5 +93,54 @@ describe('ProjectsController', () => {
 
   it('should delete lifecycle', async () => {
     expect(await controller.deleteLifecycle('1')).toEqual({ success: true });
+  });
+
+  it('should get technical imagery list', async () => {
+    expect(await controller.getTechnicalImageryList()).toEqual([]);
+  });
+
+  it('should upsert technical imagery', async () => {
+    expect(await controller.upsertTechnicalImagery({ projectId: 'p1' } as any)).toEqual({ id: '1' });
+    expect(projectsService.upsertTechnicalImagery).toHaveBeenCalledWith('p1', {});
+  });
+
+  it('should update technical imagery', async () => {
+    expect(await controller.updateTechnicalImagery('1', {})).toEqual({ id: '1' });
+  });
+
+  it('should delete technical imagery', async () => {
+    expect(await controller.deleteTechnicalImagery('1')).toEqual({ success: true });
+  });
+
+  it('should get database schema list', async () => {
+    expect(await controller.getDatabaseSchemaList()).toEqual([]);
+  });
+
+  it('should create database schema', async () => {
+    expect(await controller.createDatabaseSchema({} as any)).toEqual({ id: '1' });
+  });
+
+  it('should update database schema', async () => {
+    expect(await controller.updateDatabaseSchema('1', {})).toEqual({ id: '1' });
+  });
+
+  it('should delete database schema', async () => {
+    expect(await controller.deleteDatabaseSchema('1')).toEqual({ success: true });
+  });
+
+  it('should get erd list', async () => {
+    expect(await controller.getErdList()).toEqual([]);
+  });
+
+  it('should create erd', async () => {
+    expect(await controller.createErd({} as any)).toEqual({ id: '1' });
+  });
+
+  it('should update erd', async () => {
+    expect(await controller.updateErd('1', {})).toEqual({ id: '1' });
+  });
+
+  it('should delete erd', async () => {
+    expect(await controller.deleteErd('1')).toEqual({ success: true });
   });
 });

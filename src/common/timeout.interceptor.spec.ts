@@ -19,7 +19,11 @@ describe('TimeoutInterceptor', () => {
   });
 
   it('should successfully pass data if resolved within timeout', (done) => {
-    const mockContext = {} as ExecutionContext;
+    const mockContext = {
+      switchToHttp: () => ({
+        getRequest: () => ({ url: '/normal-route' }),
+      }),
+    } as unknown as ExecutionContext;
     const mockCallHandler = {
       handle: () => of('success data'),
     } as CallHandler;
@@ -33,7 +37,11 @@ describe('TimeoutInterceptor', () => {
   });
 
   it('should throw RequestTimeoutException if TimeoutError is caught', (done) => {
-    const mockContext = {} as ExecutionContext;
+    const mockContext = {
+      switchToHttp: () => ({
+        getRequest: () => ({ url: '/normal-route' }),
+      }),
+    } as unknown as ExecutionContext;
     const mockCallHandler = {
       handle: () => throwError(() => new TimeoutError()),
     } as CallHandler;
@@ -48,7 +56,11 @@ describe('TimeoutInterceptor', () => {
   });
 
   it('should rethrow standard errors untouched', (done) => {
-    const mockContext = {} as ExecutionContext;
+    const mockContext = {
+      switchToHttp: () => ({
+        getRequest: () => ({ url: '/normal-route' }),
+      }),
+    } as unknown as ExecutionContext;
     const standardError = new Error('Standard Error');
     const mockCallHandler = {
       handle: () => throwError(() => standardError),
