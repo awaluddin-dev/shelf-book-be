@@ -190,22 +190,25 @@ model Project {
   updatedAt           DateTime             @updatedAt
   problemSolved       String?
   reasonToBuild       String?
-  projectLifecycles   ProjectLifecycle[]
-  systemArchitectures SystemArchitecture[]
-  technicalImagery    TechnicalImagery?
+  projectLifecycles      ProjectLifecycle[]
+  systemArchitectures    SystemArchitecture[]
+  technicalImagery       TechnicalImagery?
+  projectDatabaseSchemas ProjectDatabaseSchema[]
+  projectErds            ProjectErd[]
 
   @@map("projects")
   @@schema("public")
 }
 
 model SystemArchitecture {
-  id        String   @id @default(dbgenerated("gen_random_uuid()"))
-  projectId String
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  imageUrl  String   @default("")
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
+  projectId   String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  imageUrl    String   @default("")
+  description String   @default("")
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@map("system_architectures")
   @@schema("public")
@@ -242,5 +245,33 @@ model TechnicalImagery {
   project          Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@map("technical_imageries")
+  @@schema("public")
+}
+
+model ProjectDatabaseSchema {
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
+  projectId   String
+  order       Int      @default(0)
+  imageUrl    String   @default("")
+  description String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_database_schemas")
+  @@schema("public")
+}
+
+model ProjectErd {
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
+  projectId   String
+  order       Int      @default(0)
+  imageUrl    String   @default("")
+  description String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_erds")
   @@schema("public")
 }

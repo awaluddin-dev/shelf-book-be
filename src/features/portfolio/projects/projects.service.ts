@@ -21,11 +21,15 @@ export class ProjectsService extends BaseCrudService {
           }
         },
         projectLifecycles: {
-          orderBy: {
-            order: 'asc'
-          }
+          orderBy: { order: 'asc' }
         },
-        technicalImagery: true
+        technicalImagery: true,
+        projectDatabaseSchemas: {
+          orderBy: { order: 'asc' }
+        },
+        projectErds: {
+          orderBy: { order: 'asc' }
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -38,6 +42,8 @@ export class ProjectsService extends BaseCrudService {
         systemArchitectures: { orderBy: { order: 'asc' } },
         projectLifecycles: { orderBy: { order: 'asc' } },
         technicalImagery: true,
+        projectDatabaseSchemas: { orderBy: { order: 'asc' } },
+        projectErds: { orderBy: { order: 'asc' } },
       },
     });
     if (!item) throw new NotFoundException(`Item with id ${id} not found`);
@@ -130,6 +136,46 @@ export class ProjectsService extends BaseCrudService {
 
   async updateTechnicalImagery(id: string, data: any) {
     return this.updateOne(this.prisma.technicalImagery, id, data);
+  }
+
+  // ----------------------------------------------------
+  // PROJECT DATABASE SCHEMA
+  // ----------------------------------------------------
+
+  async getProjectDatabaseSchemas() {
+    return this.getMany(this.prisma.projectDatabaseSchema);
+  }
+
+  async createProjectDatabaseSchema(data: any) {
+    return this.createOne(this.prisma.projectDatabaseSchema, data);
+  }
+
+  async updateProjectDatabaseSchema(id: string, data: any) {
+    return this.updateOne(this.prisma.projectDatabaseSchema, id, data);
+  }
+
+  async deleteProjectDatabaseSchema(id: string) {
+    return this.deleteOne(this.prisma.projectDatabaseSchema, id);
+  }
+
+  // ----------------------------------------------------
+  // PROJECT ERD
+  // ----------------------------------------------------
+
+  async getProjectErds() {
+    return this.getMany(this.prisma.projectErd);
+  }
+
+  async createProjectErd(data: any) {
+    return this.createOne(this.prisma.projectErd, data);
+  }
+
+  async updateProjectErd(id: string, data: any) {
+    return this.updateOne(this.prisma.projectErd, id, data);
+  }
+
+  async deleteProjectErd(id: string) {
+    return this.deleteOne(this.prisma.projectErd, id);
   }
 }
 

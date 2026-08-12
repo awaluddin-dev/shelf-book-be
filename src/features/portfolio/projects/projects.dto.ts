@@ -62,6 +62,10 @@ export class SystemArchitectureDto {
 
   @IsNumber()
   order!: number;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
 }
 
 export class ProjectLifecycleDto {
@@ -110,4 +114,34 @@ export class TechnicalImageryDto {
 
   @IsString()
   metricsCaption!: string;
+}
+
+export class ProjectDatabaseSchemaDto {
+  @IsString()
+  projectId!: string;
+
+  @IsString()
+  imageUrl!: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsNumber()
+  order!: number;
+}
+
+export class ProjectErdDto {
+  @IsString()
+  projectId!: string;
+
+  @IsString()
+  imageUrl!: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsNumber()
+  order!: number;
 }

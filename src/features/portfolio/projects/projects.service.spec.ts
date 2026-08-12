@@ -28,7 +28,14 @@ describe('ProjectsService', () => {
   });
 
   describe('CRUD operations for entities', () => {
-    const entities = ['project', 'systemArchitecture', 'projectLifecycle'];
+    const entities = [
+      'project',
+      'systemArchitecture',
+      'projectLifecycle',
+      'technicalImagery',
+      'projectDatabaseSchema',
+      'projectErd',
+    ];
 
     for (const entity of entities) {
       describe(entity, () => {
@@ -36,7 +43,10 @@ describe('ProjectsService', () => {
           mockCtx.prisma[entity].findMany = jest
             .fn()
             .mockResolvedValue([{ id: '1' }]);
-          const method = `get${entity.charAt(0).toUpperCase() + entity.slice(1)}s`;
+          let method = `get${entity.charAt(0).toUpperCase() + entity.slice(1)}s`;
+          if (entity === 'technicalImagery') {
+            method = 'getTechnicalImageries';
+          }
 
           if (typeof (service as any)[method] === 'function') {
             const res = await (service as any)[method]();
@@ -48,7 +58,11 @@ describe('ProjectsService', () => {
           mockCtx.prisma[entity].findUnique = jest
             .fn()
             .mockResolvedValue({ id: '1' });
-          const method = `get${entity.charAt(0).toUpperCase() + entity.slice(1)}`;
+          let method = `get${entity.charAt(0).toUpperCase() + entity.slice(1)}`;
+          if (entity === 'technicalImagery') {
+            method = 'getTechnicalImagery';
+          }
+          
           if (typeof (service as any)[method] === 'function') {
             const res = await (service as any)[method]('1');
             expect(res).toEqual({ id: '1' });
@@ -57,7 +71,11 @@ describe('ProjectsService', () => {
 
         it(`should throw NotFoundException if one not found`, async () => {
           mockCtx.prisma[entity].findUnique = jest.fn().mockResolvedValue(null);
-          const method = `get${entity.charAt(0).toUpperCase() + entity.slice(1)}`;
+          let method = `get${entity.charAt(0).toUpperCase() + entity.slice(1)}`;
+          if (entity === 'technicalImagery') {
+            method = 'getTechnicalImagery';
+          }
+
           if (typeof (service as any)[method] === 'function') {
             await expect((service as any)[method]('999')).rejects.toThrow(
               NotFoundException,
@@ -123,5 +141,18 @@ describe('ProjectsService', () => {
         });
       });
     }
+
+    describe('specific methods', () => {
+      it('should upsertTechnicalImagery', async () => {
+        mockCtx.prisma.technicalImagery.upsert = jest.fn().mockResolvedValue({ id: '1', projectId: 'p1' });
+        const res = await service.upsertTechnicalImagery('p1', { someData: true });
+        expect(mockCtx.prisma.technicalImagery.upsert).toHaveBeenCalledWith({
+          where: { projectId: 'p1' },
+          update: { someData: true },
+          create: { someData: true, projectId: 'p1' }
+        });
+        expect(res).toEqual({ id: '1', projectId: 'p1' });
+      });
+    });
   });
 });
