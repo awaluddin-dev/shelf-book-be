@@ -10,7 +10,9 @@ import helmet from 'helmet';
 import compression from 'compression';
 import { TransformInterceptor } from './common/transform.interceptor';
 import { TimeoutInterceptor } from './common/timeout.interceptor';
+import { DemoModeInterceptor } from './common/demo-mode.interceptor';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
+import { apiReference } from '@scalar/nestjs-api-reference';
 
 async function bootstrap() {
   process.env.TZ = 'Asia/Makassar';
@@ -46,6 +48,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(
     new TransformInterceptor(),
     new TimeoutInterceptor(),
+    new DemoModeInterceptor(),
   );
   app.useGlobalFilters(new AllExceptionsFilter());
 
@@ -59,12 +62,23 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
+  app.use(
+    '/api/scalar',
+    apiReference({
+      theme: 'purple',
+      spec: {
+        content: document,
+      },
+    }),
+  );
+
   const port = process.env.PORT || 8080;
   const host = process.env.HOST || '0.0.0.0';
 
   await app.listen(port, host);
   logger.log(`Application is running on: ${await app.getUrl()}`);
   logger.log(`Swagger UI is running on: ${await app.getUrl()}/api/docs`);
+  logger.log(`Scalar API Reference is running on: ${await app.getUrl()}/api/scalar`);
 }
 
 bootstrap().catch((error) => {
