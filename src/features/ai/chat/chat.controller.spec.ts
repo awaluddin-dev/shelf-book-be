@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ChatController } from './chat.controller';
 import { ChatService } from './chat.service';
 import { ChatDto } from './chat.dto';
+import { ReadableStream } from 'node:stream/web';
 
 describe('ChatController', () => {
   let controller: ChatController;
@@ -99,7 +100,6 @@ describe('ChatController', () => {
     });
 
     it('should stream successfully', async () => {
-      const { ReadableStream } = await import('node:stream/web');
       const mockBody = new ReadableStream({
         start(c: any) {
           c.close();
