@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { BaseCrudService } from 'src/common/services/base-crud.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ProjectsService extends BaseCrudService {
@@ -125,8 +126,8 @@ export class ProjectsService extends BaseCrudService {
   async upsertTechnicalImagery(projectId: string, data: Record<string, any>) {
     return this.prisma.technicalImagery.upsert({
       where: { projectId },
-      update: data,
-      create: { ...data, projectId },
+      update: data as Prisma.TechnicalImageryUncheckedUpdateInput,
+      create: { ...data, projectId } as Prisma.TechnicalImageryUncheckedCreateInput,
     });
   }
 
