@@ -40,7 +40,10 @@ describe('SkillsService', () => {
 
           if (typeof service[method as keyof SkillsService] === 'function') {
             const res = await (service as any)[method]();
-            const expected = entity === 'skill' ? [{ id: '1', category: '', categoryObj: undefined }] : [{ id: '1' }];
+            const expected =
+              entity === 'skill'
+                ? [{ id: '1', category: '', categoryObj: undefined }]
+                : [{ id: '1' }];
             expect(res).toEqual(expected);
           }
         });
@@ -52,7 +55,10 @@ describe('SkillsService', () => {
           const method = `get${entity.charAt(0).toUpperCase() + entity.slice(1)}`;
           if (typeof service[method as keyof SkillsService] === 'function') {
             const res = await (service as any)[method]('1');
-            const expected = entity === 'skill' ? { id: '1', category: '', categoryObj: undefined } : { id: '1' };
+            const expected =
+              entity === 'skill'
+                ? { id: '1', category: '', categoryObj: undefined }
+                : { id: '1' };
             expect(res).toEqual(expected);
           }
         });

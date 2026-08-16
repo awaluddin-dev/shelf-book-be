@@ -62,7 +62,7 @@ describe('ProjectsService', () => {
           if (entity === 'technicalImagery') {
             method = 'getTechnicalImagery';
           }
-          
+
           if (typeof (service as any)[method] === 'function') {
             const res = await (service as any)[method]('1');
             expect(res).toEqual({ id: '1' });
@@ -144,12 +144,16 @@ describe('ProjectsService', () => {
 
     describe('specific methods', () => {
       it('should upsertTechnicalImagery', async () => {
-        mockCtx.prisma.technicalImagery.upsert = jest.fn().mockResolvedValue({ id: '1', projectId: 'p1' });
-        const res = await service.upsertTechnicalImagery('p1', { someData: true });
+        mockCtx.prisma.technicalImagery.upsert = jest
+          .fn()
+          .mockResolvedValue({ id: '1', projectId: 'p1' });
+        const res = await service.upsertTechnicalImagery('p1', {
+          someData: true,
+        });
         expect(mockCtx.prisma.technicalImagery.upsert).toHaveBeenCalledWith({
           where: { projectId: 'p1' },
           update: { someData: true },
-          create: { someData: true, projectId: 'p1' }
+          create: { someData: true, projectId: 'p1' },
         });
         expect(res).toEqual({ id: '1', projectId: 'p1' });
       });

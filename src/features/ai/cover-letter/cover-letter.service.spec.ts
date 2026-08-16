@@ -57,21 +57,40 @@ describe('CoverLetterService', () => {
 
   describe('streamCoverLetter', () => {
     it('should generate cover letter with full data', async () => {
-      mockPrismaService.heroConfig.findFirst.mockResolvedValue({ name: 'John', role: 'Dev', expertise: 'JS' });
+      mockPrismaService.heroConfig.findFirst.mockResolvedValue({
+        name: 'John',
+        role: 'Dev',
+        expertise: 'JS',
+      });
       mockPrismaService.workExperience.findMany.mockResolvedValue([
-        { role: 'Dev', company: 'ABC', years: '2020-2022', duration: '2 yrs', stack: 'Node', fullImpact: 'Did stuff' }
+        {
+          role: 'Dev',
+          company: 'ABC',
+          years: '2020-2022',
+          duration: '2 yrs',
+          stack: 'Node',
+          fullImpact: 'Did stuff',
+        },
       ]);
       mockPrismaService.skill.findMany.mockResolvedValue([
-        { title: 'Node.js', categoryId: 'backend', level: 'expert' }
+        { title: 'Node.js', categoryId: 'backend', level: 'expert' },
       ]);
       mockPrismaService.project.findMany.mockResolvedValue([
-        { title: 'Project 1', subtitle: 'P1', tags: [], reasonToBuild: 'fun', problemSolved: 'nothing' }
+        {
+          title: 'Project 1',
+          subtitle: 'P1',
+          tags: [],
+          reasonToBuild: 'fun',
+          problemSolved: 'nothing',
+        },
       ]);
-      
+
       const mockResponse = {} as Response;
       mockLlmProviderService.streamCompletion.mockResolvedValue(mockResponse);
 
-      const result = await service.streamCoverLetter({ jobDescription: 'Needs Node' });
+      const result = await service.streamCoverLetter({
+        jobDescription: 'Needs Node',
+      });
 
       expect(prisma.heroConfig.findFirst).toHaveBeenCalled();
       expect(prisma.workExperience.findMany).toHaveBeenCalled();
@@ -79,10 +98,16 @@ describe('CoverLetterService', () => {
       expect(prisma.project.findMany).toHaveBeenCalled();
 
       expect(llm.streamCompletion).toHaveBeenCalled();
-      expect(llm.streamCompletion.mock.calls[0][0][0].content).toContain('Needs Node');
-      expect(llm.streamCompletion.mock.calls[0][0][0].content).toContain('John');
+      expect(llm.streamCompletion.mock.calls[0][0][0].content).toContain(
+        'Needs Node',
+      );
+      expect(llm.streamCompletion.mock.calls[0][0][0].content).toContain(
+        'John',
+      );
       expect(llm.streamCompletion.mock.calls[0][0][0].content).toContain('ABC');
-      expect(llm.streamCompletion.mock.calls[0][0][0].content).toContain('Project 1');
+      expect(llm.streamCompletion.mock.calls[0][0][0].content).toContain(
+        'Project 1',
+      );
       expect(result).toBe(mockResponse);
     });
 
@@ -91,33 +116,43 @@ describe('CoverLetterService', () => {
       mockPrismaService.workExperience.findMany.mockResolvedValue([]);
       mockPrismaService.skill.findMany.mockResolvedValue([]);
       mockPrismaService.project.findMany.mockResolvedValue([
-        { title: 'Project 2', subtitle: 'P2' } // missing problemSolved
+        { title: 'Project 2', subtitle: 'P2' }, // missing problemSolved
       ]);
-      
+
       const mockResponse = {} as Response;
       mockLlmProviderService.streamCompletion.mockResolvedValue(mockResponse);
 
-      const result = await service.streamCoverLetter({ jobDescription: 'Needs Node' });
+      const result = await service.streamCoverLetter({
+        jobDescription: 'Needs Node',
+      });
 
       expect(llm.streamCompletion).toHaveBeenCalled();
-      expect(llm.streamCompletion.mock.calls[0][0][0].content).toContain('Name: Awaluddin');
-      expect(llm.streamCompletion.mock.calls[0][0][0].content).toContain('Project 2');
+      expect(llm.streamCompletion.mock.calls[0][0][0].content).toContain(
+        'Name: Awaluddin',
+      );
+      expect(llm.streamCompletion.mock.calls[0][0][0].content).toContain(
+        'Project 2',
+      );
       expect(result).toBe(mockResponse);
     });
-    
+
     it('should generate cover letter with partial hero data', async () => {
       mockPrismaService.heroConfig.findFirst.mockResolvedValue({});
       mockPrismaService.workExperience.findMany.mockResolvedValue([]);
       mockPrismaService.skill.findMany.mockResolvedValue([]);
       mockPrismaService.project.findMany.mockResolvedValue([]);
-      
+
       const mockResponse = {} as Response;
       mockLlmProviderService.streamCompletion.mockResolvedValue(mockResponse);
 
-      const result = await service.streamCoverLetter({ jobDescription: 'Needs Node' });
+      const result = await service.streamCoverLetter({
+        jobDescription: 'Needs Node',
+      });
 
       expect(llm.streamCompletion).toHaveBeenCalled();
-      expect(llm.streamCompletion.mock.calls[0][0][0].content).toContain('Name: Awaluddin');
+      expect(llm.streamCompletion.mock.calls[0][0][0].content).toContain(
+        'Name: Awaluddin',
+      );
       expect(result).toBe(mockResponse);
     });
   });
@@ -130,7 +165,9 @@ describe('CoverLetterService', () => {
       const result = await service.streamDraftInquiry({ coverLetter: 'My CL' });
 
       expect(llm.streamCompletion).toHaveBeenCalled();
-      expect(llm.streamCompletion.mock.calls[0][0][0].content).toContain('My CL');
+      expect(llm.streamCompletion.mock.calls[0][0][0].content).toContain(
+        'My CL',
+      );
       expect(result).toBe(mockResponse);
     });
   });

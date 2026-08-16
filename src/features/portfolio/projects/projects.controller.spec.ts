@@ -100,16 +100,25 @@ describe('ProjectsController', () => {
   });
 
   it('should upsert technical imagery', async () => {
-    expect(await controller.upsertTechnicalImagery({ projectId: 'p1' } as any)).toEqual({ id: '1' });
-    expect(projectsService.upsertTechnicalImagery).toHaveBeenCalledWith('p1', {});
+    expect(
+      await controller.upsertTechnicalImagery({ projectId: 'p1' } as any),
+    ).toEqual({ id: '1' });
+    expect(projectsService.upsertTechnicalImagery).toHaveBeenCalledWith(
+      'p1',
+      {},
+    );
   });
 
   it('should update technical imagery', async () => {
-    expect(await controller.updateTechnicalImagery('1', {})).toEqual({ id: '1' });
+    expect(await controller.updateTechnicalImagery('1', {})).toEqual({
+      id: '1',
+    });
   });
 
   it('should delete technical imagery', async () => {
-    expect(await controller.deleteTechnicalImagery('1')).toEqual({ success: true });
+    expect(await controller.deleteTechnicalImagery('1')).toEqual({
+      success: true,
+    });
   });
 
   it('should get database schema list', async () => {
@@ -117,7 +126,9 @@ describe('ProjectsController', () => {
   });
 
   it('should create database schema', async () => {
-    expect(await controller.createDatabaseSchema({} as any)).toEqual({ id: '1' });
+    expect(await controller.createDatabaseSchema({} as any)).toEqual({
+      id: '1',
+    });
   });
 
   it('should update database schema', async () => {
@@ -125,7 +136,9 @@ describe('ProjectsController', () => {
   });
 
   it('should delete database schema', async () => {
-    expect(await controller.deleteDatabaseSchema('1')).toEqual({ success: true });
+    expect(await controller.deleteDatabaseSchema('1')).toEqual({
+      success: true,
+    });
   });
 
   it('should get erd list', async () => {

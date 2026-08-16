@@ -17,18 +17,18 @@ export class ProjectsService extends BaseCrudService {
       include: {
         systemArchitectures: {
           orderBy: {
-            order: 'asc'
-          }
+            order: 'asc',
+          },
         },
         projectLifecycles: {
-          orderBy: { order: 'asc' }
+          orderBy: { order: 'asc' },
         },
         technicalImagery: true,
         projectDatabaseSchemas: {
-          orderBy: { order: 'asc' }
+          orderBy: { order: 'asc' },
         },
         projectErds: {
-          orderBy: { order: 'asc' }
+          orderBy: { order: 'asc' },
         },
       },
       orderBy: { createdAt: 'desc' },
@@ -122,7 +122,7 @@ export class ProjectsService extends BaseCrudService {
     return this.getById(this.prisma.technicalImagery, id);
   }
 
-  async upsertTechnicalImagery(projectId: string, data: any) {
+  async upsertTechnicalImagery(projectId: string, data: Record<string, any>) {
     return this.prisma.technicalImagery.upsert({
       where: { projectId },
       update: data,
@@ -178,4 +178,3 @@ export class ProjectsService extends BaseCrudService {
     return this.deleteOne(this.prisma.projectErd, id);
   }
 }
-

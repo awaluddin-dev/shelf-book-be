@@ -96,20 +96,22 @@ export class SkillsService extends BaseCrudService {
     };
   }
 
-  async createSkill(data: any) {
-    const { category, categoryObj, ...rest } = data;
+  async createSkill(data: Record<string, any>) {
+    delete data.category;
+    delete data.categoryObj;
     return this.prisma.skill.create({
-      data: rest,
-      include: { category: true, proficiencySkill: true }
+      data,
+      include: { category: true, proficiencySkill: true },
     });
   }
 
-  async updateSkill(id: string, data: any) {
-    const { category, categoryObj, ...rest } = data;
+  async updateSkill(id: string, data: Record<string, any>) {
+    delete data.category;
+    delete data.categoryObj;
     return this.prisma.skill.update({
       where: { id },
-      data: rest,
-      include: { category: true, proficiencySkill: true }
+      data,
+      include: { category: true, proficiencySkill: true },
     });
   }
 

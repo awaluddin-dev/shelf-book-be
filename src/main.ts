@@ -27,10 +27,14 @@ async function bootstrap() {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-          scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
-          fontSrc: ["'self'", "https://fonts.gstatic.com"],
-          imgSrc: ["'self'", "data:", "validator.swagger.io"],
+          styleSrc: [
+            "'self'",
+            "'unsafe-inline'",
+            'https://fonts.googleapis.com',
+          ],
+          scriptSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net'],
+          fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+          imgSrc: ["'self'", 'data:', 'validator.swagger.io'],
         },
       },
     }),
@@ -68,14 +72,14 @@ async function bootstrap() {
     .setTitle('ShelfBook API')
     .setDescription(
       '# API documentation for the Shelf Book System\n\n' +
-      'Welcome to the **ShelfBook API** documentation. \n' +
-      'This API is built using **NestJS** and provides all the endpoints needed to interact with the Shelf Book system, including AI integrations, User Authentication, Portfolio management, and more.\n\n' +
-      '## Technologies Used\n' +
-      '- **Node.js** & **NestJS** (Backend Framework)\n' +
-      '- **Fastify** (HTTP engine)\n' +
-      '- **PostgreSQL** & **Prisma** (Database & ORM)\n\n' +
-      '## Authentication\n' +
-      'Most endpoints require a JWT bearer token. Use the `/auth/login` endpoint to acquire a token, then click the **Authorize** button to set your token.'
+        'Welcome to the **ShelfBook API** documentation. \n' +
+        'This API is built using **NestJS** and provides all the endpoints needed to interact with the Shelf Book system, including AI integrations, User Authentication, Portfolio management, and more.\n\n' +
+        '## Technologies Used\n' +
+        '- **Node.js** & **NestJS** (Backend Framework)\n' +
+        '- **Fastify** (HTTP engine)\n' +
+        '- **PostgreSQL** & **Prisma** (Database & ORM)\n\n' +
+        '## Authentication\n' +
+        'Most endpoints require a JWT bearer token. Use the `/auth/login` endpoint to acquire a token, then click the **Authorize** button to set your token.',
     )
     .setVersion('1.0')
     .addBearerAuth() // Hint: Tells Swagger we use JWT
@@ -93,7 +97,19 @@ async function bootstrap() {
       },
       withFastify: true,
       hiddenClients: [
-        'ruby', 'python', 'php', 'c', 'csharp', 'go', 'java', 'kotlin', 'objc', 'ocaml', 'r', 'swift', 'clojure'
+        'ruby',
+        'python',
+        'php',
+        'c',
+        'csharp',
+        'go',
+        'java',
+        'kotlin',
+        'objc',
+        'ocaml',
+        'r',
+        'swift',
+        'clojure',
       ],
       defaultHttpClient: {
         targetKey: 'node',
@@ -108,7 +124,9 @@ async function bootstrap() {
   await app.listen(port, host);
   logger.log(`Application is running on: ${await app.getUrl()}`);
   logger.log(`Swagger UI is running on: ${await app.getUrl()}/api/docs`);
-  logger.log(`Scalar API Reference is running on: ${await app.getUrl()}/api/scalar`);
+  logger.log(
+    `Scalar API Reference is running on: ${await app.getUrl()}/api/scalar`,
+  );
 }
 
 bootstrap().catch((error) => {
