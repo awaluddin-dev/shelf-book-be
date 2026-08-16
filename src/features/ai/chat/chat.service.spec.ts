@@ -25,8 +25,8 @@ describe('ChatService', () => {
     }).compile();
 
     service = module.get<ChatService>(ChatService);
-    rag = module.get(RagRetrievalService) as any;
-    llm = module.get(LlmProviderService) as any;
+    rag = module.get(RagRetrievalService);
+    llm = module.get(LlmProviderService);
   });
 
   describe('streamChat', () => {
@@ -49,7 +49,7 @@ describe('ChatService', () => {
 
     it('should handle chat with context and history', async () => {
       rag.retrieve.mockResolvedValue([
-        { source: 'skills', content: 'TypeScript' }
+        { source: 'skills', content: 'TypeScript' },
       ]);
       llm.streamCompletion.mockResolvedValue('mock_response' as any);
 
@@ -70,7 +70,7 @@ describe('ChatService', () => {
       expect(rag.retrieve).toHaveBeenCalledWith('g');
       const args = llm.streamCompletion.mock.calls[0][0];
       expect(args[0].content).toContain('[SKILLS]\nTypeScript');
-      
+
       // system, assistant, c, d, e, f, g (c,d,e,f is slice(-5, -1))
       expect(args.length).toBe(7);
       expect(args[2].content).toBe('c');

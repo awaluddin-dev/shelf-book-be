@@ -8,18 +8,19 @@ import {
 } from '@nestjs/common';
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
+import type { FastifyRequest } from 'fastify';
 
 @Injectable()
 export class TimeoutInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<FastifyRequest>();
     if (
       request.url?.includes('/ai/explain-project') ||
       request.url?.includes('/ai/cover-letter')
     ) {
       return next.handle();
     }
-    
+
     return next.handle().pipe(
       timeout(10000), // 10 seconds timeout
       catchError((err) => {

@@ -19,7 +19,7 @@ describe('AiService', () => {
     }).compile();
 
     service = module.get<AiService>(AiService);
-    llmProvider = module.get(LlmProviderService) as any;
+    llmProvider = module.get(LlmProviderService);
   });
 
   describe('streamProjectExplanation', () => {
@@ -32,8 +32,8 @@ describe('AiService', () => {
         description: 'D',
         tech_stack: ['A', 'B'],
         metrics: 'M',
-        role: 'R'
-      } as any;
+        role: 'R',
+      };
 
       const result = await service.streamProjectExplanation(dto);
 
@@ -54,7 +54,7 @@ describe('AiService', () => {
         title: 'T',
         description: 'D',
         tech_stack: ['A', 'B'],
-      } as any;
+      };
 
       const result = await service.streamProjectExplanation(dto);
 

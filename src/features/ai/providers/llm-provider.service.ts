@@ -25,7 +25,10 @@ export class LlmProviderService {
     // Primary: self-hosted / custom OpenAI-compatible endpoint
     const customUrl = this.config.get<string>('AI_CUSTOM_BASE_URL');
     const customKey = this.config.get<string>('AI_CUSTOM_API_KEY');
-    const customModel = this.config.get<string>('AI_CUSTOM_MODEL', 'gpt-4o-mini');
+    const customModel = this.config.get<string>(
+      'AI_CUSTOM_MODEL',
+      'gpt-4o-mini',
+    );
 
     if (customUrl && customKey) {
       providers.push({
@@ -72,7 +75,9 @@ export class LlmProviderService {
     const providers = this.getProviders();
 
     if (providers.length === 0) {
-      throw new Error('No LLM providers configured. Set AI_CUSTOM_API_KEY, GROQ_API_KEY, or GEMINI_API_KEY.');
+      throw new Error(
+        'No LLM providers configured. Set AI_CUSTOM_API_KEY, GROQ_API_KEY, or GEMINI_API_KEY.',
+      );
     }
 
     for (const provider of providers) {
@@ -105,11 +110,15 @@ export class LlmProviderService {
         this.logger.log(`Streaming from provider: ${provider.name}`);
         return response;
       } catch (error) {
-        this.logger.warn(`Provider ${provider.name} failed: ${(error as Error).message}`);
+        this.logger.warn(
+          `Provider ${provider.name} failed: ${(error as Error).message}`,
+        );
         continue;
       }
     }
 
-    throw new Error('All LLM providers failed. Check your API keys and connectivity.');
+    throw new Error(
+      'All LLM providers failed. Check your API keys and connectivity.',
+    );
   }
 }

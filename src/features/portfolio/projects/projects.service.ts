@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { BaseCrudService } from 'src/common/services/base-crud.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ProjectsService extends BaseCrudService {
@@ -17,18 +18,18 @@ export class ProjectsService extends BaseCrudService {
       include: {
         systemArchitectures: {
           orderBy: {
-            order: 'asc'
-          }
+            order: 'asc',
+          },
         },
         projectLifecycles: {
-          orderBy: { order: 'asc' }
+          orderBy: { order: 'asc' },
         },
         technicalImagery: true,
         projectDatabaseSchemas: {
-          orderBy: { order: 'asc' }
+          orderBy: { order: 'asc' },
         },
         projectErds: {
-          orderBy: { order: 'asc' }
+          orderBy: { order: 'asc' },
         },
       },
       orderBy: { createdAt: 'desc' },
@@ -122,11 +123,11 @@ export class ProjectsService extends BaseCrudService {
     return this.getById(this.prisma.technicalImagery, id);
   }
 
-  async upsertTechnicalImagery(projectId: string, data: any) {
+  async upsertTechnicalImagery(projectId: string, data: Record<string, any>) {
     return this.prisma.technicalImagery.upsert({
       where: { projectId },
-      update: data,
-      create: { ...data, projectId },
+      update: data as Prisma.TechnicalImageryUncheckedUpdateInput,
+      create: { ...data, projectId } as Prisma.TechnicalImageryUncheckedCreateInput,
     });
   }
 
@@ -178,4 +179,3 @@ export class ProjectsService extends BaseCrudService {
     return this.deleteOne(this.prisma.projectErd, id);
   }
 }
-

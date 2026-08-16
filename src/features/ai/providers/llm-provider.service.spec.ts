@@ -40,9 +40,9 @@ describe('LlmProviderService', () => {
   describe('getProviders', () => {
     it('should throw if no providers are configured', async () => {
       mockConfigService.get.mockReturnValue(null);
-      await expect(service.streamCompletion([{ role: 'user', content: 'test' }])).rejects.toThrow(
-        'No LLM providers configured',
-      );
+      await expect(
+        service.streamCompletion([{ role: 'user', content: 'test' }]),
+      ).rejects.toThrow('No LLM providers configured');
     });
   });
 
@@ -57,7 +57,9 @@ describe('LlmProviderService', () => {
       const mockResponse = { ok: true } as Response;
       (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
 
-      const res = await service.streamCompletion([{ role: 'user', content: 'test' }]);
+      const res = await service.streamCompletion([
+        { role: 'user', content: 'test' },
+      ]);
       expect(res).toBe(mockResponse);
       expect(global.fetch).toHaveBeenCalledTimes(1);
     });
@@ -70,14 +72,20 @@ describe('LlmProviderService', () => {
         return null;
       });
 
-      const errorResponse = { ok: false, status: 500, text: jest.fn().mockResolvedValue('error') } as unknown as Response;
+      const errorResponse = {
+        ok: false,
+        status: 500,
+        text: jest.fn().mockResolvedValue('error'),
+      } as unknown as Response;
       const successResponse = { ok: true } as Response;
 
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce(errorResponse)
         .mockResolvedValueOnce(successResponse);
 
-      const res = await service.streamCompletion([{ role: 'user', content: 'test' }]);
+      const res = await service.streamCompletion([
+        { role: 'user', content: 'test' },
+      ]);
       expect(res).toBe(successResponse);
       expect(global.fetch).toHaveBeenCalledTimes(2);
     });
@@ -96,7 +104,9 @@ describe('LlmProviderService', () => {
         .mockRejectedValueOnce(new Error('Network error'))
         .mockResolvedValueOnce(successResponse);
 
-      const res = await service.streamCompletion([{ role: 'user', content: 'test' }]);
+      const res = await service.streamCompletion([
+        { role: 'user', content: 'test' },
+      ]);
       expect(res).toBe(successResponse);
       expect(global.fetch).toHaveBeenCalledTimes(2);
     });
@@ -110,8 +120,16 @@ describe('LlmProviderService', () => {
         return null;
       });
 
-      const errorResponse1 = { ok: false, status: 500, text: jest.fn().mockResolvedValue('err1') } as unknown as Response;
-      const errorResponse2 = { ok: false, status: 500, text: jest.fn().mockResolvedValue('err2') } as unknown as Response;
+      const errorResponse1 = {
+        ok: false,
+        status: 500,
+        text: jest.fn().mockResolvedValue('err1'),
+      } as unknown as Response;
+      const errorResponse2 = {
+        ok: false,
+        status: 500,
+        text: jest.fn().mockResolvedValue('err2'),
+      } as unknown as Response;
       const successResponse = { ok: true } as Response;
 
       (global.fetch as jest.Mock)
@@ -119,7 +137,9 @@ describe('LlmProviderService', () => {
         .mockResolvedValueOnce(errorResponse2)
         .mockResolvedValueOnce(successResponse);
 
-      const res = await service.streamCompletion([{ role: 'user', content: 'test' }]);
+      const res = await service.streamCompletion([
+        { role: 'user', content: 'test' },
+      ]);
       expect(res).toBe(successResponse);
       expect(global.fetch).toHaveBeenCalledTimes(3);
     });
@@ -133,9 +153,9 @@ describe('LlmProviderService', () => {
 
       (global.fetch as jest.Mock).mockRejectedValue(new Error('Fail'));
 
-      await expect(service.streamCompletion([{ role: 'user', content: 'test' }])).rejects.toThrow(
-        'All LLM providers failed',
-      );
+      await expect(
+        service.streamCompletion([{ role: 'user', content: 'test' }]),
+      ).rejects.toThrow('All LLM providers failed');
     });
   });
 });

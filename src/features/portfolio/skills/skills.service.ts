@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { BaseCrudService } from 'src/common/services/base-crud.service';
 import { ProficiencyDto } from './skills.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class SkillsService extends BaseCrudService {
@@ -96,20 +97,22 @@ export class SkillsService extends BaseCrudService {
     };
   }
 
-  async createSkill(data: any) {
-    const { category, categoryObj, ...rest } = data;
+  async createSkill(data: Record<string, any>) {
+    delete data.category;
+    delete data.categoryObj;
     return this.prisma.skill.create({
-      data: rest,
-      include: { category: true, proficiencySkill: true }
+      data: data as Prisma.SkillUncheckedCreateInput,
+      include: { category: true, proficiencySkill: true },
     });
   }
 
-  async updateSkill(id: string, data: any) {
-    const { category, categoryObj, ...rest } = data;
+  async updateSkill(id: string, data: Record<string, any>) {
+    delete data.category;
+    delete data.categoryObj;
     return this.prisma.skill.update({
       where: { id },
-      data: rest,
-      include: { category: true, proficiencySkill: true }
+      data: data as Prisma.SkillUncheckedUpdateInput,
+      include: { category: true, proficiencySkill: true },
     });
   }
 

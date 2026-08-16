@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AiController } from './ai.controller';
 import { AiService } from './ai.service';
 import { ExplainProjectDto } from './dto/explain-project.dto';
+import { ReadableStream } from 'node:stream/web';
 
 describe('AiController', () => {
   let controller: AiController;
@@ -18,7 +19,7 @@ describe('AiController', () => {
     }).compile();
 
     controller = module.get<AiController>(AiController);
-    aiService = module.get(AiService) as any;
+    aiService = module.get(AiService);
   });
 
   describe('explainProject', () => {
@@ -30,10 +31,15 @@ describe('AiController', () => {
         tech_stack: ['A', 'B'],
         metrics: '',
         role: '',
-      } as any;
-      const { ReadableStream } = require('node:stream/web');
-      const mockBody = new ReadableStream({ start(c: any) { c.close(); } });
-      aiService.streamProjectExplanation.mockResolvedValue({ body: mockBody } as any);
+      };
+      const mockBody = new ReadableStream({
+        start(c: any) {
+          c.close();
+        },
+      });
+      aiService.streamProjectExplanation.mockResolvedValue({
+        body: mockBody,
+      } as any);
 
       const reply = {
         header: jest.fn(),
@@ -43,7 +49,10 @@ describe('AiController', () => {
 
       await controller.explainProject(dto, reply);
 
-      expect(reply.header).toHaveBeenCalledWith('Content-Type', 'text/event-stream');
+      expect(reply.header).toHaveBeenCalledWith(
+        'Content-Type',
+        'text/event-stream',
+      );
       expect(reply.header).toHaveBeenCalledWith('Cache-Control', 'no-cache');
       expect(reply.header).toHaveBeenCalledWith('Connection', 'keep-alive');
       expect(reply.header).toHaveBeenCalledWith('X-Accel-Buffering', 'no');
@@ -52,7 +61,9 @@ describe('AiController', () => {
 
     it('should throw if llmResponse body is null', async () => {
       const dto: ExplainProjectDto = {} as any;
-      aiService.streamProjectExplanation.mockResolvedValue({ body: null } as any);
+      aiService.streamProjectExplanation.mockResolvedValue({
+        body: null,
+      } as any);
 
       const reply = {
         header: jest.fn(),
@@ -62,12 +73,16 @@ describe('AiController', () => {
 
       await controller.explainProject(dto, reply);
       expect(reply.status).toHaveBeenCalledWith(500);
-      expect(reply.send).toHaveBeenCalledWith({ error: 'LLM response body is null' });
+      expect(reply.send).toHaveBeenCalledWith({
+        error: 'LLM response body is null',
+      });
     });
 
     it('should handle service errors', async () => {
       const dto: ExplainProjectDto = {} as any;
-      aiService.streamProjectExplanation.mockRejectedValue(new Error('Service error'));
+      aiService.streamProjectExplanation.mockRejectedValue(
+        new Error('Service error'),
+      );
 
       const reply = {
         header: jest.fn(),

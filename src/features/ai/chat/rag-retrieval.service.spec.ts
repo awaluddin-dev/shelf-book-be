@@ -24,7 +24,7 @@ describe('RagRetrievalService', () => {
     }).compile();
 
     service = module.get<RagRetrievalService>(RagRetrievalService);
-    prisma = module.get(PrismaService) as any;
+    prisma = module.get(PrismaService);
   });
 
   describe('retrieve', () => {
@@ -40,34 +40,48 @@ describe('RagRetrievalService', () => {
         openForWork: true,
         availableFrom: 'Now',
         expertise: 'Tech',
-        service: 'Code'
+        service: 'Code',
       } as any);
 
       prisma.workExperience.findMany.mockResolvedValue([
-        { role: 'Dev', company: 'X', years: '2', duration: '2y', stack: 'JS', fullImpact: 'Did it' }
+        {
+          role: 'Dev',
+          company: 'X',
+          years: '2',
+          duration: '2y',
+          stack: 'JS',
+          fullImpact: 'Did it',
+        },
       ] as any);
 
       prisma.skill.findMany.mockResolvedValue([
-        { title: 'TS', categoryId: 'Language', level: 'Pro', details: 'Good' }
+        { title: 'TS', categoryId: 'Language', level: 'Pro', details: 'Good' },
       ] as any);
 
       prisma.project.findMany.mockResolvedValue([
-        { title: 'P1', subtitle: 'Sub', tags: ['T1'], problemSolved: 'P', date: '2020' }
+        {
+          title: 'P1',
+          subtitle: 'Sub',
+          tags: ['T1'],
+          problemSolved: 'P',
+          date: '2020',
+        },
       ] as any);
 
       prisma.testimonial.findMany.mockResolvedValue([
-        { testimonial: 'Great', name: 'Bob', role: 'CTO', company: 'Y' }
+        { testimonial: 'Great', name: 'Bob', role: 'CTO', company: 'Y' },
       ] as any);
 
       prisma.currentFocus.findMany.mockResolvedValue([
-        { title: 'F1', description: 'Desc' }
+        { title: 'F1', description: 'Desc' },
       ] as any);
 
       const res = await service.retrieve('pengalaman kerja tentang teknologi');
       expect(res.length).toBe(6);
-      
+
       expect(prisma.workExperience.findMany).toHaveBeenCalled();
-      const whereClause = (prisma.workExperience.findMany as jest.Mock).mock.calls[0][0].where.OR;
+      const whereClause = (prisma.workExperience.findMany as jest.Mock).mock
+        .calls[0][0].where.OR;
       // Should have 'experience', 'work', 'about', 'technology' in the condition
       expect(JSON.stringify(whereClause)).toContain('experience');
       expect(JSON.stringify(whereClause)).toContain('technology');
@@ -82,7 +96,7 @@ describe('RagRetrievalService', () => {
       prisma.workExperience.findMany.mockResolvedValue([]);
       prisma.skill.findMany.mockResolvedValue([]);
       prisma.project.findMany.mockResolvedValue([
-        { title: 'P2', subtitle: 'Sub2', tags: ['T2'], date: '2021' } // no problemSolved
+        { title: 'P2', subtitle: 'Sub2', tags: ['T2'], date: '2021' }, // no problemSolved
       ] as any);
       prisma.testimonial.findMany.mockResolvedValue([]);
       prisma.currentFocus.findMany.mockResolvedValue([]);

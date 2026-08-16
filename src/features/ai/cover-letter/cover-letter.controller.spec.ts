@@ -54,17 +54,22 @@ describe('CoverLetterController', () => {
         },
       });
 
-      mockCoverLetterService.streamCoverLetter.mockResolvedValue({ body: mockStream });
+      mockCoverLetterService.streamCoverLetter.mockResolvedValue({
+        body: mockStream,
+      });
 
       await controller.generateCoverLetter(dto, reply);
 
       expect(service.streamCoverLetter).toHaveBeenCalledWith(dto);
-      expect(reply.header).toHaveBeenCalledWith('Content-Type', 'text/event-stream');
+      expect(reply.header).toHaveBeenCalledWith(
+        'Content-Type',
+        'text/event-stream',
+      );
       expect(reply.header).toHaveBeenCalledWith('Cache-Control', 'no-cache');
       expect(reply.header).toHaveBeenCalledWith('Connection', 'keep-alive');
       expect(reply.header).toHaveBeenCalledWith('X-Accel-Buffering', 'no');
       expect(reply.send).toHaveBeenCalled();
-      
+
       const sentStream = reply.send.mock.calls[0][0];
       expect(sentStream).toBeInstanceOf(Readable);
     });
@@ -72,20 +77,26 @@ describe('CoverLetterController', () => {
     it('should throw an error if body is null', async () => {
       const dto = { jobDescription: 'test jd' };
       const reply = mockReply();
-      
-      mockCoverLetterService.streamCoverLetter.mockResolvedValue({ body: null });
+
+      mockCoverLetterService.streamCoverLetter.mockResolvedValue({
+        body: null,
+      });
 
       await controller.generateCoverLetter(dto, reply);
 
       expect(reply.status).toHaveBeenCalledWith(500);
-      expect(reply.send).toHaveBeenCalledWith({ error: 'LLM response body is null' });
+      expect(reply.send).toHaveBeenCalledWith({
+        error: 'LLM response body is null',
+      });
     });
 
     it('should handle service errors', async () => {
       const dto = { jobDescription: 'test jd' };
       const reply = mockReply();
-      
-      mockCoverLetterService.streamCoverLetter.mockRejectedValue(new Error('Service error'));
+
+      mockCoverLetterService.streamCoverLetter.mockRejectedValue(
+        new Error('Service error'),
+      );
 
       await controller.generateCoverLetter(dto, reply);
 
@@ -105,14 +116,19 @@ describe('CoverLetterController', () => {
         },
       });
 
-      mockCoverLetterService.streamDraftInquiry.mockResolvedValue({ body: mockStream });
+      mockCoverLetterService.streamDraftInquiry.mockResolvedValue({
+        body: mockStream,
+      });
 
       await controller.draftInquiry(dto, reply);
 
       expect(service.streamDraftInquiry).toHaveBeenCalledWith(dto);
-      expect(reply.header).toHaveBeenCalledWith('Content-Type', 'text/event-stream');
+      expect(reply.header).toHaveBeenCalledWith(
+        'Content-Type',
+        'text/event-stream',
+      );
       expect(reply.send).toHaveBeenCalled();
-      
+
       const sentStream = reply.send.mock.calls[0][0];
       expect(sentStream).toBeInstanceOf(Readable);
     });
@@ -120,20 +136,26 @@ describe('CoverLetterController', () => {
     it('should throw an error if body is null', async () => {
       const dto = { coverLetter: 'test cl' };
       const reply = mockReply();
-      
-      mockCoverLetterService.streamDraftInquiry.mockResolvedValue({ body: null });
+
+      mockCoverLetterService.streamDraftInquiry.mockResolvedValue({
+        body: null,
+      });
 
       await controller.draftInquiry(dto, reply);
 
       expect(reply.status).toHaveBeenCalledWith(500);
-      expect(reply.send).toHaveBeenCalledWith({ error: 'LLM response body is null' });
+      expect(reply.send).toHaveBeenCalledWith({
+        error: 'LLM response body is null',
+      });
     });
 
     it('should handle service errors', async () => {
       const dto = { coverLetter: 'test cl' };
       const reply = mockReply();
-      
-      mockCoverLetterService.streamDraftInquiry.mockRejectedValue(new Error('Service error'));
+
+      mockCoverLetterService.streamDraftInquiry.mockRejectedValue(
+        new Error('Service error'),
+      );
 
       await controller.draftInquiry(dto, reply);
 
