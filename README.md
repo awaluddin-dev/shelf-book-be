@@ -1,8 +1,22 @@
 # shelf-book-be
 
+![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)
+![Fastify](https://img.shields.io/badge/Fastify-000000?style=for-the-badge&logo=fastify&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+
 > Headless CMS API powering my personal portfolio — built with NestJS, Prisma, and PostgreSQL.
 
 A RESTful backend that serves structured content for [shelf-book-portofolio](https://github.com/awaluddin-dev/shelf-book-portofolio): hero configuration, work experience, projects, skills, learning roadmap, testimonials, system architecture, and project lifecycles. All write operations are protected behind JWT authentication, and a set of AI endpoints stream LLM responses (chat, cover letter, project explanation) over SSE.
+
+---
+
+## 🚀 Key Features
+- **AI-Powered (RAG) & SSE Streaming**: Integrates multi-LLM providers (Custom, Groq, Gemini) with automatic failover. Features a RAG-backed chat that retrieves your portfolio data to answer recruiter questions in real-time.
+- **Enterprise-Grade Architecture**: Built on NestJS using the high-performance Fastify adapter.
+- **Robust Security & Auth**: Implements JWT Access/Refresh tokens, Argon2 password hashing, Redis-backed rate limiting, and Helmet.
+- **Interactive API Docs**: Fully documented REST API powered by Swagger and Scalar API Reference.
+- **Production Ready**: Fully dockerized and integrated with Kubernetes (OpsCtrl) CI/CD pipelines.
 
 ---
 
@@ -22,6 +36,12 @@ A RESTful backend that serves structured content for [shelf-book-portofolio](htt
 | Email              | Resend (contact form)                                           |
 | AI                 | OpenAI-compatible LLM providers (multi-fallback, SSE streaming) |
 | Deploy             | Docker + OpsCtrl (Kubernetes)                                   |
+
+---
+
+## System Architecture
+
+![System Architecture](./assets/architecture/shelf-book-architecture.excalidraw.svg)
 
 ---
 

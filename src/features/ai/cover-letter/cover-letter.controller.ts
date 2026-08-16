@@ -9,12 +9,20 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import type { FastifyReply } from 'fastify';
 import { CoverLetterService } from './cover-letter.service';
 import { GenerateCoverLetterDto } from './dto/generate-cover-letter.dto';
 import { DraftInquiryDto } from './dto/draft-inquiry.dto';
 import { Readable } from 'stream';
 
+@ApiTags('AI Cover Letter')
+@ApiResponse({ status: 400, description: 'Bad Request', schema: { example: { statusCode: 400, message: ['Validation failed'], error: 'Bad Request' } } })
+@ApiResponse({ status: 401, description: 'Unauthorized', schema: { example: { statusCode: 401, message: 'Unauthorized', error: 'Unauthorized' } } })
+@ApiResponse({ status: 403, description: 'Forbidden', schema: { example: { statusCode: 403, message: 'Forbidden resource', error: 'Forbidden' } } })
+@ApiResponse({ status: 404, description: 'Not Found', schema: { example: { statusCode: 404, message: 'Resource not found', error: 'Not Found' } } })
+@ApiResponse({ status: 429, description: 'Too Many Requests', schema: { example: { statusCode: 429, message: 'Too many requests, please try again later.', error: 'Too Many Requests' } } })
+@ApiResponse({ status: 500, description: 'Internal Server Error', schema: { example: { statusCode: 500, message: 'Internal server error' } } })
 @Controller('ai')
 export class CoverLetterController {
   private readonly logger = new Logger(CoverLetterController.name);
@@ -27,6 +35,12 @@ export class CoverLetterController {
    * Returns SSE stream (text/event-stream)
    */
   @Post('cover-letter')
+  @ApiOperation({
+    summary: 'Stream cover letter generation',
+    description: 'Generates a cover letter based on the provided job description and returns an SSE stream.',
+  })
+  @ApiResponse({ status: 200, description: 'Successful stream' })
+  @ApiResponse({ status: 500, description: 'Internal server error' , schema: { example: { statusCode: 500, message: 'Internal server error' } }})
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async generateCoverLetter(
@@ -62,6 +76,12 @@ export class CoverLetterController {
    * Returns SSE stream (text/event-stream)
    */
   @Post('draft-inquiry')
+  @ApiOperation({
+    summary: 'Stream inquiry draft',
+    description: 'Drafts an inquiry based on the generated cover letter and returns an SSE stream.',
+  })
+  @ApiResponse({ status: 200, description: 'Successful stream' })
+  @ApiResponse({ status: 500, description: 'Internal server error' , schema: { example: { statusCode: 500, message: 'Internal server error' } }})
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async draftInquiry(
