@@ -32,19 +32,26 @@ export class LoginService {
         },
       );
 
-      const verifyData = (await verifyRes.json()) as { success: boolean };
+      const verifyData = (await verifyRes.json()) as { success: boolean, 'error-codes'?: string[] };
       if (!verifyData.success) {
+        console.error('Turnstile verification failed:', verifyData);
         throw new UnauthorizedException(
           'Captcha validation failed. Are you a bot?',
         );
       }
     } catch (error) {
+      console.error('Turnstile fetch error:', error);
       if (error instanceof UnauthorizedException) throw error;
       throw new UnauthorizedException('Failed to verify captcha');
     }
 
     const attemptsKey = `login_attempts:${dto.email}`;
-    const attempts = await this.redis.get(attemptsKey);
+    let attempts: string | null = null;
+    try {
+      attempts = await this.redis.get(attemptsKey);
+    } catch (e) {
+      console.error('Redis error on get attempts:', e);
+    }
 
     if (attempts && parseInt(attempts) >= 3) {
       throw new UnauthorizedException(
@@ -57,20 +64,38 @@ export class LoginService {
     });
 
     if (!user) {
-      await this.redis.incr(attemptsKey);
-      await this.redis.expire(attemptsKey, 15 * 60); // 15 minutes
+      try {
+        await this.redis.incr(attemptsKey);
+        await this.redis.expire(attemptsKey, 15 * 60); // 15 minutes
+      } catch (e) {
+        console.error('Redis error on incr attempts:', e);
+      }
       throw new UnauthorizedException('Email atau password salah');
     }
 
-    const pwMatches = await argon2.verify(user.password, dto.password);
+    let pwMatches = false;
+    try {
+      pwMatches = await argon2.verify(user.password, dto.password);
+    } catch (e) {
+      console.error('Argon2 verify error:', e);
+    }
+
     if (!pwMatches) {
-      await this.redis.incr(attemptsKey);
-      await this.redis.expire(attemptsKey, 15 * 60); // 15 minutes
+      try {
+        await this.redis.incr(attemptsKey);
+        await this.redis.expire(attemptsKey, 15 * 60); // 15 minutes
+      } catch (e) {
+        console.error('Redis error on incr attempts:', e);
+      }
       throw new UnauthorizedException('Email atau password salah');
     }
 
     // Success login, clear attempts
-    await this.redis.del(attemptsKey);
+    try {
+      await this.redis.del(attemptsKey);
+    } catch (e) {
+      console.error('Redis error on del attempts:', e);
+    }
 
     return this.tokenService.generateAndSaveTokens(user.id, user.email);
   }
