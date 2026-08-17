@@ -17,10 +17,10 @@ export class DemoModeInterceptor implements NestInterceptor {
 
     // Hanya hadang request mutasi (POST, PUT, PATCH, DELETE)
     if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
-      const isDemoMode = process.env.DEMO_MODE === 'true';
-      const isAdmin = !!request.user;
+      const referer = request.headers.referer || '';
+      const isFromScalar = referer.includes('/reference');
 
-      if (isDemoMode || !isAdmin) {
+      if (isFromScalar) {
         return of({
           status: 'success',
           message:
