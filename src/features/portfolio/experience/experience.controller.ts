@@ -1,3 +1,4 @@
+import { ApiGlobalResponses } from 'src/common/decorators/api-global-responses.decorator';
 import {
   Controller,
   Get,
@@ -27,66 +28,7 @@ import {
 } from '@nestjs/swagger';
 
 @ApiTags('Experience')
-@ApiResponse({
-  status: 400,
-  description: 'Bad Request',
-  schema: {
-    example: {
-      statusCode: 400,
-      message: ['Validation failed'],
-      error: 'Bad Request',
-    },
-  },
-})
-@ApiResponse({
-  status: 401,
-  description: 'Unauthorized',
-  schema: {
-    example: {
-      statusCode: 401,
-      message: 'Unauthorized',
-      error: 'Unauthorized',
-    },
-  },
-})
-@ApiResponse({
-  status: 403,
-  description: 'Forbidden',
-  schema: {
-    example: {
-      statusCode: 403,
-      message: 'Forbidden resource',
-      error: 'Forbidden',
-    },
-  },
-})
-@ApiResponse({
-  status: 404,
-  description: 'Not Found',
-  schema: {
-    example: {
-      statusCode: 404,
-      message: 'Resource not found',
-      error: 'Not Found',
-    },
-  },
-})
-@ApiResponse({
-  status: 429,
-  description: 'Too Many Requests',
-  schema: {
-    example: {
-      statusCode: 429,
-      message: 'Too many requests, please try again later.',
-      error: 'Too Many Requests',
-    },
-  },
-})
-@ApiResponse({
-  status: 500,
-  description: 'Internal Server Error',
-  schema: { example: { statusCode: 500, message: 'Internal server error' } },
-})
+@ApiGlobalResponses()
 @Controller()
 export class ExperienceController {
   constructor(
@@ -134,17 +76,7 @@ export class ExperienceController {
     description: 'Testimonial successfully updated.',
     type: TestimonialDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Testimonial not found.' })
   async updateTestimonial(
     @Param('id') id: string,
@@ -162,17 +94,7 @@ export class ExperienceController {
     description: 'Testimonial successfully deleted.',
     type: TestimonialDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Testimonial not found.' })
   async deleteTestimonial(@Param('id') id: string) {
     return await this.experienceService.deleteTestimonial(id);
@@ -199,17 +121,7 @@ export class ExperienceController {
     description: 'Work experience successfully created.',
     type: WorkExperienceDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   async createWork(@Body() body: WorkExperienceDto) {
     return await this.experienceService.createWorkExperience(body);
   }
@@ -223,17 +135,7 @@ export class ExperienceController {
     description: 'Work experience successfully updated.',
     type: WorkExperienceDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Work experience not found.' })
   async updateWork(
     @Param('id') id: string,
@@ -251,17 +153,7 @@ export class ExperienceController {
     description: 'Work experience successfully deleted.',
     type: WorkExperienceDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Work experience not found.' })
   async deleteWork(@Param('id') id: string) {
     return await this.experienceService.deleteWorkExperience(id);
@@ -288,17 +180,7 @@ export class ExperienceController {
     description: 'Current focus successfully created.',
     type: CurrentFocusDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   async createCurrent(@Body() body: CurrentFocusDto) {
     return await this.experienceService.createCurrentFocus(body);
   }
@@ -312,17 +194,7 @@ export class ExperienceController {
     description: 'Current focus successfully updated.',
     type: CurrentFocusDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Current focus not found.' })
   async updateCurrent(
     @Param('id') id: string,
@@ -340,17 +212,7 @@ export class ExperienceController {
     description: 'Current focus successfully deleted.',
     type: CurrentFocusDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Current focus not found.' })
   async deleteCurrent(@Param('id') id: string) {
     return await this.experienceService.deleteCurrentFocus(id);

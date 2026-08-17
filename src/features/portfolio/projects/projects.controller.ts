@@ -1,3 +1,4 @@
+import { ApiGlobalResponses } from 'src/common/decorators/api-global-responses.decorator';
 import {
   Controller,
   Get,
@@ -26,66 +27,7 @@ import {
 } from '@nestjs/swagger';
 
 @ApiTags('Projects')
-@ApiResponse({
-  status: 400,
-  description: 'Bad Request',
-  schema: {
-    example: {
-      statusCode: 400,
-      message: ['Validation failed'],
-      error: 'Bad Request',
-    },
-  },
-})
-@ApiResponse({
-  status: 401,
-  description: 'Unauthorized',
-  schema: {
-    example: {
-      statusCode: 401,
-      message: 'Unauthorized',
-      error: 'Unauthorized',
-    },
-  },
-})
-@ApiResponse({
-  status: 403,
-  description: 'Forbidden',
-  schema: {
-    example: {
-      statusCode: 403,
-      message: 'Forbidden resource',
-      error: 'Forbidden',
-    },
-  },
-})
-@ApiResponse({
-  status: 404,
-  description: 'Not Found',
-  schema: {
-    example: {
-      statusCode: 404,
-      message: 'Resource not found',
-      error: 'Not Found',
-    },
-  },
-})
-@ApiResponse({
-  status: 429,
-  description: 'Too Many Requests',
-  schema: {
-    example: {
-      statusCode: 429,
-      message: 'Too many requests, please try again later.',
-      error: 'Too Many Requests',
-    },
-  },
-})
-@ApiResponse({
-  status: 500,
-  description: 'Internal Server Error',
-  schema: { example: { statusCode: 500, message: 'Internal server error' } },
-})
+@ApiGlobalResponses()
 @Controller()
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
@@ -111,17 +53,7 @@ export class ProjectsController {
     description: 'Project successfully created.',
     type: ProjectDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   async createProject(@Body() body: ProjectDto) {
     return await this.projectsService.createProject(body);
   }
@@ -135,17 +67,7 @@ export class ProjectsController {
     description: 'Project successfully updated.',
     type: ProjectDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Project not found.' })
   async updateProject(
     @Param('id') id: string,
@@ -163,17 +85,7 @@ export class ProjectsController {
     description: 'Project successfully deleted.',
     type: ProjectDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Project not found.' })
   async deleteProject(@Param('id') id: string) {
     return await this.projectsService.deleteProject(id);
@@ -200,17 +112,7 @@ export class ProjectsController {
     description: 'System architecture successfully created.',
     type: SystemArchitectureDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   async createArchitecture(@Body() body: SystemArchitectureDto) {
     return await this.projectsService.createSystemArchitecture(body);
   }
@@ -224,17 +126,7 @@ export class ProjectsController {
     description: 'System architecture successfully updated.',
     type: SystemArchitectureDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'System architecture not found.' })
   async updateArchitecture(
     @Param('id') id: string,
@@ -252,17 +144,7 @@ export class ProjectsController {
     description: 'System architecture successfully deleted.',
     type: SystemArchitectureDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'System architecture not found.' })
   async deleteArchitecture(@Param('id') id: string) {
     return await this.projectsService.deleteSystemArchitecture(id);
@@ -289,17 +171,7 @@ export class ProjectsController {
     description: 'Project lifecycle successfully created.',
     type: ProjectLifecycleDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   async createLifecycle(@Body() body: ProjectLifecycleDto) {
     return await this.projectsService.createProjectLifecycle(body);
   }
@@ -313,17 +185,7 @@ export class ProjectsController {
     description: 'Project lifecycle successfully updated.',
     type: ProjectLifecycleDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Project lifecycle not found.' })
   async updateLifecycle(
     @Param('id') id: string,
@@ -341,17 +203,7 @@ export class ProjectsController {
     description: 'Project lifecycle successfully deleted.',
     type: ProjectLifecycleDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Project lifecycle not found.' })
   async deleteLifecycle(@Param('id') id: string) {
     return await this.projectsService.deleteProjectLifecycle(id);
@@ -378,17 +230,7 @@ export class ProjectsController {
     description: 'Technical imagery successfully upserted.',
     type: TechnicalImageryDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   async upsertTechnicalImagery(@Body() body: TechnicalImageryDto) {
     // Upsert expects projectId to match
     const { projectId, ...data } = body;
@@ -404,17 +246,7 @@ export class ProjectsController {
     description: 'Technical imagery successfully deleted.',
     type: TechnicalImageryDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Technical imagery not found.' })
   async deleteTechnicalImagery(@Param('id') id: string) {
     return await this.projectsService.deleteTechnicalImagery(id);
@@ -429,17 +261,7 @@ export class ProjectsController {
     description: 'Technical imagery successfully updated.',
     type: TechnicalImageryDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Technical imagery not found.' })
   async updateTechnicalImagery(
     @Param('id') id: string,
@@ -469,17 +291,7 @@ export class ProjectsController {
     description: 'Database schema successfully created.',
     type: ProjectDatabaseSchemaDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   async createDatabaseSchema(@Body() body: ProjectDatabaseSchemaDto) {
     return await this.projectsService.createProjectDatabaseSchema(body);
   }
@@ -493,17 +305,7 @@ export class ProjectsController {
     description: 'Database schema successfully updated.',
     type: ProjectDatabaseSchemaDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Database schema not found.' })
   async updateDatabaseSchema(
     @Param('id') id: string,
@@ -521,17 +323,7 @@ export class ProjectsController {
     description: 'Database schema successfully deleted.',
     type: ProjectDatabaseSchemaDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Database schema not found.' })
   async deleteDatabaseSchema(@Param('id') id: string) {
     return await this.projectsService.deleteProjectDatabaseSchema(id);
@@ -558,17 +350,7 @@ export class ProjectsController {
     description: 'Project ERD successfully created.',
     type: ProjectErdDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   async createErd(@Body() body: ProjectErdDto) {
     return await this.projectsService.createProjectErd(body);
   }
@@ -582,17 +364,7 @@ export class ProjectsController {
     description: 'Project ERD successfully updated.',
     type: ProjectErdDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Project ERD not found.' })
   async updateErd(
     @Param('id') id: string,
@@ -610,17 +382,7 @@ export class ProjectsController {
     description: 'Project ERD successfully deleted.',
     type: ProjectErdDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Project ERD not found.' })
   async deleteErd(@Param('id') id: string) {
     return await this.projectsService.deleteProjectErd(id);
