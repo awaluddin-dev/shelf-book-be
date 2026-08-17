@@ -1,3 +1,4 @@
+import { ApiGlobalResponses } from 'src/common/decorators/api-global-responses.decorator';
 import {
   Controller,
   Get,
@@ -24,66 +25,7 @@ import {
 } from '@nestjs/swagger';
 
 @ApiTags('Skills')
-@ApiResponse({
-  status: 400,
-  description: 'Bad Request',
-  schema: {
-    example: {
-      statusCode: 400,
-      message: ['Validation failed'],
-      error: 'Bad Request',
-    },
-  },
-})
-@ApiResponse({
-  status: 401,
-  description: 'Unauthorized',
-  schema: {
-    example: {
-      statusCode: 401,
-      message: 'Unauthorized',
-      error: 'Unauthorized',
-    },
-  },
-})
-@ApiResponse({
-  status: 403,
-  description: 'Forbidden',
-  schema: {
-    example: {
-      statusCode: 403,
-      message: 'Forbidden resource',
-      error: 'Forbidden',
-    },
-  },
-})
-@ApiResponse({
-  status: 404,
-  description: 'Not Found',
-  schema: {
-    example: {
-      statusCode: 404,
-      message: 'Resource not found',
-      error: 'Not Found',
-    },
-  },
-})
-@ApiResponse({
-  status: 429,
-  description: 'Too Many Requests',
-  schema: {
-    example: {
-      statusCode: 429,
-      message: 'Too many requests, please try again later.',
-      error: 'Too Many Requests',
-    },
-  },
-})
-@ApiResponse({
-  status: 500,
-  description: 'Internal Server Error',
-  schema: { example: { statusCode: 500, message: 'Internal server error' } },
-})
+@ApiGlobalResponses()
 @Controller()
 export class SkillsController {
   constructor(private readonly skillsService: SkillsService) {}
@@ -109,17 +51,7 @@ export class SkillsController {
     description: 'Proficiency successfully created.',
     type: ProficiencyDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   async createProficiency(@Body() body: ProficiencyDto) {
     return await this.skillsService.createProficiency(body);
   }
@@ -133,17 +65,7 @@ export class SkillsController {
     description: 'Proficiency successfully updated.',
     type: ProficiencyDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Proficiency not found.' })
   async updateProficiency(
     @Param('id') id: string,
@@ -161,17 +83,7 @@ export class SkillsController {
     description: 'Proficiency successfully deleted.',
     type: ProficiencyDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Proficiency not found.' })
   async deleteProficiency(@Param('id') id: string) {
     return await this.skillsService.deleteProficiency(id);
@@ -198,17 +110,7 @@ export class SkillsController {
     description: 'Skill successfully created.',
     type: SkillDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   async createSkill(@Body() body: SkillDto) {
     return await this.skillsService.createSkill(body);
   }
@@ -222,17 +124,7 @@ export class SkillsController {
     description: 'Skill successfully updated.',
     type: SkillDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Skill not found.' })
   async updateSkill(@Param('id') id: string, @Body() body: Partial<SkillDto>) {
     return await this.skillsService.updateSkill(id, body);
@@ -247,17 +139,7 @@ export class SkillsController {
     description: 'Skill successfully deleted.',
     type: SkillDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Skill not found.' })
   async deleteSkill(@Param('id') id: string) {
     return await this.skillsService.deleteSkill(id);
@@ -285,17 +167,7 @@ export class SkillsController {
     description: 'Roadmap entry successfully created.',
     type: RoadmapDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   async createLearning(@Body() body: RoadmapDto) {
     return await this.skillsService.createRoadmap(body);
   }
@@ -309,17 +181,7 @@ export class SkillsController {
     description: 'Roadmap entry successfully updated.',
     type: RoadmapDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Roadmap entry not found.' })
   async updateLearning(
     @Param('id') id: string,
@@ -337,17 +199,7 @@ export class SkillsController {
     description: 'Roadmap entry successfully deleted.',
     type: RoadmapDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
-    },
-  })
+
   @ApiResponse({ status: 404, description: 'Roadmap entry not found.' })
   async deleteLearning(@Param('id') id: string) {
     return await this.skillsService.deleteRoadmap(id);
