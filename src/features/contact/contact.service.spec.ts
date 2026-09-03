@@ -71,7 +71,7 @@ describe('ContactService', () => {
 
       expect(service['resend'].emails.send).toHaveBeenCalledWith({
         from: 'Portfolio Inquiry <onboarding@resend.dev>',
-        to: 'awal14h@gmail.com',
+        to: 'hello@awaluddin.dev',
         replyTo: 'test@example.com',
         subject: 'New Inquiry from Test - Web',
         html: expect.stringContaining('Hello<br/>World'),

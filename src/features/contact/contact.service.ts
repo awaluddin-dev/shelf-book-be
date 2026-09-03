@@ -21,7 +21,7 @@ export class ContactService {
     try {
       const { data, error } = await this.resend.emails.send({
         from: 'Portfolio Inquiry <onboarding@resend.dev>',
-        to: 'awal14h@gmail.com',
+        to: 'hello@awaluddin.dev',
         replyTo: dto.email,
         subject: `New Inquiry from ${dto.name} - ${dto.projectType}`,
         html: `

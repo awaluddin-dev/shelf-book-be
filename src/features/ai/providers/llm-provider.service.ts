@@ -22,24 +22,18 @@ export class LlmProviderService {
   private getProviders(): LlmProvider[] {
     const providers: LlmProvider[] = [];
 
-    // Primary: self-hosted / custom OpenAI-compatible endpoint
-    const customUrl = this.config.get<string>('AI_CUSTOM_BASE_URL');
-    const customKey = this.config.get<string>('AI_CUSTOM_API_KEY');
-    const customModel = this.config.get<string>(
-      'AI_CUSTOM_MODEL',
-      'gpt-4o-mini',
-    );
-
-    if (customUrl && customKey) {
+    // Primary: Gemini via OpenAI-compatible endpoint
+    const geminiKey = this.config.get<string>('GEMINI_API_KEY');
+    if (geminiKey) {
       providers.push({
-        name: 'custom',
-        baseUrl: customUrl.replace(/\/$/, ''),
-        apiKey: customKey,
-        model: customModel,
+        name: 'gemini',
+        baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
+        apiKey: geminiKey,
+        model: 'gemini-2.5-flash',
       });
     }
 
-    // Fallback 1: Groq (free tier, fast)
+    // Fallback: Groq (free tier, fast)
     const groqKey = this.config.get<string>('GROQ_API_KEY');
     if (groqKey) {
       providers.push({
@@ -47,17 +41,6 @@ export class LlmProviderService {
         baseUrl: 'https://api.groq.com/openai/v1',
         apiKey: groqKey,
         model: 'llama-3.1-8b-instant',
-      });
-    }
-
-    // Fallback 2: Gemini via OpenAI-compatible endpoint
-    const geminiKey = this.config.get<string>('GEMINI_API_KEY');
-    if (geminiKey) {
-      providers.push({
-        name: 'gemini',
-        baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
-        apiKey: geminiKey,
-        model: 'gemini-3.6-flash',
       });
     }
 
@@ -76,7 +59,7 @@ export class LlmProviderService {
 
     if (providers.length === 0) {
       throw new Error(
-        'No LLM providers configured. Set AI_CUSTOM_API_KEY, GROQ_API_KEY, or GEMINI_API_KEY.',
+        'No LLM providers configured. Set GEMINI_API_KEY or GROQ_API_KEY.',
       );
     }
 
