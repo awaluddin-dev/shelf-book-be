@@ -10,6 +10,7 @@ import {
   UseGuards,
   Req,
   Res,
+  UseInterceptors,
 } from '@nestjs/common';
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import { RateLimitService } from 'src/common/services/rate-limit.service';
@@ -26,6 +27,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
 
 @ApiTags('Experience')
 @ApiGlobalResponses()
@@ -38,6 +40,8 @@ export class ExperienceController {
 
   // TESTIMONIALS (rate-limited for public submission)
   @Get('testimonials')
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('cache_testimonials')
   @ApiOperation({ summary: 'Retrieve all testimonials' })
   @ApiResponse({
     status: 200,
@@ -76,7 +80,6 @@ export class ExperienceController {
     description: 'Testimonial successfully updated.',
     type: TestimonialDto,
   })
-
   @ApiResponse({ status: 404, description: 'Testimonial not found.' })
   async updateTestimonial(
     @Param('id') id: string,
@@ -94,7 +97,6 @@ export class ExperienceController {
     description: 'Testimonial successfully deleted.',
     type: TestimonialDto,
   })
-
   @ApiResponse({ status: 404, description: 'Testimonial not found.' })
   async deleteTestimonial(@Param('id') id: string) {
     return await this.experienceService.deleteTestimonial(id);
@@ -102,6 +104,8 @@ export class ExperienceController {
 
   // WORK (workExperience)
   @Get('work')
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('cache_work')
   @ApiOperation({ summary: 'Retrieve work experiences' })
   @ApiResponse({
     status: 200,
@@ -121,7 +125,6 @@ export class ExperienceController {
     description: 'Work experience successfully created.',
     type: WorkExperienceDto,
   })
-
   async createWork(@Body() body: WorkExperienceDto) {
     return await this.experienceService.createWorkExperience(body);
   }
@@ -135,7 +138,6 @@ export class ExperienceController {
     description: 'Work experience successfully updated.',
     type: WorkExperienceDto,
   })
-
   @ApiResponse({ status: 404, description: 'Work experience not found.' })
   async updateWork(
     @Param('id') id: string,
@@ -153,7 +155,6 @@ export class ExperienceController {
     description: 'Work experience successfully deleted.',
     type: WorkExperienceDto,
   })
-
   @ApiResponse({ status: 404, description: 'Work experience not found.' })
   async deleteWork(@Param('id') id: string) {
     return await this.experienceService.deleteWorkExperience(id);
@@ -161,6 +162,8 @@ export class ExperienceController {
 
   // CURRENT (currentFocus)
   @Get('current')
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('cache_current')
   @ApiOperation({ summary: 'Retrieve current foci' })
   @ApiResponse({
     status: 200,
@@ -180,7 +183,6 @@ export class ExperienceController {
     description: 'Current focus successfully created.',
     type: CurrentFocusDto,
   })
-
   async createCurrent(@Body() body: CurrentFocusDto) {
     return await this.experienceService.createCurrentFocus(body);
   }
@@ -194,7 +196,6 @@ export class ExperienceController {
     description: 'Current focus successfully updated.',
     type: CurrentFocusDto,
   })
-
   @ApiResponse({ status: 404, description: 'Current focus not found.' })
   async updateCurrent(
     @Param('id') id: string,
@@ -212,7 +213,6 @@ export class ExperienceController {
     description: 'Current focus successfully deleted.',
     type: CurrentFocusDto,
   })
-
   @ApiResponse({ status: 404, description: 'Current focus not found.' })
   async deleteCurrent(@Param('id') id: string) {
     return await this.experienceService.deleteCurrentFocus(id);

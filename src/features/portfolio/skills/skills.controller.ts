@@ -8,6 +8,7 @@ import {
   Body,
   Patch,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { SkillsService } from './skills.service';
 import {
@@ -23,6 +24,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
 
 @ApiTags('Skills')
 @ApiGlobalResponses()
@@ -32,6 +34,8 @@ export class SkillsController {
 
   // PROFICIENCY
   @Get('proficiency')
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('cache_proficiency')
   @ApiOperation({ summary: 'Retrieve all proficiencies' })
   @ApiResponse({
     status: 200,
@@ -51,7 +55,6 @@ export class SkillsController {
     description: 'Proficiency successfully created.',
     type: ProficiencyDto,
   })
-
   async createProficiency(@Body() body: ProficiencyDto) {
     return await this.skillsService.createProficiency(body);
   }
@@ -65,7 +68,6 @@ export class SkillsController {
     description: 'Proficiency successfully updated.',
     type: ProficiencyDto,
   })
-
   @ApiResponse({ status: 404, description: 'Proficiency not found.' })
   async updateProficiency(
     @Param('id') id: string,
@@ -83,7 +85,6 @@ export class SkillsController {
     description: 'Proficiency successfully deleted.',
     type: ProficiencyDto,
   })
-
   @ApiResponse({ status: 404, description: 'Proficiency not found.' })
   async deleteProficiency(@Param('id') id: string) {
     return await this.skillsService.deleteProficiency(id);
@@ -91,6 +92,8 @@ export class SkillsController {
 
   // SKILLS
   @Get('skills')
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('cache_skills')
   @ApiOperation({ summary: 'Retrieve all skills' })
   @ApiResponse({
     status: 200,
@@ -110,7 +113,6 @@ export class SkillsController {
     description: 'Skill successfully created.',
     type: SkillDto,
   })
-
   async createSkill(@Body() body: SkillDto) {
     return await this.skillsService.createSkill(body);
   }
@@ -124,7 +126,6 @@ export class SkillsController {
     description: 'Skill successfully updated.',
     type: SkillDto,
   })
-
   @ApiResponse({ status: 404, description: 'Skill not found.' })
   async updateSkill(@Param('id') id: string, @Body() body: Partial<SkillDto>) {
     return await this.skillsService.updateSkill(id, body);
@@ -139,7 +140,6 @@ export class SkillsController {
     description: 'Skill successfully deleted.',
     type: SkillDto,
   })
-
   @ApiResponse({ status: 404, description: 'Skill not found.' })
   async deleteSkill(@Param('id') id: string) {
     return await this.skillsService.deleteSkill(id);
@@ -147,6 +147,8 @@ export class SkillsController {
 
   // LEARNING (roadmap)
   @Get('learning')
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('cache_learning')
   @ApiOperation({ summary: 'Retrieve learning roadmap' })
   @ApiResponse({
     status: 200,
@@ -167,7 +169,6 @@ export class SkillsController {
     description: 'Roadmap entry successfully created.',
     type: RoadmapDto,
   })
-
   async createLearning(@Body() body: RoadmapDto) {
     return await this.skillsService.createRoadmap(body);
   }
@@ -181,7 +182,6 @@ export class SkillsController {
     description: 'Roadmap entry successfully updated.',
     type: RoadmapDto,
   })
-
   @ApiResponse({ status: 404, description: 'Roadmap entry not found.' })
   async updateLearning(
     @Param('id') id: string,
@@ -199,7 +199,6 @@ export class SkillsController {
     description: 'Roadmap entry successfully deleted.',
     type: RoadmapDto,
   })
-
   @ApiResponse({ status: 404, description: 'Roadmap entry not found.' })
   async deleteLearning(@Param('id') id: string) {
     return await this.skillsService.deleteRoadmap(id);
