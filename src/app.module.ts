@@ -10,11 +10,17 @@ import { GithubModule } from './features/github/github.module';
 import { ContactModule } from './features/contact/contact.module';
 import { HealthModule } from './health/health.module';
 import { AiModule } from './features/ai/ai.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 1000 * 60 * 60,
+      max: 100,
     }),
     ThrottlerModule.forRoot([
       {

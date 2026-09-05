@@ -1,5 +1,13 @@
 import { ApiGlobalResponses } from 'src/common/decorators/api-global-responses.decorator';
-import { Controller, Get, Post, Body, Patch, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { HeroService } from './hero.service';
 import {
   PortfolioStatusDto,
@@ -15,6 +23,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
 
 @ApiTags('Hero')
 @ApiGlobalResponses()
@@ -24,6 +33,8 @@ export class HeroController {
 
   // STATUS
   @Get('status')
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('cache_status_hero')
   @ApiOperation({ summary: 'Retrieve portfolio status' })
   @ApiResponse({
     status: 200,
@@ -43,13 +54,14 @@ export class HeroController {
     description: 'Portfolio status successfully updated.',
     type: PortfolioStatusResponseDto,
   })
-
   async updateStatus(@Body() body: PortfolioStatusDto) {
     return await this.heroService.updateStatus(body.status);
   }
 
   // HERO
   @Get('hero')
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('cache_hero')
   @ApiOperation({ summary: 'Retrieve hero section data' })
   @ApiResponse({
     status: 200,
@@ -73,7 +85,6 @@ export class HeroController {
     description: 'Hero section data successfully updated.',
     type: HeroResponseDto,
   })
-
   async updateHero(
     @Body()
     body: {

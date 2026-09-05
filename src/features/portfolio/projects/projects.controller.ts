@@ -8,6 +8,7 @@ import {
   Body,
   Patch,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import {
@@ -25,6 +26,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
 
 @ApiTags('Projects')
 @ApiGlobalResponses()
@@ -34,6 +36,8 @@ export class ProjectsController {
 
   // PROJECTS
   @Get('projects')
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('cache_projects')
   @ApiOperation({ summary: 'Retrieve all projects' })
   @ApiResponse({
     status: 200,
@@ -53,7 +57,6 @@ export class ProjectsController {
     description: 'Project successfully created.',
     type: ProjectDto,
   })
-
   async createProject(@Body() body: ProjectDto) {
     return await this.projectsService.createProject(body);
   }
@@ -67,7 +70,6 @@ export class ProjectsController {
     description: 'Project successfully updated.',
     type: ProjectDto,
   })
-
   @ApiResponse({ status: 404, description: 'Project not found.' })
   async updateProject(
     @Param('id') id: string,
@@ -85,7 +87,6 @@ export class ProjectsController {
     description: 'Project successfully deleted.',
     type: ProjectDto,
   })
-
   @ApiResponse({ status: 404, description: 'Project not found.' })
   async deleteProject(@Param('id') id: string) {
     return await this.projectsService.deleteProject(id);
@@ -93,6 +94,8 @@ export class ProjectsController {
 
   // SYSTEM ARCHITECTURE
   @Get('architecture')
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('cache_system_architecture')
   @ApiOperation({ summary: 'Retrieve system architectures' })
   @ApiResponse({
     status: 200,
@@ -112,7 +115,6 @@ export class ProjectsController {
     description: 'System architecture successfully created.',
     type: SystemArchitectureDto,
   })
-
   async createArchitecture(@Body() body: SystemArchitectureDto) {
     return await this.projectsService.createSystemArchitecture(body);
   }
@@ -126,7 +128,6 @@ export class ProjectsController {
     description: 'System architecture successfully updated.',
     type: SystemArchitectureDto,
   })
-
   @ApiResponse({ status: 404, description: 'System architecture not found.' })
   async updateArchitecture(
     @Param('id') id: string,
@@ -144,7 +145,6 @@ export class ProjectsController {
     description: 'System architecture successfully deleted.',
     type: SystemArchitectureDto,
   })
-
   @ApiResponse({ status: 404, description: 'System architecture not found.' })
   async deleteArchitecture(@Param('id') id: string) {
     return await this.projectsService.deleteSystemArchitecture(id);
@@ -152,6 +152,8 @@ export class ProjectsController {
 
   // PROJECT LIFECYCLE
   @Get('lifecycle')
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('cache_project_lifecycle')
   @ApiOperation({ summary: 'Retrieve project lifecycles' })
   @ApiResponse({
     status: 200,
@@ -171,7 +173,6 @@ export class ProjectsController {
     description: 'Project lifecycle successfully created.',
     type: ProjectLifecycleDto,
   })
-
   async createLifecycle(@Body() body: ProjectLifecycleDto) {
     return await this.projectsService.createProjectLifecycle(body);
   }
@@ -185,7 +186,6 @@ export class ProjectsController {
     description: 'Project lifecycle successfully updated.',
     type: ProjectLifecycleDto,
   })
-
   @ApiResponse({ status: 404, description: 'Project lifecycle not found.' })
   async updateLifecycle(
     @Param('id') id: string,
@@ -203,7 +203,6 @@ export class ProjectsController {
     description: 'Project lifecycle successfully deleted.',
     type: ProjectLifecycleDto,
   })
-
   @ApiResponse({ status: 404, description: 'Project lifecycle not found.' })
   async deleteLifecycle(@Param('id') id: string) {
     return await this.projectsService.deleteProjectLifecycle(id);
@@ -211,6 +210,8 @@ export class ProjectsController {
 
   // TECHNICAL IMAGERY
   @Get('technical-imagery')
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('cache_technical_imagery')
   @ApiOperation({ summary: 'Retrieve technical imageries' })
   @ApiResponse({
     status: 200,
@@ -230,7 +231,6 @@ export class ProjectsController {
     description: 'Technical imagery successfully upserted.',
     type: TechnicalImageryDto,
   })
-
   async upsertTechnicalImagery(@Body() body: TechnicalImageryDto) {
     // Upsert expects projectId to match
     const { projectId, ...data } = body;
@@ -246,7 +246,6 @@ export class ProjectsController {
     description: 'Technical imagery successfully deleted.',
     type: TechnicalImageryDto,
   })
-
   @ApiResponse({ status: 404, description: 'Technical imagery not found.' })
   async deleteTechnicalImagery(@Param('id') id: string) {
     return await this.projectsService.deleteTechnicalImagery(id);
@@ -261,7 +260,6 @@ export class ProjectsController {
     description: 'Technical imagery successfully updated.',
     type: TechnicalImageryDto,
   })
-
   @ApiResponse({ status: 404, description: 'Technical imagery not found.' })
   async updateTechnicalImagery(
     @Param('id') id: string,
@@ -272,6 +270,8 @@ export class ProjectsController {
 
   // PROJECT DATABASE SCHEMA
   @Get('database-schema')
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('cache_database_schema')
   @ApiOperation({ summary: 'Retrieve project database schemas' })
   @ApiResponse({
     status: 200,
@@ -291,7 +291,6 @@ export class ProjectsController {
     description: 'Database schema successfully created.',
     type: ProjectDatabaseSchemaDto,
   })
-
   async createDatabaseSchema(@Body() body: ProjectDatabaseSchemaDto) {
     return await this.projectsService.createProjectDatabaseSchema(body);
   }
@@ -305,7 +304,6 @@ export class ProjectsController {
     description: 'Database schema successfully updated.',
     type: ProjectDatabaseSchemaDto,
   })
-
   @ApiResponse({ status: 404, description: 'Database schema not found.' })
   async updateDatabaseSchema(
     @Param('id') id: string,
@@ -323,7 +321,6 @@ export class ProjectsController {
     description: 'Database schema successfully deleted.',
     type: ProjectDatabaseSchemaDto,
   })
-
   @ApiResponse({ status: 404, description: 'Database schema not found.' })
   async deleteDatabaseSchema(@Param('id') id: string) {
     return await this.projectsService.deleteProjectDatabaseSchema(id);
@@ -331,6 +328,8 @@ export class ProjectsController {
 
   // PROJECT ERD
   @Get('erd')
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('cache_project_erd')
   @ApiOperation({ summary: 'Retrieve project ERDs' })
   @ApiResponse({
     status: 200,
@@ -350,7 +349,6 @@ export class ProjectsController {
     description: 'Project ERD successfully created.',
     type: ProjectErdDto,
   })
-
   async createErd(@Body() body: ProjectErdDto) {
     return await this.projectsService.createProjectErd(body);
   }
@@ -364,7 +362,6 @@ export class ProjectsController {
     description: 'Project ERD successfully updated.',
     type: ProjectErdDto,
   })
-
   @ApiResponse({ status: 404, description: 'Project ERD not found.' })
   async updateErd(
     @Param('id') id: string,
@@ -382,7 +379,6 @@ export class ProjectsController {
     description: 'Project ERD successfully deleted.',
     type: ProjectErdDto,
   })
-
   @ApiResponse({ status: 404, description: 'Project ERD not found.' })
   async deleteErd(@Param('id') id: string) {
     return await this.projectsService.deleteProjectErd(id);
