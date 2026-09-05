@@ -58,10 +58,10 @@ export class AiController {
         throw new Error('LLM response body is null');
       }
 
-      reply.header('Content-Type', 'text/event-stream');
-      reply.header('Cache-Control', 'no-cache');
-      reply.header('Connection', 'keep-alive');
-      reply.header('X-Accel-Buffering', 'no');
+      reply.raw.setHeader('Content-Type', 'text/event-stream');
+      reply.raw.setHeader('Cache-Control', 'no-cache, no-transform');
+      reply.raw.setHeader('Connection', 'keep-alive');
+      reply.raw.setHeader('X-Accel-Buffering', 'no');
 
       // Convert the Web ReadableStream to a Node.js Readable stream.
       // By using reply.send(stream), Fastify will correctly trigger its onSend hooks,
