@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { RedisModule } from './redis/redis.module';
@@ -14,6 +16,12 @@ import { AiModule } from './features/ai/ai.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000, // Pantau per 60 detik (1 menit)
+        limit: 100, // Batas maksimal: 100 request per IP per menit
+      },
+    ]),
     RedisModule,
     PrismaModule,
     AuthFeatureModule,
@@ -24,6 +32,11 @@ import { AiModule } from './features/ai/ai.module';
     AiModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
