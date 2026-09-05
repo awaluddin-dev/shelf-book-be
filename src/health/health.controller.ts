@@ -7,15 +7,17 @@ import {
   MemoryHealthIndicator,
 } from '@nestjs/terminus';
 import { PrismaService } from '../prisma/prisma.service';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @ApiTags('Health')
+@SkipThrottle()
 @Controller('health')
 export class HealthController {
   constructor(
-    private health: HealthCheckService,
-    private prismaHealth: PrismaHealthIndicator,
-    private memoryHealth: MemoryHealthIndicator,
-    private prismaService: PrismaService,
+    private readonly health: HealthCheckService,
+    private readonly prismaHealth: PrismaHealthIndicator,
+    private readonly memoryHealth: MemoryHealthIndicator,
+    private readonly prismaService: PrismaService,
   ) {}
 
   @Get()
