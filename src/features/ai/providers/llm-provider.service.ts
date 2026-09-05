@@ -29,7 +29,7 @@ export class LlmProviderService {
         name: 'gemini',
         baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
         apiKey: geminiKey,
-        model: 'gemini-2.5-flash',
+        model: 'gemini-3.6-flash',
       });
     }
 
@@ -40,7 +40,7 @@ export class LlmProviderService {
         name: 'groq',
         baseUrl: 'https://api.groq.com/openai/v1',
         apiKey: groqKey,
-        model: 'llama-3.1-8b-instant',
+        model: 'llama-3.3-70b-versatile',
       });
     }
 
