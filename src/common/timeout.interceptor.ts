@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Injectable,
   NestInterceptor,
@@ -6,27 +5,27 @@ import {
   CallHandler,
   RequestTimeoutException,
 } from '@nestjs/common';
+import type { FastifyRequest } from 'fastify'; // 1. Impor tipe FastifyRequest
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
-import type { FastifyRequest } from 'fastify';
 
 @Injectable()
 export class TimeoutInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest<FastifyRequest>();
-    if (
-      request.url?.includes('/ai/explain-project') ||
-      request.url?.includes('/ai/cover-letter')
-    ) {
-      return next.handle();
-    }
+    const url = request?.url ?? '';
+
+    const timeoutDuration = url.includes('/ai/') ? 60000 : 10000;
 
     return next.handle().pipe(
-      timeout(10000), // 10 seconds timeout
-      catchError((err) => {
+      timeout(timeoutDuration),
+      catchError((err: unknown) => {
         if (err instanceof TimeoutError) {
           return throwError(
-            () => new RequestTimeoutException('Request Timeout (Exceeded 10s)'),
+            () =>
+              new RequestTimeoutException(
+                `Request Timeout (Exceeded ${timeoutDuration / 1000}s)`,
+              ),
           );
         }
         return throwError(() => err);
