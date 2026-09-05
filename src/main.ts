@@ -9,7 +9,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import compression from 'compression';
 import { TransformInterceptor } from './common/transform.interceptor';
-import { TimeoutInterceptor } from './common/timeout.interceptor';
+// import { TimeoutInterceptor } from './common/timeout.interceptor';
 import { DemoModeInterceptor } from './common/demo-mode.interceptor';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { apiReference } from '@scalar/nestjs-api-reference';
@@ -63,7 +63,7 @@ async function bootstrap() {
   );
   app.useGlobalInterceptors(
     new TransformInterceptor(),
-    new TimeoutInterceptor(),
+    // new TimeoutInterceptor(),
     new DemoModeInterceptor(),
   );
   app.useGlobalFilters(new AllExceptionsFilter());
