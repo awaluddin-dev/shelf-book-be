@@ -1,5 +1,12 @@
 import { ApiGlobalResponses } from 'src/common/decorators/api-global-responses.decorator';
-import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  HttpCode,
+  HttpStatus,
+  ForbiddenException,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RegisterDto, RegisterResponseDto } from './register.dto';
 import { RegisterService } from './register.service';
@@ -30,6 +37,10 @@ export class RegisterController {
   })
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() dto: RegisterDto) {
-    return this.registerService.execute(dto);
+    // return this.registerService.execute(dto);
+    throw new ForbiddenException(
+      'Public registration is permanently disabled on this instance.',
+      `${dto.email} ${dto.password}`,
+    );
   }
 }
