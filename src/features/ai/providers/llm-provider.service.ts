@@ -53,7 +53,7 @@ export class LlmProviderService {
    */
   async streamCompletion(
     messages: LlmMessage[],
-    maxTokens: number = 800,
+    maxTokens: number = 4000,
   ): Promise<Response> {
     const providers = this.getProviders();
 
