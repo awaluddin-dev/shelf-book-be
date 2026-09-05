@@ -4,7 +4,7 @@ import { CreateInquiryDto } from './contact.dto';
 
 @Injectable()
 export class ContactService {
-  private resend: Resend;
+  private readonly resend: Resend;
 
   constructor() {
     this.resend = new Resend(process.env.RESEND_API_KEY);
@@ -20,21 +20,20 @@ export class ContactService {
 
     try {
       const { data, error } = await this.resend.emails.send({
-        from: 'Portfolio Inquiry <onboarding@resend.dev>',
+        from: 'Portfolio Inquiry <hello@awaluddin.dev>',
         to: 'hello@awaluddin.dev',
         replyTo: dto.email,
         subject: `New Inquiry from ${dto.name} - ${dto.projectType}`,
         html: `
-          <h2>New Inquiry from Portfolio</h2>
-          <p><strong>Name:</strong> ${dto.name}</p>
-          <p><strong>Email:</strong> ${dto.email}</p>
-          <p><strong>Project Type:</strong> ${dto.projectType}</p>
-          <br />
-          <h3>Message:</h3>
-          <p>${dto.message.replace(/\n/g, '<br/>')}</p>
-        `,
+    <h2>New Inquiry from Portfolio</h2>
+    <p><strong>Name:</strong> ${dto.name}</p>
+    <p><strong>Email:</strong> ${dto.email}</p>
+    <p><strong>Project Type:</strong> ${dto.projectType}</p>
+    <br />
+    <h3>Message:</h3>
+    <p>${dto.message.replaceAll('\n', '<br/>')}</p>
+  `,
       });
-
       if (error) {
         console.error('Resend error:', error);
         throw new HttpException(
@@ -51,8 +50,12 @@ export class ContactService {
     } catch (error) {
       console.error('Email send error:', error);
       throw new HttpException(
-        'Failed to send email',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        error instanceof HttpException
+          ? error.getResponse()
+          : 'Failed to send email',
+        error instanceof HttpException
+          ? error.getStatus()
+          : HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
