@@ -3,13 +3,21 @@
 import 'dotenv/config';
 import { defineConfig } from 'prisma/config';
 
+const rawUrl = process.env.AIVEN_DATABASE_URL || process.env.DATABASE_URL || '';
+
+const rawUrlIncludesText = rawUrl.includes('?')
+  ? `${rawUrl}&sslaccept=accept_invalid_certs`
+  : `${rawUrl}?sslaccept=accept_invalid_certs`;
+
+const rawUrlIncludes = rawUrl.includes('sslaccept=')
+  ? rawUrl
+  : rawUrlIncludesText;
+
+const formattedUrl = rawUrl ? rawUrlIncludes : '';
+
 export default defineConfig({
   schema: 'prisma/schema.prisma',
-  migrations: {
-    path: 'prisma/migrations',
-    seed: 'node dist/prisma/seed.js',
-  },
   datasource: {
-    url: process.env['DATABASE_URL'],
+    url: formattedUrl,
   },
 });
