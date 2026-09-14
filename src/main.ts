@@ -13,6 +13,7 @@ import { TransformInterceptor } from './common/transform.interceptor';
 import { DemoModeInterceptor } from './common/demo-mode.interceptor';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { apiReference } from '@scalar/nestjs-api-reference';
+import fastifyMultipart from '@fastify/multipart';
 
 async function bootstrap() {
   process.env.TZ = 'Asia/Makassar';
@@ -21,6 +22,11 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
   );
+  await app.register(fastifyMultipart, {
+    limits: {
+      fileSize: 10 * 1024 * 1024, // 10MB limit
+    },
+  });
   app.enableShutdownHooks();
   app.use(
     helmet({
@@ -44,6 +50,8 @@ async function bootstrap() {
     process.env.FRONTEND_URL,
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3001',
   ].filter(Boolean) as string[];
 
   app.enableCors({
@@ -73,13 +81,11 @@ async function bootstrap() {
     .setDescription(
       '# API documentation for the Shelf Book System\n\n' +
         'Welcome to the **ShelfBook API** documentation. \n' +
-        'This API is built using **NestJS** and provides all the endpoints needed to interact with the Shelf Book system, including AI integrations, User Authentication, Portfolio management, and more.\n\n' +
+        'This API is built using **NestJS** and provides all the endpoints needed to interact with the Shelf Book system, including AI integrations, Portfolio management, and more.\n\n' +
         '## Technologies Used\n' +
         '- **Node.js** & **NestJS** (Backend Framework)\n' +
         '- **Fastify** (HTTP engine)\n' +
-        '- **PostgreSQL** & **Prisma** (Database & ORM)\n\n' +
-        '## Authentication\n' +
-        'Most endpoints require a JWT bearer token. Use the `/auth/login` endpoint to acquire a token, then click the **Authorize** button to set your token.',
+        '- **PostgreSQL** & **Prisma** (Database & ORM)\n',
     )
     .setVersion('1.0')
     .addBearerAuth() // Hint: Tells Swagger we use JWT

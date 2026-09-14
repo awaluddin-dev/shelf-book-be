@@ -1,9 +1,10 @@
 import { ApiGlobalResponses } from 'src/common/decorators/api-global-responses.decorator';
 import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiExcludeController } from '@nestjs/swagger';
 import { RefreshDto, RefreshResponseDto } from './refresh-token.dto';
 import { RefreshTokenService } from './refresh-token.service';
 
+@ApiExcludeController()
 @ApiTags('Auth')
 @ApiGlobalResponses()
 @Controller('auth')

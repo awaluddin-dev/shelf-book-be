@@ -7,10 +7,11 @@ import {
   HttpStatus,
   ForbiddenException,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiExcludeController } from '@nestjs/swagger';
 import { RegisterDto, RegisterResponseDto } from './register.dto';
 import { RegisterService } from './register.service';
 
+@ApiExcludeController()
 @ApiTags('Auth')
 @ApiGlobalResponses()
 @Controller('auth')
