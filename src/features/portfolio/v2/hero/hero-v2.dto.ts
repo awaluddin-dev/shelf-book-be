@@ -39,6 +39,14 @@ export class HeroConfigV2Dto {
   @ApiProperty({ example: 'https://sb.awaluddin.dev/docs' })
   @IsString()
   docsUrl: string;
+
+  @ApiPropertyOptional({
+    description: 'Long-form about text for portfolio about section (supports markdown or paragraphs)',
+    example: 'Back in my early engineering days at Daikin HVAC...',
+  })
+  @IsOptional()
+  @IsString()
+  aboutText?: string;
 }
 
 export class MetricV2Dto {

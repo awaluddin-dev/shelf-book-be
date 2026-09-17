@@ -16,13 +16,18 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
+import { CacheInterceptor, CacheKey, CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Inject } from '@nestjs/common';
+import type { Cache } from 'cache-manager';
 
 @ApiTags('Portfolio V2 - Hero')
 @ApiGlobalResponses()
 @Controller('v2/hero')
 export class HeroV2Controller {
-  constructor(private readonly heroService: HeroV2Service) {}
+  constructor(
+    private readonly heroService: HeroV2Service,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+  ) {}
 
   @Get()
   @UseInterceptors(CacheInterceptor)
@@ -45,6 +50,13 @@ export class HeroV2Controller {
     description: 'Hero configuration successfully updated.',
   })
   async updateHero(@Body() body: UpdateHeroV2Dto) {
-    return await this.heroService.updateHero(body.heroConfig, body.metrics);
+    const result = await this.heroService.updateHero(body.heroConfig, body.metrics);
+    try {
+      await this.cacheManager.del('cache_hero_v2');
+      await this.cacheManager.del('cache_hero');
+    } catch {
+      // ignore cache eviction errors
+    }
+    return result;
   }
 }

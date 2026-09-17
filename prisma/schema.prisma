@@ -306,6 +306,7 @@ model HeroConfigV2 {
   statusText         String   @default("Available for Remote Roles (UTC+7)")
   resumeUrl          String   @default("/assets/resume/Awaluddin_cv.pdf")
   docsUrl            String   @default("https://sb.awaluddin.dev/docs")
+  aboutText          String   @default("")
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
