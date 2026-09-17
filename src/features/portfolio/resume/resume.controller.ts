@@ -64,6 +64,30 @@ export class ResumeController {
     return await this.resumeService.getPrimary();
   }
 
+  // 2b. DOWNLOAD OR VIEW PRIMARY FILE
+  @Get('primary/download')
+  @ApiOperation({ summary: 'Download or view primary resume document file (.pdf / .md)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Binary primary document file stream.',
+  })
+  async downloadPrimaryDocument(@Res() reply: FastifyReply) {
+    const primary = await this.resumeService.getPrimary();
+    if (!primary) {
+      throw new BadRequestException('No resume document found');
+    }
+    const fileData = await this.resumeService.getFileForDownload(primary.id);
+
+    reply.header('Content-Type', fileData.mimeType);
+    reply.header(
+      'Content-Disposition',
+      `inline; filename="${encodeURIComponent(fileData.fileName)}"`,
+    );
+    reply.header('Content-Length', fileData.fileSize);
+
+    return reply.send(fileData.stream);
+  }
+
   // 3. GET BY ID
   @Get(':id')
   @ApiOperation({ summary: 'Retrieve resume document metadata by ID' })

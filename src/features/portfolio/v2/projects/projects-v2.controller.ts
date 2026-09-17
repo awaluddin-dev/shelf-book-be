@@ -1,0 +1,87 @@
+import { ApiGlobalResponses } from 'src/common/decorators/api-global-responses.decorator';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { ProjectsV2Service } from './projects-v2.service';
+import { CreateProjectV2Dto, UpdateProjectV2Dto } from './projects-v2.dto';
+import { JwtGuard } from 'src/auth/jwt.guard';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
+
+@ApiTags('Portfolio V2 - Projects')
+@ApiGlobalResponses()
+@Controller('v2/projects')
+export class ProjectsV2Controller {
+  constructor(private readonly projectsService: ProjectsV2Service) {}
+
+  @Get()
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('cache_projects_v2')
+  @ApiOperation({ summary: 'Retrieve all V2 projects' })
+  @ApiResponse({
+    status: 200,
+    description: 'Projects successfully retrieved.',
+  })
+  async findAll() {
+    return await this.projectsService.findAll();
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Retrieve a single V2 project' })
+  @ApiResponse({
+    status: 200,
+    description: 'Project successfully retrieved.',
+  })
+  async findOne(@Param('id') id: string) {
+    return await this.projectsService.findOne(id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Post()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create a new V2 project' })
+  @ApiResponse({
+    status: 201,
+    description: 'Project successfully created.',
+  })
+  async create(@Body() body: CreateProjectV2Dto) {
+    return await this.projectsService.create(body);
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch(':id')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update a V2 project' })
+  @ApiResponse({
+    status: 200,
+    description: 'Project successfully updated.',
+  })
+  async update(@Param('id') id: string, @Body() body: UpdateProjectV2Dto) {
+    return await this.projectsService.update(id, body);
+  }
+
+  @UseGuards(JwtGuard)
+  @Delete(':id')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete a V2 project' })
+  @ApiResponse({
+    status: 200,
+    description: 'Project successfully deleted.',
+  })
+  async remove(@Param('id') id: string) {
+    return await this.projectsService.remove(id);
+  }
+}

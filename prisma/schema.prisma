@@ -293,3 +293,95 @@ model ResumeDocument {
   @@map("resume_documents")
   @@schema("public")
 }
+
+// ─── VERSION 2 MODELS ────────────────────────────────────────
+
+model HeroConfigV2 {
+  id                 String   @id @default("hero_v2_default")
+  name               String   @default("Awaluddin")
+  role               String   @default("Backend Engineer & AI Integrator")
+  headline           String   @default("Production Systems at Scale")
+  quote              String   @default("I ship LLM integrations into production — not train models in notebooks.")
+  status             String   @default("available")
+  statusText         String   @default("Available for Remote Roles (UTC+7)")
+  resumeUrl          String   @default("/assets/resume/Awaluddin_cv.pdf")
+  docsUrl            String   @default("https://sb.awaluddin.dev/docs")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("hero_config_v2")
+  @@schema("public")
+}
+
+model MetricV2 {
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
+  value       String
+  label       String
+  description String
+  subtext     String
+  icon        String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("metrics_v2")
+  @@schema("public")
+}
+
+model CareerExperienceV2 {
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
+  company   String
+  role      String
+  period    String
+  isActive  Boolean  @default(false)
+  bullets   Json
+  techTags  String[]
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("career_experiences_v2")
+  @@schema("public")
+}
+
+model ProficiencyPillarV2 {
+  id           String   @id @default(dbgenerated("gen_random_uuid()"))
+  pillarNumber String
+  title        String
+  description  String
+  icon         String
+  skills       Json
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("proficiency_pillars_v2")
+  @@schema("public")
+}
+
+model ProjectV2 {
+  id            String   @id @default(dbgenerated("gen_random_uuid()"))
+  title         String
+  subtitle      String
+  category      String
+  date          String
+  tags          String[]
+  domainBadge   String?
+  problem       String?
+  solution      String?
+  pipelineFlow  String[]
+  spineColor    String   @default("#0f4c75")
+  coverColor    String   @default("#142028")
+  spineText     String   @default("")
+  github        String?
+  demoUrl       String?
+  stats         Json?
+  phases        Json?
+  markdown      String   @default("")
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("projects_v2")
+  @@schema("public")
+}

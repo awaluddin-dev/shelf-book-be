@@ -11,9 +11,10 @@ import { ProjectsController } from './projects/projects.controller';
 import { ProjectsService } from './projects/projects.service';
 import { ResumeController } from './resume/resume.controller';
 import { ResumeService } from './resume/resume.service';
+import { PortfolioV2Module } from './v2/portfolio-v2.module';
 
 @Module({
-  imports: [CommonModule],
+  imports: [CommonModule, PortfolioV2Module],
   controllers: [
     HeroController,
     ExperienceController,
@@ -28,5 +29,6 @@ import { ResumeService } from './resume/resume.service';
     ProjectsService,
     ResumeService,
   ],
+  exports: [PortfolioV2Module],
 })
 export class PortfolioModule {}
