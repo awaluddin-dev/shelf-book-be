@@ -386,3 +386,42 @@ model ProjectV2 {
   @@map("projects_v2")
   @@schema("public")
 }
+
+model DirectionV2 {
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
+  title       String
+  category    String   // 'learning', 'project', 'architecture', 'system'
+  type        String   // 'current' (now) or 'future' (upcoming quarters)
+  quarter     String   // e.g. 'Q1 2026', 'Q2 2026', 'Ongoing'
+  status      String   @default("in_progress") // 'in_progress', 'planned', 'completed'
+  description String
+  depth       String?  // e.g. 'Deep dive', 'Production scale'
+  tags        String[]
+  icon        String?  // Lucide icon name
+  link        String?
+  linkText    String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("directions_v2")
+  @@schema("public")
+}
+
+model YouTubeVideoV2 {
+  id           String   @id @default(dbgenerated("gen_random_uuid()"))
+  title        String
+  description  String   @default("")
+  thumbnailUrl String   @default("")
+  videoUrl     String
+  duration     String?
+  views        String?
+  publishedAt  DateTime?
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("youtube_videos_v2")
+  @@schema("public")
+}
+

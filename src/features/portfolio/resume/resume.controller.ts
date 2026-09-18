@@ -13,6 +13,7 @@ import {
   UseInterceptors,
   HttpStatus,
   BadRequestException,
+  Inject,
 } from '@nestjs/common';
 import { ResumeService } from './resume.service';
 import {
@@ -29,14 +30,18 @@ import {
   ApiConsumes,
   ApiBody,
 } from '@nestjs/swagger';
-import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
+import { CacheInterceptor, CacheKey, CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
 import type { FastifyRequest, FastifyReply } from 'fastify';
 
 @ApiTags('Resume Documents')
 @ApiGlobalResponses()
 @Controller('resume/documents')
 export class ResumeController {
-  constructor(private readonly resumeService: ResumeService) {}
+  constructor(
+    private readonly resumeService: ResumeService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+  ) {}
 
   // 1. GET ALL
   @Get()
@@ -189,7 +194,13 @@ export class ResumeController {
       isPrimary: isPrimaryValue === 'true' || isPrimaryValue === true,
     };
 
-    return await this.resumeService.uploadDocument(metadata, file);
+    const doc = await this.resumeService.uploadDocument(metadata, file);
+    try {
+      await this.cacheManager.del('cache_resume_documents');
+    } catch {
+      // ignore
+    }
+    return doc;
   }
 
   // 6. UPDATE RESUME DOCUMENT (Metadata and optional file replace)
@@ -234,6 +245,7 @@ export class ResumeController {
     @Req() req: FastifyRequest,
     @Body() body: UpdateResumeDto,
   ) {
+    let result;
     if (req.isMultipart()) {
       const file = await req.file();
       const fields = (file?.fields || {}) as Record<string, any>;
@@ -251,10 +263,17 @@ export class ResumeController {
             : undefined,
       };
 
-      return await this.resumeService.updateDocument(id, metadata, file || undefined);
+      result = await this.resumeService.updateDocument(id, metadata, file || undefined);
+    } else {
+      result = await this.resumeService.updateDocument(id, body);
     }
 
-    return await this.resumeService.updateDocument(id, body);
+    try {
+      await this.cacheManager.del('cache_resume_documents');
+    } catch {
+      // ignore
+    }
+    return result;
   }
 
   // 7. DELETE RESUME DOCUMENT
@@ -268,6 +287,12 @@ export class ResumeController {
     schema: { example: { success: true } },
   })
   async deleteDocument(@Param('id') id: string) {
-    return await this.resumeService.deleteDocument(id);
+    const result = await this.resumeService.deleteDocument(id);
+    try {
+      await this.cacheManager.del('cache_resume_documents');
+    } catch {
+      // ignore
+    }
+    return result;
   }
 }
