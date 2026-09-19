@@ -380,6 +380,11 @@ model ProjectV2 {
   phases        Json?
   markdown      String   @default("")
   order         Int      @default(0)
+  isFeatured    Boolean  @default(false)
+  mediaType     String?  // 'gif', 'screenshot', 'video'
+  mediaUrl      String?  // URL of screenshot, gif, or demo preview
+  architectureDiagram String? // Architecture diagram image or ASCII/Mermaid
+  keyHighlights String[] @default([]) // Key achievements / bullet points for recruiters
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

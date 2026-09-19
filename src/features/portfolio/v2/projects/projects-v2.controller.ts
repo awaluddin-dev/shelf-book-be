@@ -7,8 +7,12 @@ import {
   Delete,
   Body,
   Param,
+  Req,
+  Res,
   UseGuards,
   UseInterceptors,
+  HttpStatus,
+  BadRequestException,
 } from '@nestjs/common';
 import { ProjectsV2Service } from './projects-v2.service';
 import { CreateProjectV2Dto, UpdateProjectV2Dto } from './projects-v2.dto';
@@ -18,8 +22,11 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiConsumes,
+  ApiBody,
 } from '@nestjs/swagger';
 import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
+import type { FastifyRequest, FastifyReply } from 'fastify';
 
 @ApiTags('Portfolio V2 - Projects')
 @ApiGlobalResponses()
@@ -37,6 +44,64 @@ export class ProjectsV2Controller {
   })
   async findAll() {
     return await this.projectsService.findAll();
+  }
+
+  @Get('assets/:filename')
+  @ApiOperation({ summary: 'Serve or stream uploaded project asset (architecture, preview, screenshot)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Project asset file stream.',
+  })
+  async getAsset(
+    @Param('filename') filename: string,
+    @Res() reply: FastifyReply,
+  ) {
+    const fileData = await this.projectsService.getFileForDownload(filename);
+
+    reply.header('Content-Type', fileData.mimeType);
+    reply.header(
+      'Content-Disposition',
+      `inline; filename="${encodeURIComponent(fileData.fileName)}"`,
+    );
+    reply.header('Content-Length', fileData.fileSize);
+    reply.header('Cache-Control', 'public, max-age=31536000, immutable');
+
+    return reply.send(fileData.stream);
+  }
+
+  @UseGuards(JwtGuard)
+  @Post('upload')
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Upload project media asset (architecture diagram, screenshot, GIF, etc.)' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['file'],
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'Asset file (image, gif, video, diagram pdf/png)',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Asset uploaded successfully.',
+  })
+  async uploadAsset(@Req() req: FastifyRequest) {
+    if (!req.isMultipart()) {
+      throw new BadRequestException('Request must be multipart/form-data');
+    }
+
+    const file = await req.file();
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+
+    return await this.projectsService.saveAsset(file);
   }
 
   @Get(':id')
@@ -85,3 +150,4 @@ export class ProjectsV2Controller {
     return await this.projectsService.remove(id);
   }
 }
+

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, IsInt, IsArray } from 'class-validator';
+import { IsString, IsOptional, IsInt, IsArray, IsBoolean } from 'class-validator';
 
 export class CreateProjectV2Dto {
   @ApiProperty({ example: 'AuraFlow AI Orchestrator' })
@@ -86,6 +86,32 @@ export class CreateProjectV2Dto {
   @IsOptional()
   @IsInt()
   order?: number;
+
+  @ApiPropertyOptional({ example: true })
+  @IsOptional()
+  @IsBoolean()
+  isFeatured?: boolean;
+
+  @ApiPropertyOptional({ example: 'gif' })
+  @IsOptional()
+  @IsString()
+  mediaType?: string;
+
+  @ApiPropertyOptional({ example: 'https://images.unsplash.com/...' })
+  @IsOptional()
+  @IsString()
+  mediaUrl?: string;
+
+  @ApiPropertyOptional({ example: 'https://raw.githubusercontent.com/...' })
+  @IsOptional()
+  @IsString()
+  architectureDiagram?: string;
+
+  @ApiPropertyOptional({ example: ['Handled 100K+ concurrent requests', 'Sub-50ms latency'] })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  keyHighlights?: string[];
 }
 
 export class UpdateProjectV2Dto {
@@ -178,4 +204,30 @@ export class UpdateProjectV2Dto {
   @IsOptional()
   @IsInt()
   order?: number;
+
+  @ApiPropertyOptional({ example: true })
+  @IsOptional()
+  @IsBoolean()
+  isFeatured?: boolean;
+
+  @ApiPropertyOptional({ example: 'gif' })
+  @IsOptional()
+  @IsString()
+  mediaType?: string;
+
+  @ApiPropertyOptional({ example: 'https://images.unsplash.com/...' })
+  @IsOptional()
+  @IsString()
+  mediaUrl?: string;
+
+  @ApiPropertyOptional({ example: 'https://raw.githubusercontent.com/...' })
+  @IsOptional()
+  @IsString()
+  architectureDiagram?: string;
+
+  @ApiPropertyOptional({ example: ['Handled 100K+ concurrent requests', 'Sub-50ms latency'] })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  keyHighlights?: string[];
 }
