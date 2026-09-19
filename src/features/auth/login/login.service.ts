@@ -32,7 +32,10 @@ export class LoginService {
         },
       );
 
-      const verifyData = (await verifyRes.json()) as { success: boolean, 'error-codes'?: string[] };
+      const verifyData = (await verifyRes.json()) as {
+        success: boolean;
+        'error-codes'?: string[];
+      };
       if (!verifyData.success) {
         console.error('Turnstile verification failed:', verifyData);
         throw new UnauthorizedException(

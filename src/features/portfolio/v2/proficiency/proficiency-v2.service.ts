@@ -45,9 +45,13 @@ export class ProficiencyV2Service {
     return await this.prisma.proficiencyPillarV2.update({
       where: { id },
       data: {
-        ...(data.pillarNumber !== undefined && { pillarNumber: data.pillarNumber }),
+        ...(data.pillarNumber !== undefined && {
+          pillarNumber: data.pillarNumber,
+        }),
         ...(data.title !== undefined && { title: data.title }),
-        ...(data.description !== undefined && { description: data.description }),
+        ...(data.description !== undefined && {
+          description: data.description,
+        }),
         ...(data.icon !== undefined && { icon: data.icon }),
         ...(data.skills !== undefined && {
           skills: data.skills as unknown as Prisma.InputJsonValue,

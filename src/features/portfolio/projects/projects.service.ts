@@ -127,7 +127,10 @@ export class ProjectsService extends BaseCrudService {
     return this.prisma.technicalImagery.upsert({
       where: { projectId },
       update: data as Prisma.TechnicalImageryUncheckedUpdateInput,
-      create: { ...data, projectId } as Prisma.TechnicalImageryUncheckedCreateInput,
+      create: {
+        ...data,
+        projectId,
+      },
     });
   }
 

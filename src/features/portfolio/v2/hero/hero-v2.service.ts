@@ -18,7 +18,8 @@ export class HeroV2Service {
           name: 'Awaluddin',
           role: 'Backend Engineer & AI Integrator',
           headline: 'Production Systems at Scale',
-          quote: 'I ship LLM integrations into production — not train models in notebooks.',
+          quote:
+            'I ship LLM integrations into production — not train models in notebooks.',
           status: 'available',
           statusText: 'Available for Remote Roles (UTC+7)',
           resumeUrl: '/assets/resume/Awaluddin_cv.pdf',

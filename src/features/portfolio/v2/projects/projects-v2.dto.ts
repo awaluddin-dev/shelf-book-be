@@ -1,6 +1,12 @@
 import { Prisma } from '@prisma/client';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, IsInt, IsArray, IsBoolean } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsInt,
+  IsArray,
+  IsBoolean,
+} from 'class-validator';
 
 export class CreateProjectV2Dto {
   @ApiProperty({ example: 'AuraFlow AI Orchestrator' })
@@ -29,17 +35,23 @@ export class CreateProjectV2Dto {
   @IsString()
   domainBadge?: string;
 
-  @ApiPropertyOptional({ example: 'Cascading timeouts and uncontrolled LLM execution latencies.' })
+  @ApiPropertyOptional({
+    example: 'Cascading timeouts and uncontrolled LLM execution latencies.',
+  })
   @IsOptional()
   @IsString()
   problem?: string;
 
-  @ApiPropertyOptional({ example: 'Decoupled queue workers with LangGraph state checkpoints.' })
+  @ApiPropertyOptional({
+    example: 'Decoupled queue workers with LangGraph state checkpoints.',
+  })
   @IsOptional()
   @IsString()
   solution?: string;
 
-  @ApiPropertyOptional({ example: ['Gateway', 'BullMQ', 'LangGraph', 'PostgreSQL'] })
+  @ApiPropertyOptional({
+    example: ['Gateway', 'BullMQ', 'LangGraph', 'PostgreSQL'],
+  })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
@@ -108,7 +120,9 @@ export class CreateProjectV2Dto {
   @IsString()
   architectureDiagram?: string;
 
-  @ApiPropertyOptional({ example: ['Handled 100K+ concurrent requests', 'Sub-50ms latency'] })
+  @ApiPropertyOptional({
+    example: ['Handled 100K+ concurrent requests', 'Sub-50ms latency'],
+  })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
@@ -147,17 +161,23 @@ export class UpdateProjectV2Dto {
   @IsString()
   domainBadge?: string;
 
-  @ApiPropertyOptional({ example: 'Cascading timeouts and uncontrolled LLM execution latencies.' })
+  @ApiPropertyOptional({
+    example: 'Cascading timeouts and uncontrolled LLM execution latencies.',
+  })
   @IsOptional()
   @IsString()
   problem?: string;
 
-  @ApiPropertyOptional({ example: 'Decoupled queue workers with LangGraph state checkpoints.' })
+  @ApiPropertyOptional({
+    example: 'Decoupled queue workers with LangGraph state checkpoints.',
+  })
   @IsOptional()
   @IsString()
   solution?: string;
 
-  @ApiPropertyOptional({ example: ['Gateway', 'BullMQ', 'LangGraph', 'PostgreSQL'] })
+  @ApiPropertyOptional({
+    example: ['Gateway', 'BullMQ', 'LangGraph', 'PostgreSQL'],
+  })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
@@ -226,7 +246,9 @@ export class UpdateProjectV2Dto {
   @IsString()
   architectureDiagram?: string;
 
-  @ApiPropertyOptional({ example: ['Handled 100K+ concurrent requests', 'Sub-50ms latency'] })
+  @ApiPropertyOptional({
+    example: ['Handled 100K+ concurrent requests', 'Sub-50ms latency'],
+  })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })

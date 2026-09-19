@@ -37,7 +37,10 @@ export class DirectionsV2Controller {
   @Get()
   @UseInterceptors(CacheInterceptor)
   @CacheKey('cache_directions_v2')
-  @ApiOperation({ summary: 'Retrieve all V2 directions, grouped by current and future quarters' })
+  @ApiOperation({
+    summary:
+      'Retrieve all V2 directions, grouped by current and future quarters',
+  })
   @ApiResponse({
     status: 200,
     description: 'Directions successfully retrieved.',
@@ -59,7 +62,9 @@ export class DirectionsV2Controller {
   @ApiOperation({ summary: 'Retrieve published articles from Dev.to' })
   @ApiQuery({ name: 'username', required: false })
   async getDevTo(@Query('username') username?: string) {
-    return await this.directionsService.getDevToArticles(username || 'awaluddin');
+    return await this.directionsService.getDevToArticles(
+      username || 'awaluddin',
+    );
   }
 
   @Get('youtube')
@@ -92,10 +97,7 @@ export class DirectionsV2Controller {
   @Patch(':id')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update an existing direction item' })
-  async update(
-    @Param('id') id: string,
-    @Body() body: UpdateDirectionV2Dto,
-  ) {
+  async update(@Param('id') id: string, @Body() body: UpdateDirectionV2Dto) {
     return await this.directionsService.update(id, body);
   }
 

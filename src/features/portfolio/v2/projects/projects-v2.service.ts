@@ -1,5 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import type { Prisma } from '@prisma/client';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProjectV2Dto, UpdateProjectV2Dto } from './projects-v2.dto';
 import * as fs from 'fs';
@@ -9,7 +12,11 @@ import type { MultipartFile } from '@fastify/multipart';
 
 @Injectable()
 export class ProjectsV2Service {
-  private readonly uploadDir = path.resolve(process.cwd(), 'uploads', 'projects');
+  private readonly uploadDir = path.resolve(
+    process.cwd(),
+    'uploads',
+    'projects',
+  );
   private readonly allowedMimeTypes = [
     'image/png',
     'image/jpeg',
@@ -77,8 +84,8 @@ export class ProjectsV2Service {
         spineText: data.spineText ?? data.title,
         github: data.github,
         demoUrl: data.demoUrl,
-        stats: (data.stats ?? []) as Prisma.InputJsonValue,
-        phases: (data.phases ?? []) as Prisma.InputJsonValue,
+        stats: data.stats ?? [],
+        phases: data.phases ?? [],
         markdown: data.markdown ?? '',
         order: data.order ?? 0,
         isFeatured: data.isFeatured ?? false,
@@ -100,28 +107,36 @@ export class ProjectsV2Service {
         ...(data.category !== undefined && { category: data.category }),
         ...(data.date !== undefined && { date: data.date }),
         ...(data.tags !== undefined && { tags: data.tags }),
-        ...(data.domainBadge !== undefined && { domainBadge: data.domainBadge }),
+        ...(data.domainBadge !== undefined && {
+          domainBadge: data.domainBadge,
+        }),
         ...(data.problem !== undefined && { problem: data.problem }),
         ...(data.solution !== undefined && { solution: data.solution }),
-        ...(data.pipelineFlow !== undefined && { pipelineFlow: data.pipelineFlow }),
+        ...(data.pipelineFlow !== undefined && {
+          pipelineFlow: data.pipelineFlow,
+        }),
         ...(data.spineColor !== undefined && { spineColor: data.spineColor }),
         ...(data.coverColor !== undefined && { coverColor: data.coverColor }),
         ...(data.spineText !== undefined && { spineText: data.spineText }),
         ...(data.github !== undefined && { github: data.github }),
         ...(data.demoUrl !== undefined && { demoUrl: data.demoUrl }),
         ...(data.stats !== undefined && {
-          stats: data.stats as Prisma.InputJsonValue,
+          stats: data.stats,
         }),
         ...(data.phases !== undefined && {
-          phases: data.phases as Prisma.InputJsonValue,
+          phases: data.phases,
         }),
         ...(data.markdown !== undefined && { markdown: data.markdown }),
         ...(data.order !== undefined && { order: data.order }),
         ...(data.isFeatured !== undefined && { isFeatured: data.isFeatured }),
         ...(data.mediaType !== undefined && { mediaType: data.mediaType }),
         ...(data.mediaUrl !== undefined && { mediaUrl: data.mediaUrl }),
-        ...(data.architectureDiagram !== undefined && { architectureDiagram: data.architectureDiagram }),
-        ...(data.keyHighlights !== undefined && { keyHighlights: data.keyHighlights }),
+        ...(data.architectureDiagram !== undefined && {
+          architectureDiagram: data.architectureDiagram,
+        }),
+        ...(data.keyHighlights !== undefined && {
+          keyHighlights: data.keyHighlights,
+        }),
       },
     });
   }
@@ -197,4 +212,3 @@ export class ProjectsV2Service {
     }
   }
 }
-

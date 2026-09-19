@@ -1,5 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, IsInt, IsArray, ValidateNested } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsInt,
+  IsArray,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class HeroConfigV2Dto {
@@ -20,7 +26,10 @@ export class HeroConfigV2Dto {
   @IsString()
   headline: string;
 
-  @ApiProperty({ example: 'I ship LLM integrations into production — not train models in notebooks.' })
+  @ApiProperty({
+    example:
+      'I ship LLM integrations into production — not train models in notebooks.',
+  })
   @IsString()
   quote: string;
 
@@ -41,7 +50,8 @@ export class HeroConfigV2Dto {
   docsUrl: string;
 
   @ApiPropertyOptional({
-    description: 'Long-form about text for portfolio about section (supports markdown or paragraphs)',
+    description:
+      'Long-form about text for portfolio about section (supports markdown or paragraphs)',
     example: 'Back in my early engineering days at Daikin HVAC...',
   })
   @IsOptional()
@@ -63,7 +73,10 @@ export class MetricV2Dto {
   @IsString()
   label: string;
 
-  @ApiProperty({ example: 'Cloud resource right-sizing & query indexing optimization at Telkomsel.' })
+  @ApiProperty({
+    example:
+      'Cloud resource right-sizing & query indexing optimization at Telkomsel.',
+  })
   @IsString()
   description: string;
 

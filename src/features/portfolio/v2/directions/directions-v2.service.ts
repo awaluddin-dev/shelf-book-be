@@ -120,7 +120,10 @@ export class DirectionsV2Service {
   // ---------------------------------------------------------------------------
   async getDevToArticles(username = 'awaluddin'): Promise<DevToArticle[]> {
     const now = Date.now();
-    if (this.devToCache && now - this.devToCache.timestamp < this.CACHE_TTL_MS) {
+    if (
+      this.devToCache &&
+      now - this.devToCache.timestamp < this.CACHE_TTL_MS
+    ) {
       return this.devToCache.data.slice(0, 2);
     }
 
@@ -159,25 +162,28 @@ export class DirectionsV2Service {
         comments_count?: number;
       }
 
-      const articles: DevToArticle[] = (rawArticles as RawDevToArticle[]).map((art) => ({
-        id: art.id,
-        title: art.title,
-        description: art.description,
-        url: art.url,
-        coverImage: art.cover_image || art.social_image,
-        socialImage: art.social_image,
-        publishedAt: art.published_at,
-        readablePublishDate: art.readable_publish_date,
-        readingTimeMinutes: art.reading_time_minutes,
-        tagList: art.tag_list || [],
-        publicReactionsCount: art.public_reactions_count || 0,
-        commentsCount: art.comments_count || 0,
-      }));
+      const articles: DevToArticle[] = (rawArticles as RawDevToArticle[]).map(
+        (art) => ({
+          id: art.id,
+          title: art.title,
+          description: art.description,
+          url: art.url,
+          coverImage: art.cover_image || art.social_image,
+          socialImage: art.social_image,
+          publishedAt: art.published_at,
+          readablePublishDate: art.readable_publish_date,
+          readingTimeMinutes: art.reading_time_minutes,
+          tagList: art.tag_list || [],
+          publicReactionsCount: art.public_reactions_count || 0,
+          commentsCount: art.comments_count || 0,
+        }),
+      );
 
       this.devToCache = { timestamp: now, data: articles };
       return articles.slice(0, 2);
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       this.logger.warn(`Failed to fetch dev.to articles: ${errorMessage}`);
       if (this.devToCache) return this.devToCache.data.slice(0, 2);
       return [];
@@ -216,7 +222,9 @@ export class DirectionsV2Service {
       data: {
         ...(dto.title !== undefined && { title: dto.title }),
         ...(dto.description !== undefined && { description: dto.description }),
-        ...(dto.thumbnailUrl !== undefined && { thumbnailUrl: dto.thumbnailUrl }),
+        ...(dto.thumbnailUrl !== undefined && {
+          thumbnailUrl: dto.thumbnailUrl,
+        }),
         ...(dto.videoUrl !== undefined && { videoUrl: dto.videoUrl }),
         ...(dto.duration !== undefined && { duration: dto.duration }),
         ...(dto.views !== undefined && { views: dto.views }),
@@ -244,7 +252,8 @@ export class DirectionsV2Service {
         type: 'current',
         quarter: 'Q1 2026',
         status: 'in_progress',
-        description: 'Building event-driven microservices pipelines with schema registry, dead letter queues, and exactly-once processing guarantees.',
+        description:
+          'Building event-driven microservices pipelines with schema registry, dead letter queues, and exactly-once processing guarantees.',
         depth: 'Production Deep Dive',
         tags: ['Kafka', 'Event-Driven', 'Go', 'NestJS'],
         icon: 'Layers',
@@ -258,7 +267,8 @@ export class DirectionsV2Service {
         type: 'current',
         quarter: 'Q1 2026',
         status: 'in_progress',
-        description: 'Designing autonomous agent loops with dynamic tool retrieval, reactive wakeups, state verification, and long-running job persistence.',
+        description:
+          'Designing autonomous agent loops with dynamic tool retrieval, reactive wakeups, state verification, and long-running job persistence.',
         depth: 'System Implementation',
         tags: ['AI Agents', 'LLM Routing', 'LangGraph', 'TypeScript'],
         icon: 'BrainCircuit',
@@ -272,7 +282,8 @@ export class DirectionsV2Service {
         type: 'current',
         quarter: 'Q1 2026',
         status: 'in_progress',
-        description: 'Deep diving into memory safety, zero-cost abstractions, asynchronous IO, and native gRPC service contracts.',
+        description:
+          'Deep diving into memory safety, zero-cost abstractions, asynchronous IO, and native gRPC service contracts.',
         depth: 'Core Systems Mastery',
         tags: ['Rust', 'Tokio', 'gRPC', 'Systems'],
         icon: 'Cpu',
@@ -287,7 +298,8 @@ export class DirectionsV2Service {
         type: 'future',
         quarter: 'Q2 2026',
         status: 'planned',
-        description: 'Setting up GitOps deployment workflows via ArgoCD, dynamic autoscaling with KEDA, and strict zero-trust network policies via Cilium.',
+        description:
+          'Setting up GitOps deployment workflows via ArgoCD, dynamic autoscaling with KEDA, and strict zero-trust network policies via Cilium.',
         depth: 'Infrastructure & DevOps',
         tags: ['Kubernetes', 'ArgoCD', 'Cilium', 'Helm'],
         icon: 'Cloud',
@@ -299,7 +311,8 @@ export class DirectionsV2Service {
         type: 'future',
         quarter: 'Q2 2026',
         status: 'planned',
-        description: 'Combining Neo4j knowledge graphs with vector embeddings to achieve explainable and hallucination-resistant RAG systems.',
+        description:
+          'Combining Neo4j knowledge graphs with vector embeddings to achieve explainable and hallucination-resistant RAG systems.',
         depth: 'AI & Knowledge Engineering',
         tags: ['GraphRAG', 'Neo4j', 'Qdrant', 'FastAPI'],
         icon: 'Zap',
@@ -311,7 +324,8 @@ export class DirectionsV2Service {
         type: 'future',
         quarter: 'Q3 2026',
         status: 'planned',
-        description: 'Architecting an immutable financial ledger with ACID transactions, idempotent mutation tokens, and deterministic replay logs.',
+        description:
+          'Architecting an immutable financial ledger with ACID transactions, idempotent mutation tokens, and deterministic replay logs.',
         depth: 'Financial Systems',
         tags: ['PostgreSQL', 'Rust', 'FinTech', 'Event Sourcing'],
         icon: 'Server',
@@ -323,7 +337,8 @@ export class DirectionsV2Service {
         type: 'future',
         quarter: 'Q4 2026',
         status: 'planned',
-        description: 'Releasing lightweight developer toolkits for rapid NestJS scaffolding, automated database migration verification, and contract testing.',
+        description:
+          'Releasing lightweight developer toolkits for rapid NestJS scaffolding, automated database migration verification, and contract testing.',
         depth: 'Open Source',
         tags: ['Open Source', 'CLI', 'TypeScript', 'Developer Tools'],
         icon: 'Terminal',

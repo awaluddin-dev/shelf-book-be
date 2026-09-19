@@ -61,7 +61,9 @@ export function ApiGlobalResponses() {
     ApiResponse({
       status: 500,
       description: 'Internal Server Error',
-      schema: { example: { statusCode: 500, message: 'Internal server error' } },
+      schema: {
+        example: { statusCode: 500, message: 'Internal server error' },
+      },
     }),
   );
 }

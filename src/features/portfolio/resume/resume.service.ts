@@ -13,8 +13,17 @@ import type { MultipartFile } from '@fastify/multipart';
 
 @Injectable()
 export class ResumeService extends BaseCrudService {
-  private readonly uploadDir = path.resolve(process.cwd(), 'uploads', 'documents');
-  private readonly allowedMimeTypes = ['application/pdf', 'text/markdown', 'text/x-markdown', 'text/plain'];
+  private readonly uploadDir = path.resolve(
+    process.cwd(),
+    'uploads',
+    'documents',
+  );
+  private readonly allowedMimeTypes = [
+    'application/pdf',
+    'text/markdown',
+    'text/x-markdown',
+    'text/plain',
+  ];
   private readonly allowedExtensions = ['.pdf', '.md'];
 
   constructor(private readonly prisma: PrismaService) {
@@ -51,10 +60,7 @@ export class ResumeService extends BaseCrudService {
     return primary;
   }
 
-  async uploadDocument(
-    metadata: CreateResumeDto,
-    file: MultipartFile,
-  ) {
+  async uploadDocument(metadata: CreateResumeDto, file: MultipartFile) {
     this.validateFile(file);
 
     const ext = path.extname(file.filename).toLowerCase();
@@ -86,7 +92,9 @@ export class ResumeService extends BaseCrudService {
         storedName,
         filePath: relativePath,
         fileSize: stats.size,
-        mimeType: file.mimetype || (fileType === 'pdf' ? 'application/pdf' : 'text/markdown'),
+        mimeType:
+          file.mimetype ||
+          (fileType === 'pdf' ? 'application/pdf' : 'text/markdown'),
         isPrimary: Boolean(metadata.isPrimary),
       },
     });
@@ -121,7 +129,9 @@ export class ResumeService extends BaseCrudService {
         storedName,
         filePath: path.join('uploads', 'documents', storedName),
         fileSize: stats.size,
-        mimeType: file.mimetype || (fileType === 'pdf' ? 'application/pdf' : 'text/markdown'),
+        mimeType:
+          file.mimetype ||
+          (fileType === 'pdf' ? 'application/pdf' : 'text/markdown'),
       };
     }
 
@@ -136,8 +146,12 @@ export class ResumeService extends BaseCrudService {
       where: { id },
       data: {
         ...(metadata.title !== undefined && { title: metadata.title }),
-        ...(metadata.description !== undefined && { description: metadata.description }),
-        ...(metadata.isPrimary !== undefined && { isPrimary: metadata.isPrimary }),
+        ...(metadata.description !== undefined && {
+          description: metadata.description,
+        }),
+        ...(metadata.isPrimary !== undefined && {
+          isPrimary: metadata.isPrimary,
+        }),
         ...updatedFileData,
       },
     });
@@ -161,7 +175,9 @@ export class ResumeService extends BaseCrudService {
     const fullPath = path.join(this.uploadDir, doc.storedName);
 
     if (!fs.existsSync(fullPath)) {
-      throw new NotFoundException(`Physical file for document ${id} not found on disk`);
+      throw new NotFoundException(
+        `Physical file for document ${id} not found on disk`,
+      );
     }
 
     return {

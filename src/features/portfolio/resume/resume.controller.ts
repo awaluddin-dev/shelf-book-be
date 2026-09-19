@@ -30,7 +30,11 @@ import {
   ApiConsumes,
   ApiBody,
 } from '@nestjs/swagger';
-import { CacheInterceptor, CacheKey, CACHE_MANAGER } from '@nestjs/cache-manager';
+import {
+  CacheInterceptor,
+  CacheKey,
+  CACHE_MANAGER,
+} from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import type { FastifyRequest, FastifyReply } from 'fastify';
 
@@ -71,7 +75,9 @@ export class ResumeController {
 
   // 2b. DOWNLOAD OR VIEW PRIMARY FILE
   @Get('primary/download')
-  @ApiOperation({ summary: 'Download or view primary resume document file (.pdf / .md)' })
+  @ApiOperation({
+    summary: 'Download or view primary resume document file (.pdf / .md)',
+  })
   @ApiResponse({
     status: 200,
     description: 'Binary primary document file stream.',
@@ -107,15 +113,14 @@ export class ResumeController {
 
   // 4. DOWNLOAD OR VIEW FILE
   @Get(':id/download')
-  @ApiOperation({ summary: 'Download or view resume document file (.pdf / .md)' })
+  @ApiOperation({
+    summary: 'Download or view resume document file (.pdf / .md)',
+  })
   @ApiResponse({
     status: 200,
     description: 'Binary document file stream.',
   })
-  async downloadDocument(
-    @Param('id') id: string,
-    @Res() reply: FastifyReply,
-  ) {
+  async downloadDocument(@Param('id') id: string, @Res() reply: FastifyReply) {
     const fileData = await this.resumeService.getFileForDownload(id);
 
     reply.header('Content-Type', fileData.mimeType);
@@ -179,12 +184,18 @@ export class ResumeController {
     }
 
     // Extract fields from multipart form
-    const fields = file.fields as Record<string, { value?: unknown } | undefined>;
-    const title = typeof fields.title?.value === 'string' ? fields.title.value : undefined;
-    const description = typeof fields.description?.value === 'string' ? fields.description.value : undefined;
+    const fields = file.fields as Record<
+      string,
+      { value?: unknown } | undefined
+    >;
+    const title =
+      typeof fields.title?.value === 'string' ? fields.title.value : undefined;
+    const description =
+      typeof fields.description?.value === 'string'
+        ? fields.description.value
+        : undefined;
     const isPrimaryRaw = fields.isPrimary?.value;
-    const isPrimaryValue =
-      isPrimaryRaw === 'true' || isPrimaryRaw === true;
+    const isPrimaryValue = isPrimaryRaw === 'true' || isPrimaryRaw === true;
 
     if (!title || !title.trim()) {
       throw new BadRequestException('Title is required');
@@ -250,12 +261,16 @@ export class ResumeController {
     let result: ResumeDocumentResponseDto;
     if (req.isMultipart()) {
       const file = await req.file();
-      const fields = (file?.fields || {}) as Record<string, { value?: unknown } | undefined>;
+      const fields = (file?.fields || {}) as Record<
+        string,
+        { value?: unknown } | undefined
+      >;
 
       const titleRaw = fields.title?.value;
       const title = typeof titleRaw === 'string' ? titleRaw.trim() : undefined;
       const descRaw = fields.description?.value;
-      const description = typeof descRaw === 'string' ? descRaw.trim() : undefined;
+      const description =
+        typeof descRaw === 'string' ? descRaw.trim() : undefined;
       const isPrimaryRaw = fields.isPrimary?.value;
       const isPrimary =
         isPrimaryRaw !== undefined
@@ -268,7 +283,11 @@ export class ResumeController {
         isPrimary,
       };
 
-      result = await this.resumeService.updateDocument(id, metadata, file || undefined);
+      result = await this.resumeService.updateDocument(
+        id,
+        metadata,
+        file || undefined,
+      );
     } else {
       result = await this.resumeService.updateDocument(id, body);
     }

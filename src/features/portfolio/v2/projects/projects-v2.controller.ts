@@ -47,7 +47,10 @@ export class ProjectsV2Controller {
   }
 
   @Get('assets/:filename')
-  @ApiOperation({ summary: 'Serve or stream uploaded project asset (architecture, preview, screenshot)' })
+  @ApiOperation({
+    summary:
+      'Serve or stream uploaded project asset (architecture, preview, screenshot)',
+  })
   @ApiResponse({
     status: 200,
     description: 'Project asset file stream.',
@@ -73,7 +76,10 @@ export class ProjectsV2Controller {
   @Post('upload')
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Upload project media asset (architecture diagram, screenshot, GIF, etc.)' })
+  @ApiOperation({
+    summary:
+      'Upload project media asset (architecture diagram, screenshot, GIF, etc.)',
+  })
   @ApiBody({
     schema: {
       type: 'object',
@@ -150,4 +156,3 @@ export class ProjectsV2Controller {
     return await this.projectsService.remove(id);
   }
 }
-

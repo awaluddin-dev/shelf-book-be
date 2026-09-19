@@ -100,10 +100,7 @@ describe('ContactService', () => {
           message: 'Hello',
         }),
       ).rejects.toThrow(
-        new HttpException(
-          'API Error',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        ),
+        new HttpException('API Error', HttpStatus.INTERNAL_SERVER_ERROR),
       );
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(

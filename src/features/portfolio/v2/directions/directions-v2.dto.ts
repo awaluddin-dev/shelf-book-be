@@ -9,12 +9,18 @@ import {
 } from 'class-validator';
 
 export class CreateDirectionV2Dto {
-  @ApiProperty({ description: 'Title of the direction item', example: 'Rust for High-Throughput Microservices' })
+  @ApiProperty({
+    description: 'Title of the direction item',
+    example: 'Rust for High-Throughput Microservices',
+  })
   @IsString()
   @IsNotEmpty()
   title: string;
 
-  @ApiProperty({ description: 'Category: learning, project, architecture, system', example: 'learning' })
+  @ApiProperty({
+    description: 'Category: learning, project, architecture, system',
+    example: 'learning',
+  })
   @IsString()
   @IsNotEmpty()
   category: string;
@@ -29,7 +35,10 @@ export class CreateDirectionV2Dto {
   @IsNotEmpty()
   quarter: string;
 
-  @ApiPropertyOptional({ description: 'Status: in_progress, planned, completed', default: 'in_progress' })
+  @ApiPropertyOptional({
+    description: 'Status: in_progress, planned, completed',
+    default: 'in_progress',
+  })
   @IsOptional()
   @IsIn(['in_progress', 'planned', 'completed'])
   status?: string;
@@ -39,7 +48,9 @@ export class CreateDirectionV2Dto {
   @IsNotEmpty()
   description: string;
 
-  @ApiPropertyOptional({ description: 'Depth level, e.g., Deep dive, Production ready' })
+  @ApiPropertyOptional({
+    description: 'Depth level, e.g., Deep dive, Production ready',
+  })
   @IsOptional()
   @IsString()
   depth?: string;

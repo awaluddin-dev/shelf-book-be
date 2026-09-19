@@ -1,5 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, IsInt, IsArray, ValidateNested, IsIn } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsInt,
+  IsArray,
+  ValidateNested,
+  IsIn,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class ProficiencySkillItemDto {
@@ -21,7 +28,10 @@ export class CreateProficiencyPillarV2Dto {
   @IsString()
   title: string;
 
-  @ApiProperty({ example: 'High-concurrency services, event-driven orchestration, idempotency, and IPC.' })
+  @ApiProperty({
+    example:
+      'High-concurrency services, event-driven orchestration, idempotency, and IPC.',
+  })
   @IsString()
   description: string;
 
@@ -52,7 +62,10 @@ export class UpdateProficiencyPillarV2Dto {
   @IsString()
   title?: string;
 
-  @ApiPropertyOptional({ example: 'High-concurrency services, event-driven orchestration, idempotency, and IPC.' })
+  @ApiPropertyOptional({
+    example:
+      'High-concurrency services, event-driven orchestration, idempotency, and IPC.',
+  })
   @IsOptional()
   @IsString()
   description?: string;
