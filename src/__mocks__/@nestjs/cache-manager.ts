@@ -2,8 +2,8 @@ export const CACHE_MANAGER = 'CACHE_MANAGER';
 export const CACHE_KEY_METADATA = 'cache_module:cache_key';
 export const CACHE_TTL_METADATA = 'cache_module:cache_ttl';
 
-export const CacheKey = (_key: string) => () => {};
-export const CacheTTL = (_ttl: number) => () => {};
+export const CacheKey = () => () => {};
+export const CacheTTL = () => () => {};
 
 export class CacheInterceptor {
   intercept(_context: unknown, next: { handle: () => unknown }): unknown {
