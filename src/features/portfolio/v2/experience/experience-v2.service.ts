@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
   CreateCareerExperienceV2Dto,
@@ -33,7 +34,7 @@ export class ExperienceV2Service {
         role: data.role,
         period: data.period,
         isActive: data.isActive ?? false,
-        bullets: data.bullets as any,
+        bullets: data.bullets as unknown as Prisma.InputJsonValue,
         techTags: data.techTags,
         order: data.order ?? 0,
       },
@@ -49,7 +50,9 @@ export class ExperienceV2Service {
         ...(data.role !== undefined && { role: data.role }),
         ...(data.period !== undefined && { period: data.period }),
         ...(data.isActive !== undefined && { isActive: data.isActive }),
-        ...(data.bullets !== undefined && { bullets: data.bullets as any }),
+        ...(data.bullets !== undefined && {
+          bullets: data.bullets as unknown as Prisma.InputJsonValue,
+        }),
         ...(data.techTags !== undefined && { techTags: data.techTags }),
         ...(data.order !== undefined && { order: data.order }),
       },

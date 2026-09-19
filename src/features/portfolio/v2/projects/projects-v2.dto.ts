@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsOptional, IsInt, IsArray, IsBoolean } from 'class-validator';
 
@@ -71,11 +72,11 @@ export class CreateProjectV2Dto {
 
   @ApiPropertyOptional()
   @IsOptional()
-  stats?: any;
+  stats?: Prisma.InputJsonValue;
 
   @ApiPropertyOptional()
   @IsOptional()
-  phases?: any;
+  phases?: Prisma.InputJsonValue;
 
   @ApiPropertyOptional({ example: '# Overview' })
   @IsOptional()
@@ -189,11 +190,11 @@ export class UpdateProjectV2Dto {
 
   @ApiPropertyOptional()
   @IsOptional()
-  stats?: any;
+  stats?: Prisma.InputJsonValue;
 
   @ApiPropertyOptional()
   @IsOptional()
-  phases?: any;
+  phases?: Prisma.InputJsonValue;
 
   @ApiPropertyOptional({ example: '# Overview' })
   @IsOptional()

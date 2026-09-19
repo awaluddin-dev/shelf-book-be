@@ -39,14 +39,15 @@ export class HeroV2Service {
     metricsPayload?: MetricV2Dto[],
   ) {
     if (heroConfigPayload) {
-      const { id, ...updateData } = heroConfigPayload;
+      const updateData = { ...heroConfigPayload };
+      delete updateData.id;
       await this.prisma.heroConfigV2.upsert({
         where: { id: 'hero_v2_default' },
         update: updateData,
         create: {
           id: 'hero_v2_default',
           ...updateData,
-        } as any,
+        },
       });
 
       if (updateData.status) {

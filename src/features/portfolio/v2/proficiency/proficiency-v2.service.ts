@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
   CreateProficiencyPillarV2Dto,
@@ -33,7 +34,7 @@ export class ProficiencyV2Service {
         title: data.title,
         description: data.description,
         icon: data.icon,
-        skills: data.skills as any,
+        skills: data.skills as unknown as Prisma.InputJsonValue,
         order: data.order ?? 0,
       },
     });
@@ -48,7 +49,9 @@ export class ProficiencyV2Service {
         ...(data.title !== undefined && { title: data.title }),
         ...(data.description !== undefined && { description: data.description }),
         ...(data.icon !== undefined && { icon: data.icon }),
-        ...(data.skills !== undefined && { skills: data.skills as any }),
+        ...(data.skills !== undefined && {
+          skills: data.skills as unknown as Prisma.InputJsonValue,
+        }),
         ...(data.order !== undefined && { order: data.order }),
       },
     });

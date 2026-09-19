@@ -139,12 +139,27 @@ export class DirectionsV2Service {
         throw new Error(`Dev.to API responded with status ${response.status}`);
       }
 
-      const rawArticles = await response.json();
+      const rawArticles = (await response.json()) as unknown;
       if (!Array.isArray(rawArticles)) {
         return [];
       }
 
-      const articles: DevToArticle[] = rawArticles.map((art: any) => ({
+      interface RawDevToArticle {
+        id: number;
+        title: string;
+        description: string;
+        url: string;
+        cover_image?: string;
+        social_image?: string;
+        published_at: string;
+        readable_publish_date: string;
+        reading_time_minutes: number;
+        tag_list?: string[];
+        public_reactions_count?: number;
+        comments_count?: number;
+      }
+
+      const articles: DevToArticle[] = (rawArticles as RawDevToArticle[]).map((art) => ({
         id: art.id,
         title: art.title,
         description: art.description,
@@ -161,8 +176,9 @@ export class DirectionsV2Service {
 
       this.devToCache = { timestamp: now, data: articles };
       return articles.slice(0, 2);
-    } catch (error) {
-      this.logger.warn(`Failed to fetch dev.to articles: ${error.message}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.logger.warn(`Failed to fetch dev.to articles: ${errorMessage}`);
       if (this.devToCache) return this.devToCache.data.slice(0, 2);
       return [];
     }

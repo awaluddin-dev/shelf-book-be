@@ -143,7 +143,7 @@ export class ResumeService extends BaseCrudService {
     });
   }
 
-  async deleteDocument(id: string) {
+  async deleteDocument(id: string): Promise<{ success: boolean }> {
     const existing = await this.getByIdDelegate(id);
 
     // Remove physical file

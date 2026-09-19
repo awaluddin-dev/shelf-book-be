@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProjectV2Dto, UpdateProjectV2Dto } from './projects-v2.dto';
 import * as fs from 'fs';
@@ -76,8 +77,8 @@ export class ProjectsV2Service {
         spineText: data.spineText ?? data.title,
         github: data.github,
         demoUrl: data.demoUrl,
-        stats: data.stats ?? [],
-        phases: data.phases ?? [],
+        stats: (data.stats ?? []) as Prisma.InputJsonValue,
+        phases: (data.phases ?? []) as Prisma.InputJsonValue,
         markdown: data.markdown ?? '',
         order: data.order ?? 0,
         isFeatured: data.isFeatured ?? false,
@@ -108,8 +109,12 @@ export class ProjectsV2Service {
         ...(data.spineText !== undefined && { spineText: data.spineText }),
         ...(data.github !== undefined && { github: data.github }),
         ...(data.demoUrl !== undefined && { demoUrl: data.demoUrl }),
-        ...(data.stats !== undefined && { stats: data.stats }),
-        ...(data.phases !== undefined && { phases: data.phases }),
+        ...(data.stats !== undefined && {
+          stats: data.stats as Prisma.InputJsonValue,
+        }),
+        ...(data.phases !== undefined && {
+          phases: data.phases as Prisma.InputJsonValue,
+        }),
         ...(data.markdown !== undefined && { markdown: data.markdown }),
         ...(data.order !== undefined && { order: data.order }),
         ...(data.isFeatured !== undefined && { isFeatured: data.isFeatured }),

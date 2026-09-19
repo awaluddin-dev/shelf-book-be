@@ -179,19 +179,21 @@ export class ResumeController {
     }
 
     // Extract fields from multipart form
-    const fields = file.fields as Record<string, any>;
-    const title = fields.title?.value;
-    const description = fields.description?.value;
-    const isPrimaryValue = fields.isPrimary?.value;
+    const fields = file.fields as Record<string, { value?: unknown } | undefined>;
+    const title = typeof fields.title?.value === 'string' ? fields.title.value : undefined;
+    const description = typeof fields.description?.value === 'string' ? fields.description.value : undefined;
+    const isPrimaryRaw = fields.isPrimary?.value;
+    const isPrimaryValue =
+      isPrimaryRaw === 'true' || isPrimaryRaw === true;
 
-    if (!title || typeof title !== 'string' || !title.trim()) {
+    if (!title || !title.trim()) {
       throw new BadRequestException('Title is required');
     }
 
     const metadata: CreateResumeDto = {
       title: title.trim(),
-      description: description ? String(description).trim() : undefined,
-      isPrimary: isPrimaryValue === 'true' || isPrimaryValue === true,
+      description: description ? description.trim() : undefined,
+      isPrimary: isPrimaryValue,
     };
 
     const doc = await this.resumeService.uploadDocument(metadata, file);
@@ -245,22 +247,25 @@ export class ResumeController {
     @Req() req: FastifyRequest,
     @Body() body: UpdateResumeDto,
   ) {
-    let result;
+    let result: ResumeDocumentResponseDto;
     if (req.isMultipart()) {
       const file = await req.file();
-      const fields = (file?.fields || {}) as Record<string, any>;
+      const fields = (file?.fields || {}) as Record<string, { value?: unknown } | undefined>;
 
-      const title = fields.title?.value;
-      const description = fields.description?.value;
-      const isPrimaryValue = fields.isPrimary?.value;
+      const titleRaw = fields.title?.value;
+      const title = typeof titleRaw === 'string' ? titleRaw.trim() : undefined;
+      const descRaw = fields.description?.value;
+      const description = typeof descRaw === 'string' ? descRaw.trim() : undefined;
+      const isPrimaryRaw = fields.isPrimary?.value;
+      const isPrimary =
+        isPrimaryRaw !== undefined
+          ? isPrimaryRaw === 'true' || isPrimaryRaw === true
+          : undefined;
 
       const metadata: UpdateResumeDto = {
-        title: title !== undefined ? String(title).trim() : undefined,
-        description: description !== undefined ? String(description).trim() : undefined,
-        isPrimary:
-          isPrimaryValue !== undefined
-            ? isPrimaryValue === 'true' || isPrimaryValue === true
-            : undefined,
+        title,
+        description,
+        isPrimary,
       };
 
       result = await this.resumeService.updateDocument(id, metadata, file || undefined);
@@ -286,7 +291,7 @@ export class ResumeController {
     description: 'Document deleted successfully.',
     schema: { example: { success: true } },
   })
-  async deleteDocument(@Param('id') id: string) {
+  async deleteDocument(@Param('id') id: string): Promise<{ success: boolean }> {
     const result = await this.resumeService.deleteDocument(id);
     try {
       await this.cacheManager.del('cache_resume_documents');
