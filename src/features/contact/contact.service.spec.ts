@@ -70,7 +70,7 @@ describe('ContactService', () => {
       const result = await service.sendInquiry(dto);
 
       expect(service['resend'].emails.send).toHaveBeenCalledWith({
-        from: 'Portfolio Inquiry <onboarding@resend.dev>',
+        from: 'Portfolio Inquiry <hello@awaluddin.dev>',
         to: 'hello@awaluddin.dev',
         replyTo: 'test@example.com',
         subject: 'New Inquiry from Test - Web',
@@ -100,10 +100,7 @@ describe('ContactService', () => {
           message: 'Hello',
         }),
       ).rejects.toThrow(
-        new HttpException(
-          'Failed to send email',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        ),
+        new HttpException('API Error', HttpStatus.INTERNAL_SERVER_ERROR),
       );
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(

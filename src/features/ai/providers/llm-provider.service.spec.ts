@@ -49,8 +49,7 @@ describe('LlmProviderService', () => {
   describe('streamCompletion', () => {
     it('should succeed with the first provider', async () => {
       mockConfigService.get.mockImplementation((key: string) => {
-        if (key === 'AI_CUSTOM_BASE_URL') return 'http://custom/';
-        if (key === 'AI_CUSTOM_API_KEY') return 'custom-key';
+        if (key === 'GEMINI_API_KEY') return 'gemini-key';
         return null;
       });
 
@@ -66,8 +65,7 @@ describe('LlmProviderService', () => {
 
     it('should fall back to next provider if first fails (response not ok)', async () => {
       mockConfigService.get.mockImplementation((key: string) => {
-        if (key === 'AI_CUSTOM_BASE_URL') return 'http://custom/';
-        if (key === 'AI_CUSTOM_API_KEY') return 'custom-key';
+        if (key === 'GEMINI_API_KEY') return 'gemini-key';
         if (key === 'GROQ_API_KEY') return 'groq-key';
         return null;
       });
@@ -92,8 +90,7 @@ describe('LlmProviderService', () => {
 
     it('should fall back to next provider if first throws an exception', async () => {
       mockConfigService.get.mockImplementation((key: string) => {
-        if (key === 'AI_CUSTOM_BASE_URL') return 'http://custom/';
-        if (key === 'AI_CUSTOM_API_KEY') return 'custom-key';
+        if (key === 'GEMINI_API_KEY') return 'gemini-key';
         if (key === 'GROQ_API_KEY') return 'groq-key';
         return null;
       });
@@ -111,12 +108,10 @@ describe('LlmProviderService', () => {
       expect(global.fetch).toHaveBeenCalledTimes(2);
     });
 
-    it('should try all configured providers (custom, groq, gemini)', async () => {
+    it('should try all configured providers (gemini, groq)', async () => {
       mockConfigService.get.mockImplementation((key: string) => {
-        if (key === 'AI_CUSTOM_BASE_URL') return 'http://custom/';
-        if (key === 'AI_CUSTOM_API_KEY') return 'custom-key';
-        if (key === 'GROQ_API_KEY') return 'groq-key';
         if (key === 'GEMINI_API_KEY') return 'gemini-key';
+        if (key === 'GROQ_API_KEY') return 'groq-key';
         return null;
       });
 
@@ -125,29 +120,22 @@ describe('LlmProviderService', () => {
         status: 500,
         text: jest.fn().mockResolvedValue('err1'),
       } as unknown as Response;
-      const errorResponse2 = {
-        ok: false,
-        status: 500,
-        text: jest.fn().mockResolvedValue('err2'),
-      } as unknown as Response;
       const successResponse = { ok: true } as Response;
 
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce(errorResponse1)
-        .mockResolvedValueOnce(errorResponse2)
         .mockResolvedValueOnce(successResponse);
 
       const res = await service.streamCompletion([
         { role: 'user', content: 'test' },
       ]);
       expect(res).toBe(successResponse);
-      expect(global.fetch).toHaveBeenCalledTimes(3);
+      expect(global.fetch).toHaveBeenCalledTimes(2);
     });
 
     it('should throw if all providers fail', async () => {
       mockConfigService.get.mockImplementation((key: string) => {
-        if (key === 'AI_CUSTOM_BASE_URL') return 'http://custom/';
-        if (key === 'AI_CUSTOM_API_KEY') return 'custom-key';
+        if (key === 'GEMINI_API_KEY') return 'gemini-key';
         return null;
       });
 

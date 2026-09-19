@@ -275,3 +275,158 @@ model ProjectErd {
   @@map("project_erds")
   @@schema("public")
 }
+
+model ResumeDocument {
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
+  title       String
+  description String?
+  fileType    String   // "pdf" | "md"
+  fileName    String   // original filename
+  storedName  String   // stored filename on disk
+  filePath    String   // relative path on disk
+  fileSize    Int      // in bytes
+  mimeType    String   // application/pdf or text/markdown
+  isPrimary   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+
+  @@map("resume_documents")
+  @@schema("public")
+}
+
+// ─── VERSION 2 MODELS ────────────────────────────────────────
+
+model HeroConfigV2 {
+  id                 String   @id @default("hero_v2_default")
+  name               String   @default("Awaluddin")
+  role               String   @default("Backend Engineer & AI Integrator")
+  headline           String   @default("Production Systems at Scale")
+  quote              String   @default("I ship LLM integrations into production — not train models in notebooks.")
+  status             String   @default("available")
+  statusText         String   @default("Available for Remote Roles (UTC+7)")
+  resumeUrl          String   @default("/assets/resume/Awaluddin_cv.pdf")
+  docsUrl            String   @default("https://sb.awaluddin.dev/docs")
+  aboutText          String   @default("")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("hero_config_v2")
+  @@schema("public")
+}
+
+model MetricV2 {
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
+  value       String
+  label       String
+  description String
+  subtext     String
+  icon        String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("metrics_v2")
+  @@schema("public")
+}
+
+model CareerExperienceV2 {
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
+  company   String
+  role      String
+  period    String
+  isActive  Boolean  @default(false)
+  bullets   Json
+  techTags  String[]
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("career_experiences_v2")
+  @@schema("public")
+}
+
+model ProficiencyPillarV2 {
+  id           String   @id @default(dbgenerated("gen_random_uuid()"))
+  pillarNumber String
+  title        String
+  description  String
+  icon         String
+  skills       Json
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("proficiency_pillars_v2")
+  @@schema("public")
+}
+
+model ProjectV2 {
+  id            String   @id @default(dbgenerated("gen_random_uuid()"))
+  title         String
+  subtitle      String
+  category      String
+  date          String
+  tags          String[]
+  domainBadge   String?
+  problem       String?
+  solution      String?
+  pipelineFlow  String[]
+  spineColor    String   @default("#0f4c75")
+  coverColor    String   @default("#142028")
+  spineText     String   @default("")
+  github        String?
+  demoUrl       String?
+  stats         Json?
+  phases        Json?
+  markdown      String   @default("")
+  order         Int      @default(0)
+  isFeatured    Boolean  @default(false)
+  mediaType     String?  // 'gif', 'screenshot', 'video'
+  mediaUrl      String?  // URL of screenshot, gif, or demo preview
+  architectureDiagram String? // Architecture diagram image or ASCII/Mermaid
+  keyHighlights String[] @default([]) // Key achievements / bullet points for recruiters
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("projects_v2")
+  @@schema("public")
+}
+
+model DirectionV2 {
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
+  title       String
+  category    String   // 'learning', 'project', 'architecture', 'system'
+  type        String   // 'current' (now) or 'future' (upcoming quarters)
+  quarter     String   // e.g. 'Q1 2026', 'Q2 2026', 'Ongoing'
+  status      String   @default("in_progress") // 'in_progress', 'planned', 'completed'
+  description String
+  depth       String?  // e.g. 'Deep dive', 'Production scale'
+  tags        String[]
+  icon        String?  // Lucide icon name
+  link        String?
+  linkText    String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("directions_v2")
+  @@schema("public")
+}
+
+model YouTubeVideoV2 {
+  id           String   @id @default(dbgenerated("gen_random_uuid()"))
+  title        String
+  description  String   @default("")
+  thumbnailUrl String   @default("")
+  videoUrl     String
+  duration     String?
+  views        String?
+  publishedAt  DateTime?
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("youtube_videos_v2")
+  @@schema("public")
+}
+

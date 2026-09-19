@@ -31,25 +31,16 @@ describe('RegisterController', () => {
   });
 
   describe('register', () => {
-    it('should call registerService.execute with correct parameters', async () => {
+    it('should throw ForbiddenException as public registration is disabled', async () => {
       const dto: RegisterDto = {
         name: 'Test',
         email: 'test@example.com',
         password: 'password123',
       };
-      const expectedResult = {
-        id: 'user1',
-        name: 'Test',
-        email: 'test@example.com',
-        createdAt: new Date(),
-      };
 
-      jest.spyOn(service, 'execute').mockResolvedValue(expectedResult);
-
-      const result = await controller.register(dto);
-
-      expect(service.execute).toHaveBeenCalledWith(dto);
-      expect(result).toEqual(expectedResult);
+      await expect(controller.register(dto)).rejects.toThrow(
+        'Public registration is permanently disabled on this instance.',
+      );
     });
   });
 });
